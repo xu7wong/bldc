@@ -315,7 +315,9 @@ int main(void) {
 
 	for(;;) {
 		chThdSleepMilliseconds(1000);
-		mc_interface_set_pid_speed((float)2500.0);
+		mc_interface_set_current((float)2.0);
+		// mc_interface_set_pid_speed((float)2500.0);
+		//mcpwm_foc_set_pid_speed((float)2500.0);
 		timeout_reset();
 	}
 }

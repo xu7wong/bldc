@@ -441,9 +441,10 @@ void mcpwm_init(volatile mc_configuration *configuration) {
 
 	// Start threads
 	timer_thd_stop = false;
-	rpm_thd_stop = false;
+	
 	chThdCreateStatic(timer_thread_wa, sizeof(timer_thread_wa), NORMALPRIO, timer_thread, NULL);
-	chThdCreateStatic(rpm_thread_wa, sizeof(rpm_thread_wa), NORMALPRIO, rpm_thread, NULL);
+	rpm_thd_stop = true;
+	// chThdCreateStatic(rpm_thread_wa, sizeof(rpm_thread_wa), NORMALPRIO, rpm_thread, NULL);
 
 	// Check if the system has resumed from IWDG reset
 	if (timeout_had_IWDG_reset()) {

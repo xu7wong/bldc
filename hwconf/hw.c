@@ -22,18 +22,18 @@
 #include <math.h>
 #include HW_SOURCE
 
-uint8_t hw_id_from_uuid(void) {
-	uint8_t id = utils_crc32c(STM32_UUID_8, 12) & 0x7F;
-	// CAN ID 10 and 11 are often used by DieBieMS / FlexiBMS
-	uint8_t reserved[] = {10, 11};
-	for (size_t i = 0; i < sizeof(reserved); ++i) {
-		if (id == reserved[i]) {
-			id = (id + 1) & 0x7F;
-			i = 0;
-		}
-	}
-	return id;
-}
+// uint8_t hw_id_from_uuid(void) {
+// 	uint8_t id = utils_crc32c(STM32_UUID_8, 12) & 0x7F;
+// 	// CAN ID 10 and 11 are often used by DieBieMS / FlexiBMS
+// 	uint8_t reserved[] = {10, 11};
+// 	for (size_t i = 0; i < sizeof(reserved); ++i) {
+// 		if (id == reserved[i]) {
+// 			id = (id + 1) & 0x7F;
+// 			i = 0;
+// 		}
+// 	}
+// 	return id;
+// }
 
 #if defined(HW_ID_PIN_GPIOS) && defined(HW_ID_PIN_PINS)
 uint8_t hw_id_from_pins(void) {

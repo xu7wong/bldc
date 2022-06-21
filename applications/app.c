@@ -18,28 +18,28 @@
     */
 
 #include "app.h"
-#include "ch.h"
+// #include "ch.h"
 #include "hal.h"
 #include "hw.h"
-#include "nrf_driver.h"
-#include "rfhelp.h"
-#include "comm_can.h"
-#include "imu.h"
-#include "crc.h"
-#include "servo_simple.h"
+//#include "nrf_driver.h"
+//#include "rfhelp.h"
+// #include "comm_can.h"
+//#include "imu.h"
+// #include "crc.h"
+//#include "servo_simple.h"
 
 // Private variables
-static app_configuration appconf;
-static virtual_timer_t output_vt;
-static bool output_vt_init_done = false;
-static volatile bool output_disabled_now = false;
+// static app_configuration appconf;
+// static virtual_timer_t output_vt;
+// static bool output_vt_init_done = false;
+// static volatile bool output_disabled_now = false;
 
 // Private functions
-static void output_vt_cb(void *arg);
+// static void output_vt_cb(void *arg);
 
-const app_configuration* app_get_configuration(void) {
-	return &appconf;
-}
+// const app_configuration* app_get_configuration(void) {
+// 	return &appconf;
+// }
 
 /**
  * Reconfigure and restart all apps. Some apps don't have any configuration options.
@@ -47,119 +47,119 @@ const app_configuration* app_get_configuration(void) {
  * @param conf
  * The new configuration to use.
  */
-void app_set_configuration(app_configuration *conf) {
-	appconf = *conf;
+// void app_set_configuration(app_configuration *conf) {
+// 	appconf = *conf;
 
-	app_ppm_stop();
-	app_adc_stop();
-	app_uartcomm_stop(UART_PORT_COMM_HEADER);
-	app_nunchuk_stop();
-	app_balance_stop();
-	app_pas_stop();
+// 	// app_ppm_stop();
+// 	app_adc_stop();
+// 	app_uartcomm_stop(UART_PORT_COMM_HEADER);
+// 	// app_nunchuk_stop();
+// 	//app_balance_stop();
+// 	app_pas_stop();
 
-	if (!conf_general_permanent_nrf_found) {
-		nrf_driver_stop();
-	}
+// 	// if (!conf_general_permanent_nrf_found) {
+// 	// 	nrf_driver_stop();
+// 	// }
 
-#if CAN_ENABLE
-	comm_can_set_baud(conf->can_baud_rate);
-#endif
+// // #if CAN_ENABLE
+// // 	comm_can_set_baud(conf->can_baud_rate);
+// // #endif
 
-#ifdef APP_CUSTOM_TO_USE
-	app_custom_stop();
-#endif
+// #ifdef APP_CUSTOM_TO_USE
+// 	app_custom_stop();
+// #endif
 
-	imu_init(&conf->imu_conf);
+// 	//imu_init(&conf->imu_conf);
 
-	if (appconf.app_to_use != APP_PPM &&
-			appconf.app_to_use != APP_PPM_UART &&
-			appconf.servo_out_enable) {
-		servo_simple_init();
-	} else {
-		servo_simple_stop();
-	}
+// 	// if (appconf.app_to_use != APP_PPM &&
+// 	// 		appconf.app_to_use != APP_PPM_UART &&
+// 	// 		appconf.servo_out_enable) {
+// 	// 	servo_simple_init();
+// 	// } else {
+// 	// 	servo_simple_stop();
+// 	// }
 
-	// Configure balance app before starting it.
-	app_balance_configure(&appconf.app_balance_conf, &appconf.imu_conf);
+// 	// Configure balance app before starting it.
+// 	//app_balance_configure(&appconf.app_balance_conf, &appconf.imu_conf);
 
-	switch (appconf.app_to_use) {
-	case APP_PPM:
-		app_ppm_start();
-		break;
+// 	switch (appconf.app_to_use) {
+// 	// case APP_PPM:
+// 	// 	app_ppm_start();
+// 	// 	break;
 
-	case APP_ADC:
-		app_adc_start(true);
-		break;
+// 	case APP_ADC:
+// 		app_adc_start(true);
+// 		break;
 
-	case APP_UART:
-		hw_stop_i2c();
-		app_uartcomm_start(UART_PORT_COMM_HEADER);
-		break;
+// 	case APP_UART:
+// 		// hw_stop_i2c();
+// 		app_uartcomm_start(UART_PORT_COMM_HEADER);
+// 		break;
 
-	case APP_PPM_UART:
-		hw_stop_i2c();
-		app_ppm_start();
-		app_uartcomm_start(UART_PORT_COMM_HEADER);
-		break;
+// 	// case APP_PPM_UART:
+// 	// 	hw_stop_i2c();
+// 	// 	app_ppm_start();
+// 	// 	app_uartcomm_start(UART_PORT_COMM_HEADER);
+// 	// 	break;
 
-	case APP_ADC_UART:
-		hw_stop_i2c();
-		app_adc_start(false);
-		app_uartcomm_start(UART_PORT_COMM_HEADER);
-		break;
+// 	case APP_ADC_UART:
+// 		// hw_stop_i2c();
+// 		app_adc_start(false);
+// 		app_uartcomm_start(UART_PORT_COMM_HEADER);
+// 		break;
 
-	case APP_NUNCHUK:
-		app_nunchuk_start();
-		break;
+// 	// case APP_NUNCHUK:
+// 	// 	app_nunchuk_start();
+// 	// 	break;
 
-	case APP_BALANCE:
-		app_balance_start();
-		if(appconf.imu_conf.type == IMU_TYPE_INTERNAL){
-			hw_stop_i2c();
-			app_uartcomm_start(UART_PORT_COMM_HEADER);
-		}
-		break;
+// 	// case APP_BALANCE:
+// 	// 	app_balance_start();
+// 	// 	if(appconf.imu_conf.type == IMU_TYPE_INTERNAL){
+// 	// 		hw_stop_i2c();
+// 	// 		app_uartcomm_start(UART_PORT_COMM_HEADER);
+// 	// 	}
+// 	// 	break;
 
-	case APP_PAS:
-		app_pas_start(true);
-		break;
+// 	case APP_PAS:
+// 		app_pas_start(true);
+// 		break;
 
-	case APP_ADC_PAS:
-		app_adc_start(false);
-		app_pas_start(false);
-		break;
+// 	case APP_ADC_PAS:
+// 		app_adc_start(false);
+// 		app_pas_start(false);
+// 		break;
 
-	case APP_NRF:
-		if (!conf_general_permanent_nrf_found) {
-			nrf_driver_init();
-			rfhelp_restart();
-		}
-		break;
+// 	// case APP_NRF:
+// 	// 	if (!conf_general_permanent_nrf_found) {
+// 	// 		nrf_driver_init();
+// 	// 		rfhelp_restart();
+// 	// 	}
+// 	// 	break;
 
-	case APP_CUSTOM:
-#ifdef APP_CUSTOM_TO_USE
-		hw_stop_i2c();
-		app_custom_start();
-#endif
-		break;
+// 	case APP_CUSTOM:
+// #ifdef APP_CUSTOM_TO_USE
+// 		// hw_stop_i2c();
+// 		app_custom_start();
+// #endif
+// 		break;
 
-	default:
-		break;
-	}
+// 	default:
+// 		break;
+// 	}
 
-	app_ppm_configure(&appconf.app_ppm_conf);
-	app_adc_configure(&appconf.app_adc_conf);
-	app_pas_configure(&appconf.app_pas_conf);
-	app_uartcomm_configure(appconf.app_uart_baudrate, true, UART_PORT_COMM_HEADER);
-	app_uartcomm_configure(0, appconf.permanent_uart_enabled, UART_PORT_BUILTIN);
-	app_nunchuk_configure(&appconf.app_chuk_conf);
+// 	// app_ppm_configure(&appconf.app_ppm_conf);
+// 	app_adc_configure(&appconf.app_adc_conf);
+// 	app_pas_configure(&appconf.app_pas_conf);
+// 	app_uartcomm_configure(appconf.app_uart_baudrate, true, UART_PORT_COMM_HEADER);
+// 	app_uartcomm_configure(0, appconf.permanent_uart_enabled, UART_PORT_BUILTIN);
+// 	// app_nunchuk_configure(&appconf.app_chuk_conf);
 
-#ifdef APP_CUSTOM_TO_USE
-	app_custom_configure(&appconf);
-#endif
+// #ifdef APP_CUSTOM_TO_USE
+// 	app_custom_configure(&appconf);
+// #endif
 
-	rfhelp_update_conf(&appconf.app_nrf_conf);
-}
+// 	// rfhelp_update_conf(&appconf.app_nrf_conf);
+// }
 
 /**
  * Disable output on apps
@@ -170,31 +170,31 @@ void app_set_configuration(app_configuration *conf) {
  * -1: Disable forever
  * >0: Amount of milliseconds to disable output
  */
-void app_disable_output(int time_ms) {
-	if (!output_vt_init_done) {
-		chVTObjectInit(&output_vt);
-		output_vt_init_done = true;
-	}
+// void app_disable_output(int time_ms) {
+// 	if (!output_vt_init_done) {
+// 		chVTObjectInit(&output_vt);
+// 		output_vt_init_done = true;
+// 	}
 
-	if (time_ms == 0) {
-		output_disabled_now = false;
-	} else if (time_ms == -1) {
-		output_disabled_now = true;
-		chVTReset(&output_vt);
-	} else {
-		output_disabled_now = true;
-		chVTSet(&output_vt, MS2ST(time_ms), output_vt_cb, 0);
-	}
-}
+// 	if (time_ms == 0) {
+// 		output_disabled_now = false;
+// 	} else if (time_ms == -1) {
+// 		output_disabled_now = true;
+// 		chVTReset(&output_vt);
+// 	} else {
+// 		output_disabled_now = true;
+// 		chVTSet(&output_vt, MS2ST(time_ms), output_vt_cb, 0);
+// 	}
+// }
 
-bool app_is_output_disabled(void) {
-	return output_disabled_now;
-}
+// bool app_is_output_disabled(void) {
+// 	return output_disabled_now;
+// }
 
-static void output_vt_cb(void *arg) {
-	(void)arg;
-	output_disabled_now = false;
-}
+// static void output_vt_cb(void *arg) {
+// 	(void)arg;
+// 	output_disabled_now = false;
+// }
 
 /**
  * Get app_configuration CRC
@@ -205,13 +205,13 @@ static void output_vt_cb(void *arg) {
  * @return
  * CRC16 (with crc field in struct temporarily set to zero).
  */
-unsigned app_calc_crc(app_configuration* conf) {
-	if(NULL == conf)
-		conf = &appconf;
+// unsigned app_calc_crc(app_configuration* conf) {
+// 	if(NULL == conf)
+// 		conf = &appconf;
 
-	unsigned crc_old = conf->crc;
-	conf->crc = 0;
-	unsigned crc_new = crc16((uint8_t*)conf, sizeof(app_configuration));
-	conf->crc = crc_old;
-	return crc_new;
-}
+// 	unsigned crc_old = conf->crc;
+// 	conf->crc = 0;
+// 	unsigned crc_new = crc16((uint8_t*)conf, sizeof(app_configuration));
+// 	conf->crc = crc_old;
+// 	return crc_new;
+// }

@@ -20,7 +20,9 @@
 #include "timeout.h"
 #include "mc_interface.h"
 #include "stm32f4xx_conf.h"
-#include "shutdown.h"
+
+#include "ch.h"
+//#include "shutdown.h"
 
 // Private variables
 static volatile bool init_done = false;
@@ -122,7 +124,7 @@ void timeout_configure_IWDT_slowest(void) {
 
 	// As we expect to lock the CPU for a couple of ms make sure that shutdown is not sampling the button input,
 	// as that can cause a shutdown.
-	SHUTDOWN_SET_SAMPLING_DISABLED(true);
+	// SHUTDOWN_SET_SAMPLING_DISABLED(true);
 
 	while(((IWDG->SR & IWDG_SR_RVU) != 0) || ((IWDG->SR & IWDG_SR_PVU) != 0)) {
 		// Continue to kick the dog
@@ -147,7 +149,7 @@ void timeout_configure_IWDT(void) {
 		return;
 	}
 
-	SHUTDOWN_SET_SAMPLING_DISABLED(false);
+	// SHUTDOWN_SET_SAMPLING_DISABLED(false);
 
 	while(((IWDG->SR & IWDG_SR_RVU) != 0) || ((IWDG->SR & IWDG_SR_PVU) != 0)) {
 		// Continue to kick the dog
@@ -188,13 +190,13 @@ static THD_FUNCTION(timeout_thread, arg) {
 		bool kill_sw = false;
 
 		switch (timeout_kill_sw_mode) {
-		case KILL_SW_MODE_PPM_LOW:
-			kill_sw = !palReadPad(HW_ICU_GPIO, HW_ICU_PIN);
-			break;
+		// case KILL_SW_MODE_PPM_LOW:
+		// 	kill_sw = !palReadPad(HW_ICU_GPIO, HW_ICU_PIN);
+		// 	break;
 
-		case KILL_SW_MODE_PPM_HIGH:
-			kill_sw = palReadPad(HW_ICU_GPIO, HW_ICU_PIN);
-			break;
+		// case KILL_SW_MODE_PPM_HIGH:
+		// 	kill_sw = palReadPad(HW_ICU_GPIO, HW_ICU_PIN);
+		// 	break;
 
 		case KILL_SW_MODE_ADC2_LOW:
 			kill_sw = ADC_VOLTS(ADC_IND_EXT2) < 1.65;

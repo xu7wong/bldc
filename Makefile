@@ -96,6 +96,7 @@ PROJECT = BLDC_4_ChibiOS
 
 # Imported source files and paths
 CHIBIOS = ChibiOS_3.0.5
+include driver/stm32lib.mk
 # Startup files
 include $(CHIBIOS)/os/common/ports/ARMCMx/compilers/GCC/mk/startup_stm32f4xx.mk
 # HAL-OSAL files
@@ -108,79 +109,51 @@ include $(CHIBIOS)/os/rt/ports/ARMCMx/compilers/GCC/mk/port_v7m.mk
 # Other files
 include hwconf/hwconf.mk
 include applications/applications.mk
-include nrf/nrf.mk
-include libcanard/canard.mk
-include imu/imu.mk
-include lora/lora.mk
-include lzo/lzo.mk
-include blackmagic/blackmagic.mk
+# include nrf/nrf.mk
+# include libcanard/canard.mk
+# include imu/imu.mk
+# include lora/lora.mk
+# include lzo/lzo.mk
+# include blackmagic/blackmagic.mk
 
-ifeq ($(USE_LISPBM),1)
-  include lispBM/lispbm.mk
-  USE_OPT += -DUSE_LISPBM
-endif
+# ifeq ($(USE_LISPBM),1)
+#   include lispBM/lispbm.mk
+#   USE_OPT += -DUSE_LISPBM
+# endif
 
 # Define linker script file here
 LDSCRIPT= ld_eeprom_emu.ld
 
 # C sources that can be compiled in ARM or THUMB mode depending on the global
 # setting.
-CSRC = $(STARTUPSRC) \
+CSRC = $(STM32SRC) $(STARTUPSRC) \
        $(KERNSRC) \
        $(PORTSRC) \
-       $(OSALSRC) \
        $(HALSRC) \
        $(PLATFORMSRC) \
-       $(CHIBIOS)/os/hal/lib/streams/chprintf.c \
-       $(CHIBIOS)/os/various/syscalls.c \
        board.c \
        main.c \
-       comm_usb_serial.c \
        irq_handlers.c \
        buffer.c \
-       comm_usb.c \
        crc.c \
        digital_filter.c \
-       ledpwm.c \
        mcpwm.c \
-       servo_dec.c \
        utils.c \
-       servo_simple.c \
        packet.c \
-       terminal.c \
        conf_general.c \
-       eeprom.c \
-       commands.c \
        timeout.c \
-       comm_can.c \
-       encoder.c \
-       flash_helper.c \
        mc_interface.c \
        mcpwm_foc.c \
-       gpdrive.c \
        confgenerator.c \
        timer.c \
-       i2c_bb.c \
-       spi_bb.c \
-       virtual_motor.c \
-       shutdown.c \
        mempools.c \
-       worker.c \
-       bms.c \
        events.c \
-       $(HWSRC) \
-       $(APPSRC) \
-       $(NRFSRC) \
-       $(CANARDSRC) \
-       $(IMUSRC) \
-       $(LORASRC) \
-       $(LZOSRC) \
-       $(BLACKMAGICSRC) \
-       qmlui/qmlui.c
+       $(HWSRC)
        
-ifeq ($(USE_LISPBM),1)
-  CSRC += $(LISPBMSRC)
-endif
+       
+# ifeq ($(USE_LISPBM),1)
+#   CSRC += $(LISPBMSRC)
+# endif
 
 # C++ sources that can be compiled in ARM or THUMB mode depending on the global
 # setting.
@@ -209,31 +182,21 @@ TCPPSRC =
 # List ASM source files here
 ASMSRC = $(STARTUPASM) $(PORTASM) $(OSALASM)
 
-INCDIR = $(STARTUPINC) $(KERNINC) $(PORTINC) $(OSALINC) \
+INCDIR = $(STM32INC) $(STARTUPINC) $(KERNINC) $(PORTINC) $(OSALINC) \
          $(HALINC) $(PLATFORMINC) \
          $(CHIBIOS)/os/various \
          $(CHIBIOS)/os/hal/lib/streams \
          mcconf \
          appconf \
-         $(HWINC) \
-         $(APPINC) \
-         $(NRFINC) \
-         $(CANARDINC) \
-         $(IMUINC) \
-         $(LORAINC) \
-         $(LZOINC) \
-         $(BLACKMAGICINC) \
-         qmlui \
-         qmlui/hw \
-         qmlui/app
+         $(HWINC)
 
-ifeq ($(USE_LISPBM),1)
-  INCDIR += $(LISPBMINC)
-endif
+# ifeq ($(USE_LISPBM),1)
+#   INCDIR += $(LISPBMINC)
+# endif
 
-ifdef app_custom_mkfile
-include $(app_custom_mkfile)
-endif
+# ifdef app_custom_mkfile
+# include $(app_custom_mkfile)
+# endif
 
 #
 # Project, sources and paths
@@ -302,12 +265,12 @@ ULIBS = -lm
 # End of user defines
 ##############################################################################
 
-ifeq ($(USE_FWLIB),yes)
-  include $(CHIBIOS)/ext/stdperiph_stm32f4/stm32lib.mk
-  CSRC += $(STM32SRC)
-  INCDIR += $(STM32INC)
-  USE_OPT += -DUSE_STDPERIPH_DRIVER
-endif
+# ifeq ($(USE_FWLIB),yes)
+#   include driver/stm32lib.mk
+#   CSRC += $(STM32SRC)
+#   INCDIR += $(STM32INC)
+#   USE_OPT += -DUSE_STDPERIPH_DRIVER
+# endif
 
 RULESPATH = $(CHIBIOS)/os/common/ports/ARMCMx/compilers/GCC
 include $(RULESPATH)/rules.mk

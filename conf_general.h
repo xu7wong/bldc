@@ -72,7 +72,7 @@
 // Mark3 version of HW60 with power switch and separate NRF UART.
 //#define HW60_IS_MK3
 //#define HW60_IS_MK4
-#define HW60_IS_MK5
+//#define HW60_IS_MK5
 
 #define HW_SOURCE "hw_60.c"
 #define HW_HEADER "hw_60.h"
@@ -257,14 +257,14 @@
  * Enable blackmagic probe output on SWD port
  */
 #ifndef HAS_BLACKMAGIC
-#define HAS_BLACKMAGIC				1
+#define HAS_BLACKMAGIC				0
 #endif
 
 /*
  * Enable CAN-bus
  */
 #ifndef CAN_ENABLE
-#define CAN_ENABLE					1
+#define CAN_ENABLE					0
 #endif
 
 #ifdef HW_HAS_NO_CAN
@@ -344,31 +344,31 @@ extern bool conf_general_permanent_nrf_found;
 extern volatile backup_data g_backup;
 
 // Functions
-void conf_general_init(void);
-bool conf_general_store_backup_data(void);
-bool conf_general_read_eeprom_var_hw(eeprom_var *v, int address);
-bool conf_general_read_eeprom_var_custom(eeprom_var *v, int address);
-bool conf_general_store_eeprom_var_hw(eeprom_var *v, int address);
-bool conf_general_store_eeprom_var_custom(eeprom_var *v, int address);
-void conf_general_read_app_configuration(app_configuration *conf);
-bool conf_general_store_app_configuration(app_configuration *conf);
+// void conf_general_init(void);
+// bool conf_general_store_backup_data(void);
+// bool conf_general_read_eeprom_var_hw(eeprom_var *v, int address);
+// bool conf_general_read_eeprom_var_custom(eeprom_var *v, int address);
+// bool conf_general_store_eeprom_var_hw(eeprom_var *v, int address);
+// bool conf_general_store_eeprom_var_custom(eeprom_var *v, int address);
+// void conf_general_read_app_configuration(app_configuration *conf);
+// bool conf_general_store_app_configuration(app_configuration *conf);
 void conf_general_read_mc_configuration(mc_configuration *conf, bool is_motor_2);
-bool conf_general_store_mc_configuration(mc_configuration *conf, bool is_motor_2);
-bool conf_general_detect_motor_param(float current, float min_rpm, float low_duty,
-		float *int_limit, float *bemf_coupling_k, int8_t *hall_table, int *hall_res);
-bool conf_general_measure_flux_linkage(float current, float duty,
-		float min_erpm, float res, float *linkage);
+// bool conf_general_store_mc_configuration(mc_configuration *conf, bool is_motor_2);
+// bool conf_general_detect_motor_param(float current, float min_rpm, float low_duty,
+// 		float *int_limit, float *bemf_coupling_k, int8_t *hall_table, int *hall_res);
+// bool conf_general_measure_flux_linkage(float current, float duty,
+// 		float min_erpm, float res, float *linkage);
 uint8_t conf_general_calculate_deadtime(float deadtime_ns, float core_clock_freq);
-bool conf_general_measure_flux_linkage_openloop(float current, float duty,
-		float erpm_per_sec, float res, float ind, float *linkage,
-		float *linkage_undriven, float *undriven_samples);
-int conf_general_autodetect_apply_sensors_foc(float current,
-		bool store_mcconf_on_success, bool send_mcconf_on_success);
-void conf_general_calc_apply_foc_cc_kp_ki_gain(mc_configuration *mcconf, float tc);
-int conf_general_detect_apply_all_foc(float max_power_loss,
-		bool store_mcconf_on_success, bool send_mcconf_on_success);
-int conf_general_detect_apply_all_foc_can(bool detect_can, float max_power_loss,
-		float min_current_in, float max_current_in, float openloop_rpm, float sl_erpm);
+// bool conf_general_measure_flux_linkage_openloop(float current, float duty,
+// 		float erpm_per_sec, float res, float ind, float *linkage,
+// 		float *linkage_undriven, float *undriven_samples);
+// int conf_general_autodetect_apply_sensors_foc(float current,
+// 		bool store_mcconf_on_success, bool send_mcconf_on_success);
+// void conf_general_calc_apply_foc_cc_kp_ki_gain(mc_configuration *mcconf, float tc);
+// int conf_general_detect_apply_all_foc(float max_power_loss,
+// 		bool store_mcconf_on_success, bool send_mcconf_on_success);
+// int conf_general_detect_apply_all_foc_can(bool detect_can, float max_power_loss,
+// 		float min_current_in, float max_current_in, float openloop_rpm, float sl_erpm);
 
 
 #endif /* CONF_GENERAL_H_ */

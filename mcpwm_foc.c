@@ -23,22 +23,22 @@
 
 #include "mcpwm_foc.h"
 #include "mc_interface.h"
-#include "ch.h"
+// #include "ch.h"
 #include "hal.h"
 #include "stm32f4xx_conf.h"
 #include "digital_filter.h"
 #include "utils.h"
-#include "ledpwm.h"
-#include "terminal.h"
-#include "encoder.h"
-#include "commands.h"
+// #include "ledpwm.h"
+// #include "terminal.h"
+// #include "encoder.h"
+// #include "commands.h"
 #include "timeout.h"
 #include "timer.h"
 #include <math.h>
 #include <string.h>
 #include <stdlib.h>
 #include <stdio.h>
-#include "virtual_motor.h"
+// #include "virtual_motor.h"
 #include "digital_filter.h"
 
 // Private types
@@ -218,8 +218,8 @@ static void stop_pwm_hw(volatile motor_all_state_t *motor);
 static void start_pwm_hw(volatile motor_all_state_t *motor);
 static float correct_encoder(float obs_angle, float enc_angle, float speed, float sl_erpm, volatile motor_all_state_t *motor);
 static float correct_hall(float angle, float dt, volatile motor_all_state_t *motor);
-static void terminal_tmp(int argc, const char **argv);
-static void terminal_plot_hfi(int argc, const char **argv);
+// static void terminal_tmp(int argc, const char **argv);
+// static void terminal_plot_hfi(int argc, const char **argv);
 static void run_fw(volatile motor_all_state_t *motor, float dt);
 static void timer_update(volatile motor_all_state_t *motor, float dt);
 static void input_current_offset_measurement( void );
@@ -518,7 +518,7 @@ void mcpwm_foc_init(volatile mc_configuration *conf_m1, volatile mc_configuratio
 	update_hfi_samples(m_motor_2.m_conf->foc_hfi_samples, &m_motor_2);
 #endif
 
-	virtual_motor_init(conf_m1);
+	// virtual_motor_init(conf_m1);
 
 	TIM_DeInit(TIM1);
 	TIM_DeInit(TIM2);
@@ -683,17 +683,17 @@ void mcpwm_foc_init(volatile mc_configuration *conf_m1, volatile mc_configuratio
 		mc_interface_fault_stop(FAULT_CODE_BOOTING_FROM_WATCHDOG_RESET, false, false);
 	}
 
-	terminal_register_command_callback(
-			"foc_tmp",
-			"FOC Test Print",
-			0,
-			terminal_tmp);
+	// terminal_register_command_callback(
+	// 		"foc_tmp",
+	// 		"FOC Test Print",
+	// 		0,
+	// 		terminal_tmp);
 
-	terminal_register_command_callback(
-			"foc_plot_hfi_en",
-			"Enable HFI plotting. 0: off, 1: DFT, 2: Raw",
-			"[en]",
-			terminal_plot_hfi);
+	// terminal_register_command_callback(
+	// 		"foc_plot_hfi_en",
+	// 		"Enable HFI plotting. 0: off, 1: DFT, 2: Raw",
+	// 		"[en]",
+	// 		terminal_plot_hfi);
 
 	m_init_done = true;
 }
@@ -776,7 +776,7 @@ void mcpwm_foc_set_configuration(volatile mc_configuration *configuration) {
 		update_hfi_samples(motor_now()->m_conf->foc_hfi_samples, motor_now());
 	}
 
-	virtual_motor_set_configuration(configuration);
+	// virtual_motor_set_configuration(configuration);
 }
 
 mc_state mcpwm_foc_get_state(void) {
@@ -1484,226 +1484,226 @@ float mcpwm_foc_get_vq(void) {
  * Is set to true if the encoder reports an increase in angle in the opposite
  * direction of the motor.
  */
-void mcpwm_foc_encoder_detect(float current, bool print, float *offset, float *ratio, bool *inverted) {
-	mc_interface_lock();
+// void mcpwm_foc_encoder_detect(float current, bool print, float *offset, float *ratio, bool *inverted) {
+// 	mc_interface_lock();
 
-	volatile motor_all_state_t *motor = motor_now();
+// 	volatile motor_all_state_t *motor = motor_now();
 
-	motor->m_phase_override = true;
-	motor->m_id_set = current;
-	motor->m_iq_set = 0.0;
-	motor->m_control_mode = CONTROL_MODE_CURRENT;
-	motor->m_state = MC_STATE_RUNNING;
+// 	motor->m_phase_override = true;
+// 	motor->m_id_set = current;
+// 	motor->m_iq_set = 0.0;
+// 	motor->m_control_mode = CONTROL_MODE_CURRENT;
+// 	motor->m_state = MC_STATE_RUNNING;
 
-	// Disable timeout
-	systime_t tout = timeout_get_timeout_msec();
-	float tout_c = timeout_get_brake_current();
-	KILL_SW_MODE tout_ksw = timeout_get_kill_sw_mode();
-	timeout_reset();
-	timeout_configure(60000, 0.0, KILL_SW_MODE_DISABLED);
+// 	// Disable timeout
+// 	systime_t tout = timeout_get_timeout_msec();
+// 	float tout_c = timeout_get_brake_current();
+// 	KILL_SW_MODE tout_ksw = timeout_get_kill_sw_mode();
+// 	timeout_reset();
+// 	timeout_configure(60000, 0.0, KILL_SW_MODE_DISABLED);
 
-	// Save configuration
-	float offset_old = motor->m_conf->foc_encoder_offset;
-	float inverted_old = motor->m_conf->foc_encoder_inverted;
-	float ratio_old = motor->m_conf->foc_encoder_ratio;
-	float ldiff_old = motor->m_conf->foc_motor_ld_lq_diff;
+// 	// Save configuration
+// 	float offset_old = motor->m_conf->foc_encoder_offset;
+// 	float inverted_old = motor->m_conf->foc_encoder_inverted;
+// 	float ratio_old = motor->m_conf->foc_encoder_ratio;
+// 	float ldiff_old = motor->m_conf->foc_motor_ld_lq_diff;
 
-	motor->m_conf->foc_encoder_offset = 0.0;
-	motor->m_conf->foc_encoder_inverted = false;
-	motor->m_conf->foc_encoder_ratio = 1.0;
-	motor->m_conf->foc_motor_ld_lq_diff = 0.0;
+// 	motor->m_conf->foc_encoder_offset = 0.0;
+// 	motor->m_conf->foc_encoder_inverted = false;
+// 	motor->m_conf->foc_encoder_ratio = 1.0;
+// 	motor->m_conf->foc_motor_ld_lq_diff = 0.0;
 
-	// Find index
-	int cnt = 0;
-	while(!encoder_index_found()) {
-		for (float i = 0.0;i < 2.0 * M_PI;i += (2.0 * M_PI) / 500.0) {
-			motor->m_phase_now_override = i;
-			chThdSleepMilliseconds(1);
-		}
+// 	// Find index
+// 	int cnt = 0;
+// 	while(!encoder_index_found()) {
+// 		for (float i = 0.0;i < 2.0 * M_PI;i += (2.0 * M_PI) / 500.0) {
+// 			motor->m_phase_now_override = i;
+// 			chThdSleepMilliseconds(1);
+// 		}
 
-		cnt++;
-		if (cnt > 30) {
-			// Give up
-			break;
-		}
-	}
+// 		cnt++;
+// 		if (cnt > 30) {
+// 			// Give up
+// 			break;
+// 		}
+// 	}
 
-	if (print) {
-		commands_printf("Index found");
-	}
+// 	if (print) {
+// 		commands_printf("Index found");
+// 	}
 
-	// Rotate
-	for (float i = 0.0;i < 2.0 * M_PI;i += (2.0 * M_PI) / 500.0) {
-		motor->m_phase_now_override = i;
-		chThdSleepMilliseconds(1);
-	}
+// 	// Rotate
+// 	for (float i = 0.0;i < 2.0 * M_PI;i += (2.0 * M_PI) / 500.0) {
+// 		motor->m_phase_now_override = i;
+// 		chThdSleepMilliseconds(1);
+// 	}
 
-	if (print) {
-		commands_printf("Rotated for sync");
-	}
+// 	if (print) {
+// 		commands_printf("Rotated for sync");
+// 	}
 
-	// Inverted and ratio
-	chThdSleepMilliseconds(1000);
+// 	// Inverted and ratio
+// 	chThdSleepMilliseconds(1000);
 
-	const int it_rat = 20;
-	float s_sum = 0.0;
-	float c_sum = 0.0;
-	float first = motor->m_phase_now_encoder;
+// 	const int it_rat = 20;
+// 	float s_sum = 0.0;
+// 	float c_sum = 0.0;
+// 	float first = motor->m_phase_now_encoder;
 
-	for (int i = 0; i < it_rat; i++) {
-		float phase_old = motor->m_phase_now_encoder;
-		float phase_ovr_tmp = motor->m_phase_now_override;
-		for (float j = phase_ovr_tmp; j < phase_ovr_tmp + (2.0 / 3.0) * M_PI;
-				j += (2.0 * M_PI) / 500.0) {
-			motor->m_phase_now_override = j;
-			chThdSleepMilliseconds(1);
-		}
-		utils_norm_angle_rad((float*)&motor->m_phase_now_override);
-		chThdSleepMilliseconds(300);
-		float diff = utils_angle_difference_rad(motor->m_phase_now_encoder, phase_old);
+// 	for (int i = 0; i < it_rat; i++) {
+// 		float phase_old = motor->m_phase_now_encoder;
+// 		float phase_ovr_tmp = motor->m_phase_now_override;
+// 		for (float j = phase_ovr_tmp; j < phase_ovr_tmp + (2.0 / 3.0) * M_PI;
+// 				j += (2.0 * M_PI) / 500.0) {
+// 			motor->m_phase_now_override = j;
+// 			chThdSleepMilliseconds(1);
+// 		}
+// 		utils_norm_angle_rad((float*)&motor->m_phase_now_override);
+// 		chThdSleepMilliseconds(300);
+// 		float diff = utils_angle_difference_rad(motor->m_phase_now_encoder, phase_old);
 
-		float s, c;
-		sincosf(diff, &s, &c);
-		s_sum += s;
-		c_sum += c;
+// 		float s, c;
+// 		sincosf(diff, &s, &c);
+// 		s_sum += s;
+// 		c_sum += c;
 
-		if (print) {
-			commands_printf("%.2f", (double)RAD2DEG_f(diff));
-		}
+// 		if (print) {
+// 			commands_printf("%.2f", (double)RAD2DEG_f(diff));
+// 		}
 
-		if (i > 3 && fabsf(utils_angle_difference_rad(motor->m_phase_now_encoder, first)) < fabsf(diff / 2.0)) {
-			break;
-		}
-	}
+// 		if (i > 3 && fabsf(utils_angle_difference_rad(motor->m_phase_now_encoder, first)) < fabsf(diff / 2.0)) {
+// 			break;
+// 		}
+// 	}
 
-	first = motor->m_phase_now_encoder;
+// 	first = motor->m_phase_now_encoder;
 
-	for (int i = 0; i < it_rat; i++) {
-		float phase_old = motor->m_phase_now_encoder;
-		float phase_ovr_tmp = motor->m_phase_now_override;
-		for (float j = phase_ovr_tmp; j > phase_ovr_tmp - (2.0 / 3.0) * M_PI;
-				j -= (2.0 * M_PI) / 500.0) {
-			motor->m_phase_now_override = j;
-			chThdSleepMilliseconds(1);
-		}
-		utils_norm_angle_rad((float*)&motor->m_phase_now_override);
-		chThdSleepMilliseconds(300);
-		float diff = utils_angle_difference_rad(phase_old, motor->m_phase_now_encoder);
+// 	for (int i = 0; i < it_rat; i++) {
+// 		float phase_old = motor->m_phase_now_encoder;
+// 		float phase_ovr_tmp = motor->m_phase_now_override;
+// 		for (float j = phase_ovr_tmp; j > phase_ovr_tmp - (2.0 / 3.0) * M_PI;
+// 				j -= (2.0 * M_PI) / 500.0) {
+// 			motor->m_phase_now_override = j;
+// 			chThdSleepMilliseconds(1);
+// 		}
+// 		utils_norm_angle_rad((float*)&motor->m_phase_now_override);
+// 		chThdSleepMilliseconds(300);
+// 		float diff = utils_angle_difference_rad(phase_old, motor->m_phase_now_encoder);
 
-		float s, c;
-		sincosf(diff, &s, &c);
-		s_sum += s;
-		c_sum += c;
+// 		float s, c;
+// 		sincosf(diff, &s, &c);
+// 		s_sum += s;
+// 		c_sum += c;
 
-		if (print) {
-			commands_printf("%.2f", (double)RAD2DEG_f(diff));
-		}
+// 		if (print) {
+// 			commands_printf("%.2f", (double)RAD2DEG_f(diff));
+// 		}
 
-		if (i > 3 && fabsf(utils_angle_difference_rad(motor->m_phase_now_encoder, first)) < fabsf(diff / 2.0)) {
-			break;
-		}
-	}
+// 		if (i > 3 && fabsf(utils_angle_difference_rad(motor->m_phase_now_encoder, first)) < fabsf(diff / 2.0)) {
+// 			break;
+// 		}
+// 	}
 
-	float diff = RAD2DEG_f(atan2f(s_sum, c_sum));
-	*inverted = diff < 0.0;
-	*ratio = roundf(((2.0 / 3.0) * 180.0) / fabsf(diff));
+// 	float diff = RAD2DEG_f(atan2f(s_sum, c_sum));
+// 	*inverted = diff < 0.0;
+// 	*ratio = roundf(((2.0 / 3.0) * 180.0) / fabsf(diff));
 
-	motor->m_conf->foc_encoder_inverted = *inverted;
-	motor->m_conf->foc_encoder_ratio = *ratio;
+// 	motor->m_conf->foc_encoder_inverted = *inverted;
+// 	motor->m_conf->foc_encoder_ratio = *ratio;
 
-	if (print) {
-		commands_printf("Inversion and ratio detected");
-	}
+// 	if (print) {
+// 		commands_printf("Inversion and ratio detected");
+// 	}
 
-	// Rotate
-	for (float i = motor->m_phase_now_override;i < 2.0 * M_PI;i += (2.0 * M_PI) / 500.0) {
-		motor->m_phase_now_override = i;
-		chThdSleepMilliseconds(2);
-	}
+// 	// Rotate
+// 	for (float i = motor->m_phase_now_override;i < 2.0 * M_PI;i += (2.0 * M_PI) / 500.0) {
+// 		motor->m_phase_now_override = i;
+// 		chThdSleepMilliseconds(2);
+// 	}
 
-	if (print) {
-		commands_printf("Rotated for sync");
-		commands_printf("Enc: %.2f", (double)encoder_read_deg());
-	}
+// 	if (print) {
+// 		commands_printf("Rotated for sync");
+// 		commands_printf("Enc: %.2f", (double)encoder_read_deg());
+// 	}
 
-	const int it_ofs = motor->m_conf->foc_encoder_ratio * 3.0;
-	s_sum = 0.0;
-	c_sum = 0.0;
+// 	const int it_ofs = motor->m_conf->foc_encoder_ratio * 3.0;
+// 	s_sum = 0.0;
+// 	c_sum = 0.0;
 
-	for (int i = 0;i < it_ofs;i++) {
-		float step = (2.0 * M_PI * motor->m_conf->foc_encoder_ratio) / ((float)it_ofs);
-		float override = (float)i * step;
+// 	for (int i = 0;i < it_ofs;i++) {
+// 		float step = (2.0 * M_PI * motor->m_conf->foc_encoder_ratio) / ((float)it_ofs);
+// 		float override = (float)i * step;
 
-		while (motor->m_phase_now_override != override) {
-			utils_step_towards((float*)&motor->m_phase_now_override, override, step / 100.0);
-			chThdSleepMilliseconds(4);
-		}
+// 		while (motor->m_phase_now_override != override) {
+// 			utils_step_towards((float*)&motor->m_phase_now_override, override, step / 100.0);
+// 			chThdSleepMilliseconds(4);
+// 		}
 
-		chThdSleepMilliseconds(100);
+// 		chThdSleepMilliseconds(100);
 
-		float angle_diff = utils_angle_difference_rad(motor->m_phase_now_encoder, motor->m_phase_now_override);
-		float s, c;
-		sincosf(angle_diff, &s, &c);
-		s_sum += s;
-		c_sum += c;
+// 		float angle_diff = utils_angle_difference_rad(motor->m_phase_now_encoder, motor->m_phase_now_override);
+// 		float s, c;
+// 		sincosf(angle_diff, &s, &c);
+// 		s_sum += s;
+// 		c_sum += c;
 
-		if (print) {
-			commands_printf("%.2f", (double)RAD2DEG_f(angle_diff));
-		}
-	}
+// 		if (print) {
+// 			commands_printf("%.2f", (double)RAD2DEG_f(angle_diff));
+// 		}
+// 	}
 
-	for (int i = it_ofs;i > 0;i--) {
-		float step = (2.0 * M_PI * motor->m_conf->foc_encoder_ratio) / ((float)it_ofs);
-		float override = (float)i * step;
+// 	for (int i = it_ofs;i > 0;i--) {
+// 		float step = (2.0 * M_PI * motor->m_conf->foc_encoder_ratio) / ((float)it_ofs);
+// 		float override = (float)i * step;
 
-		while (motor->m_phase_now_override != override) {
-			utils_step_towards((float*)&motor->m_phase_now_override, override, step / 100.0);
-			chThdSleepMilliseconds(4);
-		}
+// 		while (motor->m_phase_now_override != override) {
+// 			utils_step_towards((float*)&motor->m_phase_now_override, override, step / 100.0);
+// 			chThdSleepMilliseconds(4);
+// 		}
 
-		chThdSleepMilliseconds(100);
+// 		chThdSleepMilliseconds(100);
 
-		float angle_diff = utils_angle_difference_rad(motor->m_phase_now_encoder, motor->m_phase_now_override);
-		float s, c;
-		sincosf(angle_diff, &s, &c);
-		s_sum += s;
-		c_sum += c;
+// 		float angle_diff = utils_angle_difference_rad(motor->m_phase_now_encoder, motor->m_phase_now_override);
+// 		float s, c;
+// 		sincosf(angle_diff, &s, &c);
+// 		s_sum += s;
+// 		c_sum += c;
 
-		if (print) {
-			commands_printf("%.2f", (double)RAD2DEG_f(angle_diff));
-		}
-	}
+// 		if (print) {
+// 			commands_printf("%.2f", (double)RAD2DEG_f(angle_diff));
+// 		}
+// 	}
 
-	*offset = RAD2DEG_f(atan2f(s_sum, c_sum));
+// 	*offset = RAD2DEG_f(atan2f(s_sum, c_sum));
 
-	if (print) {
-		commands_printf("Avg: %.2f", (double)*offset);
-	}
+// 	if (print) {
+// 		commands_printf("Avg: %.2f", (double)*offset);
+// 	}
 
-	utils_norm_angle(offset);
+// 	utils_norm_angle(offset);
 
-	if (print) {
-		commands_printf("Offset detected");
-	}
+// 	if (print) {
+// 		commands_printf("Offset detected");
+// 	}
 
-	motor->m_id_set = 0.0;
-	motor->m_iq_set = 0.0;
-	motor->m_phase_override = false;
-	motor->m_control_mode = CONTROL_MODE_NONE;
-	motor->m_state = MC_STATE_OFF;
-	stop_pwm_hw(motor);
+// 	motor->m_id_set = 0.0;
+// 	motor->m_iq_set = 0.0;
+// 	motor->m_phase_override = false;
+// 	motor->m_control_mode = CONTROL_MODE_NONE;
+// 	motor->m_state = MC_STATE_OFF;
+// 	stop_pwm_hw(motor);
 
-	// Restore configuration
-	motor->m_conf->foc_encoder_inverted = inverted_old;
-	motor->m_conf->foc_encoder_offset = offset_old;
-	motor->m_conf->foc_encoder_ratio = ratio_old;
-	motor->m_conf->foc_motor_ld_lq_diff = ldiff_old;
+// 	// Restore configuration
+// 	motor->m_conf->foc_encoder_inverted = inverted_old;
+// 	motor->m_conf->foc_encoder_offset = offset_old;
+// 	motor->m_conf->foc_encoder_ratio = ratio_old;
+// 	motor->m_conf->foc_motor_ld_lq_diff = ldiff_old;
 
-	// Enable timeout
-	timeout_configure(tout, tout_c, tout_ksw);
+// 	// Enable timeout
+// 	timeout_configure(tout, tout_c, tout_ksw);
 
-	mc_interface_unlock();
-}
+// 	mc_interface_unlock();
+// }
 
 /**
  * Lock the motor with a current and sample the voltage and current to
@@ -2371,28 +2371,28 @@ int mcpwm_foc_dc_cal(bool cal_undriven) {
 }
 
 void mcpwm_foc_print_state(void) {
-	commands_printf("Mod d:     %.2f", (double)motor_now()->m_motor_state.mod_d);
-	commands_printf("Mod q:     %.2f", (double)motor_now()->m_motor_state.mod_q);
-	commands_printf("Mod q flt: %.2f", (double)motor_now()->m_motor_state.mod_q_filter);
-	commands_printf("Duty:      %.2f", (double)motor_now()->m_motor_state.duty_now);
-	commands_printf("Vd:        %.2f", (double)motor_now()->m_motor_state.vd);
-	commands_printf("Vq:        %.2f", (double)motor_now()->m_motor_state.vq);
-	commands_printf("Phase:     %.2f", (double)motor_now()->m_motor_state.phase);
-	commands_printf("V_alpha:   %.2f", (double)motor_now()->m_motor_state.v_alpha);
-	commands_printf("V_beta:    %.2f", (double)motor_now()->m_motor_state.v_beta);
-	commands_printf("id:        %.2f", (double)motor_now()->m_motor_state.id);
-	commands_printf("iq:        %.2f", (double)motor_now()->m_motor_state.iq);
-	commands_printf("id_filter: %.2f", (double)motor_now()->m_motor_state.id_filter);
-	commands_printf("iq_filter: %.2f", (double)motor_now()->m_motor_state.iq_filter);
-	commands_printf("id_target: %.2f", (double)motor_now()->m_motor_state.id_target);
-	commands_printf("iq_target: %.2f", (double)motor_now()->m_motor_state.iq_target);
-	commands_printf("i_abs:     %.2f", (double)motor_now()->m_motor_state.i_abs);
-	commands_printf("i_abs_flt: %.2f", (double)motor_now()->m_motor_state.i_abs_filter);
-	commands_printf("Obs_x1:    %.2f", (double)motor_now()->m_observer_x1);
-	commands_printf("Obs_x2:    %.2f", (double)motor_now()->m_observer_x2);
-	commands_printf("vd_int:    %.2f", (double)motor_now()->m_motor_state.vd_int);
-	commands_printf("vq_int:    %.2f", (double)motor_now()->m_motor_state.vq_int);
-	commands_printf("off_delay: %.2f", (double)motor_now()->m_current_off_delay);
+	// commands_printf("Mod d:     %.2f", (double)motor_now()->m_motor_state.mod_d);
+	// commands_printf("Mod q:     %.2f", (double)motor_now()->m_motor_state.mod_q);
+	// commands_printf("Mod q flt: %.2f", (double)motor_now()->m_motor_state.mod_q_filter);
+	// commands_printf("Duty:      %.2f", (double)motor_now()->m_motor_state.duty_now);
+	// commands_printf("Vd:        %.2f", (double)motor_now()->m_motor_state.vd);
+	// commands_printf("Vq:        %.2f", (double)motor_now()->m_motor_state.vq);
+	// commands_printf("Phase:     %.2f", (double)motor_now()->m_motor_state.phase);
+	// commands_printf("V_alpha:   %.2f", (double)motor_now()->m_motor_state.v_alpha);
+	// commands_printf("V_beta:    %.2f", (double)motor_now()->m_motor_state.v_beta);
+	// commands_printf("id:        %.2f", (double)motor_now()->m_motor_state.id);
+	// commands_printf("iq:        %.2f", (double)motor_now()->m_motor_state.iq);
+	// commands_printf("id_filter: %.2f", (double)motor_now()->m_motor_state.id_filter);
+	// commands_printf("iq_filter: %.2f", (double)motor_now()->m_motor_state.iq_filter);
+	// commands_printf("id_target: %.2f", (double)motor_now()->m_motor_state.id_target);
+	// commands_printf("iq_target: %.2f", (double)motor_now()->m_motor_state.iq_target);
+	// commands_printf("i_abs:     %.2f", (double)motor_now()->m_motor_state.i_abs);
+	// commands_printf("i_abs_flt: %.2f", (double)motor_now()->m_motor_state.i_abs_filter);
+	// commands_printf("Obs_x1:    %.2f", (double)motor_now()->m_observer_x1);
+	// commands_printf("Obs_x2:    %.2f", (double)motor_now()->m_observer_x2);
+	// commands_printf("vd_int:    %.2f", (double)motor_now()->m_motor_state.vd_int);
+	// commands_printf("vq_int:    %.2f", (double)motor_now()->m_motor_state.vq_int);
+	// commands_printf("off_delay: %.2f", (double)motor_now()->m_current_off_delay);
 }
 
 float mcpwm_foc_get_last_adc_isr_duration(void) {
@@ -2405,9 +2405,9 @@ void mcpwm_foc_tim_sample_int_handler(void) {
 		TIM_GenerateEvent(TIM1, TIM_EventSource_COM);
 		TIM_GenerateEvent(TIM8, TIM_EventSource_COM);
 
-		virtual_motor_int_handler(
-				m_motor_1.m_motor_state.v_alpha,
-				m_motor_1.m_motor_state.v_beta);
+		// virtual_motor_int_handler(
+		// 		m_motor_1.m_motor_state.v_alpha,
+		// 		m_motor_1.m_motor_state.v_beta);
 	}
 }
 
@@ -2627,17 +2627,17 @@ void mcpwm_foc_adc_int_handler(void *p, uint32_t flags) {
 	volatile float enc_ang = 0;
 	volatile bool encoder_is_being_used = false;
 
-	if (virtual_motor_is_connected()) {
-		if (conf_now->foc_sensor_mode == FOC_SENSOR_MODE_ENCODER ) {
-			enc_ang = virtual_motor_get_angle_deg();
-			encoder_is_being_used = true;
-		}
-	} else {
-		if (encoder_is_configured()) {
-			enc_ang = encoder_read_deg();
-			encoder_is_being_used = true;
-		}
-	}
+	// if (virtual_motor_is_connected()) {
+	// 	if (conf_now->foc_sensor_mode == FOC_SENSOR_MODE_ENCODER ) {
+	// 		enc_ang = virtual_motor_get_angle_deg();
+	// 		encoder_is_being_used = true;
+	// 	}
+	// } else {
+		// if (encoder_is_configured()) {
+		// 	enc_ang = encoder_read_deg();
+		// 	encoder_is_being_used = true;
+		// }
+	// }
 
 	if (encoder_is_being_used) {
 		float phase_tmp = enc_ang;
@@ -2780,17 +2780,18 @@ void mcpwm_foc_adc_int_handler(void *p, uint32_t flags) {
 
 			switch (conf_now->foc_sensor_mode) {
 			case FOC_SENSOR_MODE_ENCODER:
-				if (encoder_index_found() || virtual_motor_is_connected()) {
-					motor_now->m_motor_state.phase = correct_encoder(
-							motor_now->m_phase_now_observer,
-							motor_now->m_phase_now_encoder,
-							motor_now->m_speed_est_fast,
-							conf_now->foc_sl_erpm,
-							motor_now);
-				} else {
+				// if (encoder_index_found()) {
+				// if (encoder_index_found() || virtual_motor_is_connected()) {
+				// 	motor_now->m_motor_state.phase = correct_encoder(
+				// 			motor_now->m_phase_now_observer,
+				// 			motor_now->m_phase_now_encoder,
+				// 			motor_now->m_speed_est_fast,
+				// 			conf_now->foc_sl_erpm,
+				// 			motor_now);
+				// } else {
 					// Rotate the motor in open loop if the index isn't found.
 					motor_now->m_motor_state.phase = motor_now->m_phase_now_encoder_no_index;
-				}
+				// }
 
 				if (!motor_now->m_phase_override && motor_now->m_control_mode != CONTROL_MODE_OPENLOOP_PHASE) {
 					id_set_tmp = 0.0;
@@ -3081,15 +3082,15 @@ void mcpwm_foc_adc_int_handler(void *p, uint32_t flags) {
 
 	// Track position control angle
 	float angle_now = 0.0;
-	if (encoder_is_configured()) {
-		if (conf_now->m_sensor_port_mode == SENSOR_PORT_MODE_TS5700N8501_MULTITURN) {
-			angle_now = encoder_read_deg_multiturn();
-		} else {
-			angle_now = enc_ang;
-		}
-	} else {
+	// if (encoder_is_configured()) {
+	// 	if (conf_now->m_sensor_port_mode == SENSOR_PORT_MODE_TS5700N8501_MULTITURN) {
+	// 		angle_now = encoder_read_deg_multiturn();
+	// 	} else {
+	// 		angle_now = enc_ang;
+	// 	}
+	// } else {
 		angle_now = RAD2DEG_f(motor_now->m_motor_state.phase);
-	}
+	// }
 
 	utils_norm_angle(&angle_now);
 
@@ -3385,49 +3386,49 @@ static void timer_update(volatile motor_all_state_t *motor, float dt) {
 	}
 }
 
-static void terminal_tmp(int argc, const char **argv) {
-	(void)argc;
-	(void)argv;
+// static void terminal_tmp(int argc, const char **argv) {
+// 	(void)argc;
+// 	(void)argv;
 
-	int top = 1;
-	if (argc == 2) {
-		float seconds = -1.0;
-		sscanf(argv[1], "%f", &seconds);
+// 	int top = 1;
+// 	if (argc == 2) {
+// 		float seconds = -1.0;
+// 		sscanf(argv[1], "%f", &seconds);
 
-		if (seconds > 0.0) {
-			top = seconds * 2;
-		}
-	}
+// 		if (seconds > 0.0) {
+// 			top = seconds * 2;
+// 		}
+// 	}
 
-	if (top > 1) {
-		commands_init_plot("Time", "Temperature");
-		commands_plot_add_graph("Temp Measured");
-		commands_plot_add_graph("Temp Estimated");
-	}
+// 	if (top > 1) {
+// 		commands_init_plot("Time", "Temperature");
+// 		commands_plot_add_graph("Temp Measured");
+// 		commands_plot_add_graph("Temp Estimated");
+// 	}
 
-	for (int i = 0;i < top;i++) {
-		float res_est = m_motor_1.m_r_est;
-		float t_base = m_motor_1.m_conf->foc_temp_comp_base_temp;
-		float res_base = m_motor_1.m_conf->foc_motor_r;
-		float t_est = (res_est / res_base - 1) / 0.00386 + t_base;
-		float t_meas = mc_interface_temp_motor_filtered();
+// 	for (int i = 0;i < top;i++) {
+// 		float res_est = m_motor_1.m_r_est;
+// 		float t_base = m_motor_1.m_conf->foc_temp_comp_base_temp;
+// 		float res_base = m_motor_1.m_conf->foc_motor_r;
+// 		float t_est = (res_est / res_base - 1) / 0.00386 + t_base;
+// 		float t_meas = mc_interface_temp_motor_filtered();
 
-		if (top > 1) {
-			commands_plot_set_graph(0);
-			commands_send_plot_points((float)i / 2.0, t_meas);
-			commands_plot_set_graph(1);
-			commands_send_plot_points((float)i / 2.0, t_est);
-			commands_printf("Sample %d of %d", i, top);
-		}
+// 		if (top > 1) {
+// 			commands_plot_set_graph(0);
+// 			commands_send_plot_points((float)i / 2.0, t_meas);
+// 			commands_plot_set_graph(1);
+// 			commands_send_plot_points((float)i / 2.0, t_est);
+// 			commands_printf("Sample %d of %d", i, top);
+// 		}
 
-		commands_printf("R: %.2f, EST: %.2f",
-				(double)(res_base * 1000.0), (double)(res_est * 1000.0));
-		commands_printf("T: %.2f, T_EST: %.2f\n",
-				(double)t_meas, (double)t_est);
+// 		commands_printf("R: %.2f, EST: %.2f",
+// 				(double)(res_base * 1000.0), (double)(res_est * 1000.0));
+// 		commands_printf("T: %.2f, T_EST: %.2f\n",
+// 				(double)t_meas, (double)t_est);
 
-		chThdSleepMilliseconds(500);
-	}
-}
+// 		chThdSleepMilliseconds(500);
+// 	}
+// }
 
 // TODO: This won't work for dual motors
 static void input_current_offset_measurement(void) {
@@ -3481,13 +3482,13 @@ static void hfi_update(volatile motor_all_state_t *motor) {
 		motor->m_hfi.fft_bin1_func((float*)motor->m_hfi.buffer, &real_bin1, &imag_bin1);
 		motor->m_hfi.fft_bin2_func((float*)motor->m_hfi.buffer, &real_bin2, &imag_bin2);
 
-		float mag_bin_1 = sqrtf(SQ(imag_bin1) + SQ(real_bin1));
+		// float mag_bin_1 = sqrtf(SQ(imag_bin1) + SQ(real_bin1));
 		float angle_bin_1 = -utils_fast_atan2(imag_bin1, real_bin1);
 
 		angle_bin_1 += M_PI / 1.7; // Why 1.7??
 		utils_norm_angle_rad(&angle_bin_1);
 
-		float mag_bin_2 = sqrtf(SQ(imag_bin2) + SQ(real_bin2));
+		// float mag_bin_2 = sqrtf(SQ(imag_bin2) + SQ(real_bin2));
 		float angle_bin_2 = -utils_fast_atan2(imag_bin2, real_bin2) / 2.0;
 
 		// Assuming this thread is much faster than it takes to fill the HFI buffer completely,
@@ -3545,20 +3546,20 @@ static void hfi_update(volatile motor_all_state_t *motor) {
 				float real_bin0, imag_bin0;
 				motor->m_hfi.fft_bin0_func((float*)motor->m_hfi.buffer, &real_bin0, &imag_bin0);
 
-				commands_plot_set_graph(0);
-				commands_send_plot_points(motor->m_hfi_plot_sample, motor->m_hfi.angle);
+				// commands_plot_set_graph(0);
+				// commands_send_plot_points(motor->m_hfi_plot_sample, motor->m_hfi.angle);
 
-				commands_plot_set_graph(1);
-				commands_send_plot_points(motor->m_hfi_plot_sample, angle_bin_1);
+				// commands_plot_set_graph(1);
+				// commands_send_plot_points(motor->m_hfi_plot_sample, angle_bin_1);
 
-				commands_plot_set_graph(2);
-				commands_send_plot_points(motor->m_hfi_plot_sample, 2.0 * mag_bin_2 * 1e6);
+				// commands_plot_set_graph(2);
+				// commands_send_plot_points(motor->m_hfi_plot_sample, 2.0 * mag_bin_2 * 1e6);
 
-				commands_plot_set_graph(3);
-				commands_send_plot_points(motor->m_hfi_plot_sample, 2.0 * mag_bin_1 * 1e6);
+				// commands_plot_set_graph(3);
+				// commands_send_plot_points(motor->m_hfi_plot_sample, 2.0 * mag_bin_1 * 1e6);
 
-				commands_plot_set_graph(4);
-				commands_send_plot_points(motor->m_hfi_plot_sample, real_bin0 * 1e6);
+				// commands_plot_set_graph(4);
+				// commands_send_plot_points(motor->m_hfi_plot_sample, real_bin0 * 1e6);
 
 //					commands_plot_set_graph(0);
 //					commands_send_plot_points(motor->m_hfi_plot_sample, motor->m_motor_state.speed_rad_s);
@@ -3579,11 +3580,11 @@ static void hfi_update(volatile motor_all_state_t *motor) {
 					motor->m_hfi_plot_sample = 0;
 				}
 
-				commands_plot_set_graph(0);
-				commands_send_plot_points(motor->m_hfi_plot_sample, motor->m_hfi.buffer_current[(int)motor->m_hfi_plot_sample]);
+				// commands_plot_set_graph(0);
+				// commands_send_plot_points(motor->m_hfi_plot_sample, motor->m_hfi.buffer_current[(int)motor->m_hfi_plot_sample]);
 
-				commands_plot_set_graph(1);
-				commands_send_plot_points(motor->m_hfi_plot_sample, motor->m_hfi.buffer[(int)motor->m_hfi_plot_sample] * 1e6);
+				// commands_plot_set_graph(1);
+				// commands_send_plot_points(motor->m_hfi_plot_sample, motor->m_hfi.buffer[(int)motor->m_hfi_plot_sample] * 1e6);
 
 				motor->m_hfi_plot_sample++;
 			}
@@ -3845,7 +3846,7 @@ static void control_current(volatile motor_all_state_t *motor, float dt) {
 	// Decoupling. Using feedforward this compensates for the fact that the equations of a PMSM
 	// are not really decoupled (the d axis current has impact on q axis voltage and visa-versa):
     //      Resistance  Inductance   Cross terms   Back-EMF   (see www.mathworks.com/help/physmod/sps/ref/pmsm.html)
-    // vd = Rs*id   +   Ld*did/dt −  ωe*iq*Lq
+    // vd = Rs*id   +   Ld*did/dt �?  ωe*iq*Lq
     // vq = Rs*iq   +   Lq*diq/dt +  ωe*id*Ld     + ωe*ψm
 	float dec_vd = 0.0;
 	float dec_vq = 0.0;
@@ -4016,11 +4017,11 @@ static void control_current(volatile motor_all_state_t *motor, float dt) {
 	}
 
 	// do not allow to turn on PWM outputs if virtual motor is used
-	if(virtual_motor_is_connected() == false) {
+	// if(virtual_motor_is_connected() == false) {
 		if (!motor->m_output_on) {
 			start_pwm_hw(motor);
 		}
-	}
+	// }
 }
 
 static void update_valpha_vbeta(volatile motor_all_state_t *motor, float mod_alpha, float mod_beta) {
@@ -4340,11 +4341,11 @@ static void run_pid_control_pos(float dt, volatile motor_all_state_t *motor) {
 	float error = utils_angle_difference(angle_set, angle_now);
 	float error_sign = 1.0;
 
-	if (encoder_is_configured()) {
-		if (conf_now->foc_encoder_inverted) {
-			error_sign = -1.0;
-		}
-	}
+	// if (encoder_is_configured()) {
+	// 	if (conf_now->foc_encoder_inverted) {
+	// 		error_sign = -1.0;
+	// 	}
+	// }
 
 	error *= error_sign;
 
@@ -4411,16 +4412,16 @@ static void run_pid_control_pos(float dt, volatile motor_all_state_t *motor) {
 	float output = p_term + motor->m_pos_i_term + d_term + d_term_proc;
 	utils_truncate_number(&output, -1.0, 1.0);
 
-	if (encoder_is_configured()) {
-		if (encoder_index_found()) {
-			motor->m_iq_set = output * conf_now->l_current_max * conf_now->l_current_max_scale;;
-		} else {
-			// Rotate the motor with 40 % power until the encoder index is found.
-			motor->m_iq_set = 0.4 * conf_now->l_current_max * conf_now->l_current_max_scale;;
-		}
-	} else {
+	// if (encoder_is_configured()) {
+	// 	if (encoder_index_found()) {
+	// 		motor->m_iq_set = output * conf_now->l_current_max * conf_now->l_current_max_scale;;
+	// 	} else {
+	// 		// Rotate the motor with 40 % power until the encoder index is found.
+	// 		motor->m_iq_set = 0.4 * conf_now->l_current_max * conf_now->l_current_max_scale;;
+	// 	}
+	// } else {
 		motor->m_iq_set = output * conf_now->l_current_max * conf_now->l_current_max_scale;;
-	}
+	// }
 }
 
 static void run_pid_control_speed(float dt, volatile motor_all_state_t *motor) {
@@ -4745,35 +4746,35 @@ static float correct_hall(float angle, float dt, volatile motor_all_state_t *mot
 	return angle;
 }
 
-static void terminal_plot_hfi(int argc, const char **argv) {
-	if (argc == 2) {
-		int d = -1;
-		sscanf(argv[1], "%d", &d);
+// static void terminal_plot_hfi(int argc, const char **argv) {
+// 	if (argc == 2) {
+// 		int d = -1;
+// 		sscanf(argv[1], "%d", &d);
 
-		if (d == 0 || d == 1 || d == 2) {
-			motor_now()->m_hfi_plot_en = d;
-			if (motor_now()->m_hfi_plot_en == 1) {
-				motor_now()->m_hfi_plot_sample = 0.0;
-				commands_init_plot("Sample", "Value");
-				commands_plot_add_graph("Phase");
-				commands_plot_add_graph("Phase bin2");
-				commands_plot_add_graph("Ld - Lq (uH");
-				commands_plot_add_graph("L Diff Sat (uH)");
-				commands_plot_add_graph("L Avg (uH)");
-			} else if (motor_now()->m_hfi_plot_en == 2) {
-				motor_now()->m_hfi_plot_sample = 0.0;
-				commands_init_plot("Sample Index", "Value");
-				commands_plot_add_graph("Current (A)");
-				commands_plot_add_graph("Inductance (uH)");
-			}
+// 		if (d == 0 || d == 1 || d == 2) {
+// 			motor_now()->m_hfi_plot_en = d;
+// 			if (motor_now()->m_hfi_plot_en == 1) {
+// 				motor_now()->m_hfi_plot_sample = 0.0;
+// 				commands_init_plot("Sample", "Value");
+// 				commands_plot_add_graph("Phase");
+// 				commands_plot_add_graph("Phase bin2");
+// 				commands_plot_add_graph("Ld - Lq (uH");
+// 				commands_plot_add_graph("L Diff Sat (uH)");
+// 				commands_plot_add_graph("L Avg (uH)");
+// 			} else if (motor_now()->m_hfi_plot_en == 2) {
+// 				motor_now()->m_hfi_plot_sample = 0.0;
+// 				commands_init_plot("Sample Index", "Value");
+// 				commands_plot_add_graph("Current (A)");
+// 				commands_plot_add_graph("Inductance (uH)");
+// 			}
 
-			commands_printf(motor_now()->m_hfi_plot_en ?
-					"HFI plot enabled" :
-					"HFI plot disabled");
-		} else {
-			commands_printf("Invalid Argument. en has to be 0, 1 or 2.\n");
-		}
-	} else {
-		commands_printf("This command requires one argument.\n");
-	}
-}
+// 			commands_printf(motor_now()->m_hfi_plot_en ?
+// 					"HFI plot enabled" :
+// 					"HFI plot disabled");
+// 		} else {
+// 			commands_printf("Invalid Argument. en has to be 0, 1 or 2.\n");
+// 		}
+// 	} else {
+// 		commands_printf("This command requires one argument.\n");
+// 	}
+// }

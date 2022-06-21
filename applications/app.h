@@ -23,25 +23,25 @@
 #include "conf_general.h"
 
 // Functions
-const app_configuration* app_get_configuration(void);
-void app_set_configuration(app_configuration *conf);
-void app_disable_output(int time_ms);
-bool app_is_output_disabled(void);
-unsigned app_calc_crc(app_configuration* conf);
+// const app_configuration* app_get_configuration(void);
+// void app_set_configuration(app_configuration *conf);
+// void app_disable_output(int time_ms);
+// bool app_is_output_disabled(void);
+// unsigned app_calc_crc(app_configuration* conf);
 
 // Standard apps
-void app_ppm_start(void);
-void app_ppm_stop(void);
-float app_ppm_get_decoded_level(void);
-void app_ppm_configure(ppm_config *conf);
+// void app_ppm_start(void);
+// void app_ppm_stop(void);
+// float app_ppm_get_decoded_level(void);
+// void app_ppm_configure(ppm_config *conf);
 
-void app_adc_start(bool use_rx_tx);
-void app_adc_stop(void);
-void app_adc_configure(adc_config *conf);
-float app_adc_get_decoded_level(void);
-float app_adc_get_voltage(void);
-float app_adc_get_decoded_level2(void);
-float app_adc_get_voltage2(void);
+// void app_adc_start(bool use_rx_tx);
+// void app_adc_stop(void);
+// void app_adc_configure(adc_config *conf);
+// float app_adc_get_decoded_level(void);
+// float app_adc_get_voltage(void);
+// float app_adc_get_decoded_level2(void);
+// float app_adc_get_voltage2(void);
 
 typedef enum {
 	UART_PORT_COMM_HEADER = 0,
@@ -51,41 +51,41 @@ typedef enum {
 
 void app_uartcomm_initialize(void);
 void app_uartcomm_start(UART_PORT port_number);
-void app_uartcomm_stop(UART_PORT port_number);
-void app_uartcomm_configure(uint32_t baudrate, bool permanent_enabled, UART_PORT port_number);
+// void app_uartcomm_stop(UART_PORT port_number);
+// void app_uartcomm_configure(uint32_t baudrate, bool permanent_enabled, UART_PORT port_number);
 void app_uartcomm_send_packet(unsigned char *data, unsigned int len,  UART_PORT port_number);
 
-void app_nunchuk_start(void);
-void app_nunchuk_stop(void);
-void app_nunchuk_configure(chuk_config *conf);
-float app_nunchuk_get_decoded_chuk(void);
-void app_nunchuk_update_output(chuck_data *data);
+// void app_nunchuk_start(void);
+// void app_nunchuk_stop(void);
+// void app_nunchuk_configure(chuk_config *conf);
+// float app_nunchuk_get_decoded_chuk(void);
+// void app_nunchuk_update_output(chuck_data *data);
 
-void app_balance_start(void);
-void app_balance_stop(void);
-void app_balance_configure(balance_config *conf, imu_config *conf2);
-float app_balance_get_pid_output(void);
-float app_balance_get_pitch_angle(void);
-float app_balance_get_roll_angle(void);
-uint32_t app_balance_get_diff_time(void);
-float app_balance_get_motor_current(void);
-uint16_t app_balance_get_state(void);
-uint16_t app_balance_get_switch_state(void);
-float app_balance_get_adc1(void);
-float app_balance_get_adc2(void);
-float app_balance_get_debug1(void);
-float app_balance_get_debug2(void);
+// void app_balance_start(void);
+// void app_balance_stop(void);
+// void app_balance_configure(balance_config *conf, imu_config *conf2);
+// float app_balance_get_pid_output(void);
+// float app_balance_get_pitch_angle(void);
+// float app_balance_get_roll_angle(void);
+// uint32_t app_balance_get_diff_time(void);
+// float app_balance_get_motor_current(void);
+// uint16_t app_balance_get_state(void);
+// uint16_t app_balance_get_switch_state(void);
+// float app_balance_get_adc1(void);
+// float app_balance_get_adc2(void);
+// float app_balance_get_debug1(void);
+// float app_balance_get_debug2(void);
 
-void app_pas_start(bool is_primary_output);
-void app_pas_stop(void);
-bool app_pas_is_running(void);
-void app_pas_configure(pas_config *conf);
-float app_pas_get_current_target_rel(void);
-void app_pas_set_current_sub_scaling(float current_sub_scaling);
+// void app_pas_start(bool is_primary_output);
+// void app_pas_stop(void);
+// bool app_pas_is_running(void);
+// void app_pas_configure(pas_config *conf);
+// float app_pas_get_current_target_rel(void);
+// void app_pas_set_current_sub_scaling(float current_sub_scaling);
 
-// Custom apps
-void app_custom_start(void);
-void app_custom_stop(void);
-void app_custom_configure(app_configuration *conf);
+// // Custom apps
+// void app_custom_start(void);
+// void app_custom_stop(void);
+// void app_custom_configure(app_configuration *conf);
 
 #endif /* APP_H_ */

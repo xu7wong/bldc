@@ -22,8 +22,9 @@
 
 #include <stdint.h>
 #include <stdbool.h>
-#include "ch.h"
-
+// #include "ch.h"
+// #ifdef
+typedef uint32_t systime_t;
 // Data types
 typedef enum {
 	HW_TYPE_VESC = 0,

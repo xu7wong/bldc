@@ -17,7 +17,7 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
     */
 
-#include "ch.h"
+// #include "ch.h"
 #include "hal.h"
 #include "stm32f4xx_conf.h"
 #include <stdlib.h>
@@ -28,10 +28,10 @@
 #include "mc_interface.h"
 #include "digital_filter.h"
 #include "utils.h"
-#include "ledpwm.h"
-#include "terminal.h"
+// #include "ledpwm.h"
+// #include "terminal.h"
 #include "timeout.h"
-#include "encoder.h"
+// #include "encoder.h"
 #include "timer.h"
 
 // Structs
@@ -2107,11 +2107,11 @@ void mcpwm_adc_int_handler(void *p, uint32_t flags) {
 
 	mc_interface_mc_timer_isr(false);
 
-	if (encoder_is_configured()) {
-		float pos = encoder_read_deg();
-		run_pid_control_pos(1.0 / switching_frequency_now, pos);
-		pll_run(-DEG2RAD_f(pos), 1.0 / switching_frequency_now, &m_pll_phase, &m_pll_speed);
-	}
+	// if (encoder_is_configured()) {
+	// 	float pos = encoder_read_deg();
+	// 	run_pid_control_pos(1.0 / switching_frequency_now, pos);
+	// 	pll_run(-DEG2RAD_f(pos), 1.0 / switching_frequency_now, &m_pll_phase, &m_pll_speed);
+	// }
 
 	last_adc_isr_duration = timer_seconds_elapsed_since(t_start);
 }

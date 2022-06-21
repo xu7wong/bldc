@@ -18,10 +18,10 @@
     */
 
 #include "utils.h"
-#include "ch.h"
+// #include "ch.h"
 #include "hal.h"
-#include "app.h"
-#include "conf_general.h"
+// #include "app.h"
+// #include "conf_general.h"
 #include <math.h>
 #include <string.h>
 #include <stdlib.h>
@@ -628,21 +628,21 @@ void utils_sys_unlock_cnt(void) {
 	}
 }
 
-uint32_t utils_crc32c(uint8_t *data, uint32_t len) {
-	uint32_t crc = 0xFFFFFFFF;
+// uint32_t utils_crc32c(uint8_t *data, uint32_t len) {
+// 	uint32_t crc = 0xFFFFFFFF;
 
-	for (uint32_t i = 0; i < len;i++) {
-		uint32_t byte = data[i];
-		crc = crc ^ byte;
+// 	for (uint32_t i = 0; i < len;i++) {
+// 		uint32_t byte = data[i];
+// 		crc = crc ^ byte;
 
-		for (int j = 7;j >= 0;j--) {
-			uint32_t mask = -(crc & 1);
-			crc = (crc >> 1) ^ (0x82F63B78 & mask);
-		}
-	}
+// 		for (int j = 7;j >= 0;j--) {
+// 			uint32_t mask = -(crc & 1);
+// 			crc = (crc >> 1) ^ (0x82F63B78 & mask);
+// 		}
+// 	}
 
-	return ~crc;
-}
+// 	return ~crc;
+// }
 
 // Yes, this is only the average...
 void utils_fft32_bin0(float *real_in, float *real, float *imag) {

@@ -20,24 +20,24 @@
 #include "mc_interface.h"
 #include "mcpwm.h"
 #include "mcpwm_foc.h"
-#include "ledpwm.h"
+// #include "ledpwm.h"
 #include "stm32f4xx_conf.h"
 #include "hw.h"
-#include "terminal.h"
+// #include "terminal.h"
 #include "utils.h"
-#include "ch.h"
+// #include "ch.h"
 #include "hal.h"
-#include "commands.h"
-#include "encoder.h"
+// #include "commands.h"
+// #include "encoder.h"
 #include "buffer.h"
-#include "gpdrive.h"
-#include "comm_can.h"
-#include "shutdown.h"
-#include "app.h"
+// #include "gpdrive.h"
+// #include "comm_can.h"
+// #include "shutdown.h"
+// #include "app.h"
 #include "utils.h"
 #include "mempools.h"
-#include "crc.h"
-#include "bms.h"
+// #include "crc.h"
+// #include "bms.h"
 #include "events.h"
 
 #include <math.h>
@@ -134,8 +134,8 @@ static void(*pwn_done_func)(void) = 0;
 // Threads
 static THD_WORKING_AREA(timer_thread_wa, 1024);
 static THD_FUNCTION(timer_thread, arg);
-static THD_WORKING_AREA(sample_send_thread_wa, 512);
-static THD_FUNCTION(sample_send_thread, arg);
+// static THD_WORKING_AREA(sample_send_thread_wa, 512);
+// static THD_FUNCTION(sample_send_thread, arg);
 static thread_t *sample_send_tp;
 static THD_WORKING_AREA(fault_stop_thread_wa, 512);
 static THD_FUNCTION(fault_stop_thread, arg);
@@ -173,7 +173,7 @@ void mc_interface_init(void) {
 
 	// Start threads
 	chThdCreateStatic(timer_thread_wa, sizeof(timer_thread_wa), NORMALPRIO, timer_thread, NULL);
-	chThdCreateStatic(sample_send_thread_wa, sizeof(sample_send_thread_wa), NORMALPRIO - 1, sample_send_thread, NULL);
+	// chThdCreateStatic(sample_send_thread_wa, sizeof(sample_send_thread_wa), NORMALPRIO - 1, sample_send_thread, NULL);
 	chThdCreateStatic(fault_stop_thread_wa, sizeof(fault_stop_thread_wa), HIGHPRIO - 3, fault_stop_thread, NULL);
 	chThdCreateStatic(stat_thread_wa, sizeof(stat_thread_wa), NORMALPRIO, stat_thread, NULL);
 
@@ -208,50 +208,50 @@ void mc_interface_init(void) {
 	mc_interface_select_motor_thread(motor_old);
 
 	// Initialize encoder
-	switch (motor_now()->m_conf.m_sensor_port_mode) {
-	case SENSOR_PORT_MODE_ABI:
-		SENSOR_PORT_3V3();
-		encoder_init_abi(motor_now()->m_conf.m_encoder_counts);
-		break;
+	// switch (motor_now()->m_conf.m_sensor_port_mode) {
+	// case SENSOR_PORT_MODE_ABI:
+	// 	SENSOR_PORT_3V3();
+	// 	encoder_init_abi(motor_now()->m_conf.m_encoder_counts);
+	// 	break;
 
-	case SENSOR_PORT_MODE_AS5047_SPI:
-		SENSOR_PORT_3V3();
-		encoder_init_as5047p_spi();
-		break;
+	// case SENSOR_PORT_MODE_AS5047_SPI:
+	// 	SENSOR_PORT_3V3();
+	// 	encoder_init_as5047p_spi();
+	// 	break;
 
-	case SENSOR_PORT_MODE_MT6816_SPI:
-		encoder_init_mt6816_spi();
-		break;
+	// case SENSOR_PORT_MODE_MT6816_SPI:
+	// 	encoder_init_mt6816_spi();
+	// 	break;
 
-	case SENSOR_PORT_MODE_AD2S1205:
-		encoder_init_ad2s1205_spi();
-		break;
+	// case SENSOR_PORT_MODE_AD2S1205:
+	// 	encoder_init_ad2s1205_spi();
+	// 	break;
 
-	case SENSOR_PORT_MODE_SINCOS:
-		encoder_init_sincos(motor_now()->m_conf.foc_encoder_sin_gain, motor_now()->m_conf.foc_encoder_sin_offset,
-							motor_now()->m_conf.foc_encoder_cos_gain, motor_now()->m_conf.foc_encoder_cos_offset,
-							motor_now()->m_conf.foc_encoder_sincos_filter_constant);
-		break;
+	// case SENSOR_PORT_MODE_SINCOS:
+	// 	encoder_init_sincos(motor_now()->m_conf.foc_encoder_sin_gain, motor_now()->m_conf.foc_encoder_sin_offset,
+	// 						motor_now()->m_conf.foc_encoder_cos_gain, motor_now()->m_conf.foc_encoder_cos_offset,
+	// 						motor_now()->m_conf.foc_encoder_sincos_filter_constant);
+	// 	break;
 
-	case SENSOR_PORT_MODE_TS5700N8501:
-	case SENSOR_PORT_MODE_TS5700N8501_MULTITURN: {
-		app_configuration *appconf = mempools_alloc_appconf();
-		conf_general_read_app_configuration(appconf);
-		if (appconf->app_to_use == APP_ADC ||
-				appconf->app_to_use == APP_UART ||
-				appconf->app_to_use == APP_PPM_UART ||
-				appconf->app_to_use == APP_ADC_UART) {
-			appconf->app_to_use = APP_NONE;
-			conf_general_store_app_configuration(appconf);
-		}
-		mempools_free_appconf(appconf);
-		encoder_init_ts5700n8501();
-	} break;
+	// case SENSOR_PORT_MODE_TS5700N8501:
+	// case SENSOR_PORT_MODE_TS5700N8501_MULTITURN: {
+	// 	app_configuration *appconf = mempools_alloc_appconf();
+	// 	conf_general_read_app_configuration(appconf);
+	// 	if (appconf->app_to_use == APP_ADC ||
+	// 			appconf->app_to_use == APP_UART ||
+	// 			appconf->app_to_use == APP_PPM_UART ||
+	// 			appconf->app_to_use == APP_ADC_UART) {
+	// 		appconf->app_to_use = APP_NONE;
+	// 		conf_general_store_app_configuration(appconf);
+	// 	}
+	// 	mempools_free_appconf(appconf);
+	// 	encoder_init_ts5700n8501();
+	// } break;
 
-	default:
-		SENSOR_PORT_5V();
-		break;
-	}
+	// default:
+	// 	SENSOR_PORT_5V();
+	// 	break;
+	// }
 
 	// Initialize selected implementation
 	switch (motor_now()->m_conf.motor_type) {
@@ -268,15 +268,15 @@ void mc_interface_init(void) {
 #endif
 		break;
 
-	case MOTOR_TYPE_GPD:
-		gpdrive_init(&motor_now()->m_conf);
-		break;
+	// case MOTOR_TYPE_GPD:
+	// 	gpdrive_init(&motor_now()->m_conf);
+	// 	break;
 
 	default:
 		break;
 	}
 
-	bms_init((bms_config*)&m_motor_1.m_conf.bms);
+	// bms_init((bms_config*)&m_motor_1.m_conf.bms);
 }
 
 int mc_interface_motor_now(void) {
@@ -340,47 +340,47 @@ void mc_interface_set_configuration(mc_configuration *configuration) {
 #endif
 
 	if (motor->m_conf.m_sensor_port_mode != configuration->m_sensor_port_mode) {
-		encoder_deinit();
+		// encoder_deinit();
 		switch (configuration->m_sensor_port_mode) {
-		case SENSOR_PORT_MODE_ABI:
-			SENSOR_PORT_3V3();
-			encoder_init_abi(configuration->m_encoder_counts);
-			break;
+		// case SENSOR_PORT_MODE_ABI:
+		// 	SENSOR_PORT_3V3();
+		// 	encoder_init_abi(configuration->m_encoder_counts);
+		// 	break;
 
-		case SENSOR_PORT_MODE_AS5047_SPI:
-			SENSOR_PORT_3V3();
-			encoder_init_as5047p_spi();
-			break;
+		// case SENSOR_PORT_MODE_AS5047_SPI:
+		// 	SENSOR_PORT_3V3();
+		// 	encoder_init_as5047p_spi();
+		// 	break;
 
-		case SENSOR_PORT_MODE_MT6816_SPI:
-			encoder_init_mt6816_spi();
-			break;
+		// case SENSOR_PORT_MODE_MT6816_SPI:
+		// 	encoder_init_mt6816_spi();
+		// 	break;
 
-		case SENSOR_PORT_MODE_AD2S1205:
-			encoder_init_ad2s1205_spi();
-			break;
+		// case SENSOR_PORT_MODE_AD2S1205:
+		// 	encoder_init_ad2s1205_spi();
+		// 	break;
 
-		case SENSOR_PORT_MODE_SINCOS:
-			encoder_init_sincos(motor->m_conf.foc_encoder_sin_gain, motor->m_conf.foc_encoder_sin_offset,
-								motor->m_conf.foc_encoder_cos_gain, motor->m_conf.foc_encoder_cos_offset,
-								motor->m_conf.foc_encoder_sincos_filter_constant);
-			break;
+		// case SENSOR_PORT_MODE_SINCOS:
+		// 	encoder_init_sincos(motor->m_conf.foc_encoder_sin_gain, motor->m_conf.foc_encoder_sin_offset,
+		// 						motor->m_conf.foc_encoder_cos_gain, motor->m_conf.foc_encoder_cos_offset,
+		// 						motor->m_conf.foc_encoder_sincos_filter_constant);
+		// 	break;
 
-		case SENSOR_PORT_MODE_TS5700N8501:
-		case SENSOR_PORT_MODE_TS5700N8501_MULTITURN: {
-			app_configuration *appconf = mempools_alloc_appconf();
-			*appconf = *app_get_configuration();
-			if (appconf->app_to_use == APP_ADC ||
-					appconf->app_to_use == APP_UART ||
-					appconf->app_to_use == APP_PPM_UART ||
-					appconf->app_to_use == APP_ADC_UART) {
-				appconf->app_to_use = APP_NONE;
-				conf_general_store_app_configuration(appconf);
-				app_set_configuration(appconf);
-			}
-			mempools_free_appconf(appconf);
-			encoder_init_ts5700n8501();
-		} break;
+		// case SENSOR_PORT_MODE_TS5700N8501:
+		// case SENSOR_PORT_MODE_TS5700N8501_MULTITURN: {
+		// 	app_configuration *appconf = mempools_alloc_appconf();
+		// 	*appconf = *app_get_configuration();
+		// 	if (appconf->app_to_use == APP_ADC ||
+		// 			appconf->app_to_use == APP_UART ||
+		// 			appconf->app_to_use == APP_PPM_UART ||
+		// 			appconf->app_to_use == APP_ADC_UART) {
+		// 		appconf->app_to_use = APP_NONE;
+		// 		conf_general_store_app_configuration(appconf);
+		// 		app_set_configuration(appconf);
+		// 	}
+		// 	mempools_free_appconf(appconf);
+		// 	encoder_init_ts5700n8501();
+		// } break;
 
 		default:
 			SENSOR_PORT_5V();
@@ -388,9 +388,9 @@ void mc_interface_set_configuration(mc_configuration *configuration) {
 		}
 	}
 
-	if (configuration->m_sensor_port_mode == SENSOR_PORT_MODE_ABI) {
-		encoder_set_counts(configuration->m_encoder_counts);
-	}
+	// if (configuration->m_sensor_port_mode == SENSOR_PORT_MODE_ABI) {
+	// 	encoder_set_counts(configuration->m_encoder_counts);
+	// }
 
 #ifdef HW_HAS_DRV8301
 	drv8301_set_oc_mode(configuration->m_drv8301_oc_mode);
@@ -421,7 +421,7 @@ void mc_interface_set_configuration(mc_configuration *configuration) {
 	if (motor->m_conf.motor_type != configuration->motor_type) {
 		mcpwm_deinit();
 		mcpwm_foc_deinit();
-		gpdrive_deinit();
+		// gpdrive_deinit();
 
 		motor->m_conf = *configuration;
 
@@ -439,9 +439,9 @@ void mc_interface_set_configuration(mc_configuration *configuration) {
 #endif
 			break;
 
-		case MOTOR_TYPE_GPD:
-			gpdrive_init(&motor->m_conf);
-			break;
+		// case MOTOR_TYPE_GPD:
+		// 	gpdrive_init(&motor->m_conf);
+		// 	break;
 
 		default:
 			break;
@@ -469,15 +469,15 @@ void mc_interface_set_configuration(mc_configuration *configuration) {
 		mcpwm_foc_set_configuration(&motor->m_conf);
 		break;
 
-	case MOTOR_TYPE_GPD:
-		gpdrive_set_configuration(&motor->m_conf);
-		break;
+	// case MOTOR_TYPE_GPD:
+	// 	gpdrive_set_configuration(&motor->m_conf);
+	// 	break;
 
 	default:
 		break;
 	}
 
-	bms_init(&configuration->bms);
+	// bms_init(&configuration->bms);
 }
 
 bool mc_interface_dccal_done(void) {
@@ -492,9 +492,9 @@ bool mc_interface_dccal_done(void) {
 		ret = mcpwm_foc_is_dccal_done();
 		break;
 
-	case MOTOR_TYPE_GPD:
-		ret = gpdrive_is_dccal_done();
-		break;
+	// case MOTOR_TYPE_GPD:
+	// 	ret = gpdrive_is_dccal_done();
+	// 	break;
 
 	default:
 		break;
@@ -595,7 +595,7 @@ mc_state mc_interface_get_state(void) {
 
 void mc_interface_set_duty(float dutyCycle) {
 	if (fabsf(dutyCycle) > 0.001) {
-		SHUTDOWN_RESET();
+		// SHUTDOWN_RESET();
 	}
 
 	if (mc_interface_try_input()) {
@@ -621,7 +621,7 @@ void mc_interface_set_duty(float dutyCycle) {
 
 void mc_interface_set_duty_noramp(float dutyCycle) {
 	if (fabsf(dutyCycle) > 0.001) {
-		SHUTDOWN_RESET();
+		// SHUTDOWN_RESET();
 	}
 
 	if (mc_interface_try_input()) {
@@ -647,7 +647,7 @@ void mc_interface_set_duty_noramp(float dutyCycle) {
 
 void mc_interface_set_pid_speed(float rpm) {
 	if (fabsf(rpm) > 0.001) {
-		SHUTDOWN_RESET();
+		// SHUTDOWN_RESET();
 	}
 
 	if (mc_interface_try_input()) {
@@ -672,7 +672,7 @@ void mc_interface_set_pid_speed(float rpm) {
 }
 
 void mc_interface_set_pid_pos(float pos) {
-	SHUTDOWN_RESET();
+	// SHUTDOWN_RESET();
 
 	if (mc_interface_try_input()) {
 		return;
@@ -685,11 +685,11 @@ void mc_interface_set_pid_pos(float pos) {
 	pos += motor_now()->m_conf.p_pid_offset;
 	pos *= DIR_MULT;
 
-	if (encoder_is_configured()) {
-		if (conf->foc_encoder_inverted) {
-			pos *= -1.0;
-		}
-	}
+	// if (encoder_is_configured()) {
+	// 	if (conf->foc_encoder_inverted) {
+	// 		pos *= -1.0;
+	// 	}
+	// }
 
 	utils_norm_angle(&pos);
 
@@ -712,7 +712,7 @@ void mc_interface_set_pid_pos(float pos) {
 
 void mc_interface_set_current(float current) {
 	if (fabsf(current) > 0.001) {
-		SHUTDOWN_RESET();
+		// SHUTDOWN_RESET();
 	}
 
 	if (mc_interface_try_input()) {
@@ -738,7 +738,7 @@ void mc_interface_set_current(float current) {
 
 void mc_interface_set_brake_current(float current) {
 	if (fabsf(current) > 0.001) {
-		SHUTDOWN_RESET();
+		// SHUTDOWN_RESET();
 	}
 
 	if (mc_interface_try_input()) {
@@ -755,10 +755,10 @@ void mc_interface_set_brake_current(float current) {
 		mcpwm_foc_set_brake_current(DIR_MULT * current);
 		break;
 
-	case MOTOR_TYPE_GPD:
-		// For timeout to stop the output
-		gpdrive_set_mode(GPD_OUTPUT_MODE_NONE);
-		break;
+	// case MOTOR_TYPE_GPD:
+	// 	// For timeout to stop the output
+	// 	gpdrive_set_mode(GPD_OUTPUT_MODE_NONE);
+	// 	break;
 
 	default:
 		break;
@@ -775,7 +775,7 @@ void mc_interface_set_brake_current(float current) {
  */
 void mc_interface_set_current_rel(float val) {
 	if (fabsf(val) > 0.001) {
-		SHUTDOWN_RESET();
+		// SHUTDOWN_RESET();
 	}
 
 	mc_interface_set_current(val * motor_now()->m_conf.lo_current_motor_max_now);
@@ -789,7 +789,7 @@ void mc_interface_set_current_rel(float val) {
  */
 void mc_interface_set_brake_current_rel(float val) {
 	if (fabsf(val) > 0.001) {
-		SHUTDOWN_RESET();
+		// SHUTDOWN_RESET();
 	}
 
 	mc_interface_set_brake_current(val * fabsf(motor_now()->m_conf.lo_current_motor_min_now));
@@ -803,7 +803,7 @@ void mc_interface_set_brake_current_rel(float val) {
  */
 void mc_interface_set_handbrake(float current) {
 	if (fabsf(current) > 0.001) {
-		SHUTDOWN_RESET();
+		// SHUTDOWN_RESET();
 	}
 
 	if (mc_interface_try_input()) {
@@ -836,14 +836,14 @@ void mc_interface_set_handbrake(float current) {
  */
 void mc_interface_set_handbrake_rel(float val) {
 	if (fabsf(val) > 0.001) {
-		SHUTDOWN_RESET();
+		// SHUTDOWN_RESET();
 	}
 
 	mc_interface_set_handbrake(val * fabsf(motor_now()->m_conf.lo_current_motor_min_now));
 }
 
 void mc_interface_brake_now(void) {
-	SHUTDOWN_RESET();
+	// SHUTDOWN_RESET();
 
 	mc_interface_set_duty(0.0);
 }
@@ -964,9 +964,9 @@ float mc_interface_get_sampling_frequency_now(void) {
 		ret = mcpwm_foc_get_sampling_frequency_now();
 		break;
 
-	case MOTOR_TYPE_GPD:
-		ret = gpdrive_get_switching_frequency_now();
-		break;
+	// case MOTOR_TYPE_GPD:
+	// 	ret = gpdrive_get_switching_frequency_now();
+	// 	break;
 
 	default:
 		break;
@@ -1287,9 +1287,9 @@ float mc_interface_get_last_inj_adc_isr_duration(void) {
 		ret = mcpwm_foc_get_last_adc_isr_duration();
 		break;
 
-	case MOTOR_TYPE_GPD:
-		ret = gpdrive_get_last_adc_isr_duration();
-		break;
+	// case MOTOR_TYPE_GPD:
+	// 	ret = gpdrive_get_last_adc_isr_duration();
+	// 	break;
 
 	default:
 		break;
@@ -1299,9 +1299,9 @@ float mc_interface_get_last_inj_adc_isr_duration(void) {
 }
 
 float mc_interface_read_reset_avg_motor_current(void) {
-	if (motor_now()->m_conf.motor_type == MOTOR_TYPE_GPD) {
-		return gpdrive_get_current_filtered();
-	}
+	// if (motor_now()->m_conf.motor_type == MOTOR_TYPE_GPD) {
+	// 	return gpdrive_get_current_filtered();
+	// }
 
 	float res = motor_now()->m_motor_current_sum / motor_now()->m_motor_current_iterations;
 	motor_now()->m_motor_current_sum = 0.0;
@@ -1310,9 +1310,9 @@ float mc_interface_read_reset_avg_motor_current(void) {
 }
 
 float mc_interface_read_reset_avg_input_current(void) {
-	if (motor_now()->m_conf.motor_type == MOTOR_TYPE_GPD) {
-		return gpdrive_get_current_filtered() * gpdrive_get_modulation();
-	}
+	// if (motor_now()->m_conf.motor_type == MOTOR_TYPE_GPD) {
+	// 	return gpdrive_get_current_filtered() * gpdrive_get_modulation();
+	// }
 
 	float res = motor_now()->m_input_current_sum / motor_now()->m_input_current_iterations;
 	motor_now()->m_input_current_sum = 0.0;
@@ -1382,10 +1382,10 @@ float mc_interface_get_pid_pos_now(void) {
 	volatile mc_configuration *conf = &motor_now()->m_conf;
 
 	switch (conf->motor_type) {
-	case MOTOR_TYPE_BLDC:
-	case MOTOR_TYPE_DC:
-		ret = encoder_read_deg();
-		break;
+	// case MOTOR_TYPE_BLDC:
+	// case MOTOR_TYPE_DC:
+	// 	ret = encoder_read_deg();
+	// 	break;
 
 	case MOTOR_TYPE_FOC:
 		ret = mcpwm_foc_get_pid_pos_now();
@@ -1395,11 +1395,11 @@ float mc_interface_get_pid_pos_now(void) {
 		break;
 	}
 
-	if (encoder_is_configured()) {
-		if (conf->foc_encoder_inverted) {
-			ret *= -1.0;
-		}
-	}
+	// if (encoder_is_configured()) {
+	// 	if (conf->foc_encoder_inverted) {
+	// 		ret *= -1.0;
+	// 	}
+	// }
 
 	ret *= DIR_MULT;
 	ret -= motor_now()->m_conf.p_pid_offset;
@@ -1411,21 +1411,21 @@ float mc_interface_get_pid_pos_now(void) {
 /**
  * Update the offset such that the current angle becomes angle_now
  */
-void mc_interface_update_pid_pos_offset(float angle_now, bool store) {
-	mc_configuration *mcconf = mempools_alloc_mcconf();
-	*mcconf = *mc_interface_get_configuration();
+// void mc_interface_update_pid_pos_offset(float angle_now, bool store) {
+// 	mc_configuration *mcconf = mempools_alloc_mcconf();
+// 	*mcconf = *mc_interface_get_configuration();
 
-	mcconf->p_pid_offset += mc_interface_get_pid_pos_now() - angle_now;
-	utils_norm_angle(&mcconf->p_pid_offset);
+// 	mcconf->p_pid_offset += mc_interface_get_pid_pos_now() - angle_now;
+// 	utils_norm_angle(&mcconf->p_pid_offset);
 
-	if (store) {
-		conf_general_store_mc_configuration(mcconf, mc_interface_get_motor_thread() == 2);
-	}
+// 	// if (store) {
+// 	// 	conf_general_store_mc_configuration(mcconf, mc_interface_get_motor_thread() == 2);
+// 	// }
 
-	mc_interface_set_configuration(mcconf);
+// 	mc_interface_set_configuration(mcconf);
 
-	mempools_free_mcconf(mcconf);
-}
+// 	mempools_free_mcconf(mcconf);
+// }
 
 float mc_interface_get_last_sample_adc_isr_duration(void) {
 	return m_last_adc_duration_sample;
@@ -1582,30 +1582,30 @@ setup_values mc_interface_get_setup_values(void) {
 	val.current_tot += mc_interface_get_tot_current_filtered();
 	val.current_in_tot += mc_interface_get_tot_current_in_filtered();
 
-	for (int i = 0;i < CAN_STATUS_MSGS_TO_STORE;i++) {
-		can_status_msg *msg = comm_can_get_status_msg_index(i);
-		if (msg->id >= 0 && UTILS_AGE_S(msg->rx_time) < 0.1) {
-			val.current_tot += msg->current;
-			val.num_vescs++;
-		}
+	// for (int i = 0;i < CAN_STATUS_MSGS_TO_STORE;i++) {
+	// 	can_status_msg *msg = comm_can_get_status_msg_index(i);
+	// 	if (msg->id >= 0 && UTILS_AGE_S(msg->rx_time) < 0.1) {
+	// 		val.current_tot += msg->current;
+	// 		val.num_vescs++;
+	// 	}
 
-		can_status_msg_2 *msg2 = comm_can_get_status_msg_2_index(i);
-		if (msg2->id >= 0 && UTILS_AGE_S(msg2->rx_time) < 0.1) {
-			val.ah_tot += msg2->amp_hours;
-			val.ah_charge_tot += msg2->amp_hours_charged;
-		}
+	// 	can_status_msg_2 *msg2 = comm_can_get_status_msg_2_index(i);
+	// 	if (msg2->id >= 0 && UTILS_AGE_S(msg2->rx_time) < 0.1) {
+	// 		val.ah_tot += msg2->amp_hours;
+	// 		val.ah_charge_tot += msg2->amp_hours_charged;
+	// 	}
 
-		can_status_msg_3 *msg3 = comm_can_get_status_msg_3_index(i);
-		if (msg3->id >= 0 && UTILS_AGE_S(msg3->rx_time) < 0.1) {
-			val.wh_tot += msg3->watt_hours;
-			val.wh_charge_tot += msg3->watt_hours_charged;
-		}
+	// 	can_status_msg_3 *msg3 = comm_can_get_status_msg_3_index(i);
+	// 	if (msg3->id >= 0 && UTILS_AGE_S(msg3->rx_time) < 0.1) {
+	// 		val.wh_tot += msg3->watt_hours;
+	// 		val.wh_charge_tot += msg3->watt_hours_charged;
+	// 	}
 
-		can_status_msg_4 *msg4 = comm_can_get_status_msg_4_index(i);
-		if (msg4->id >= 0 && UTILS_AGE_S(msg4->rx_time) < 0.1) {
-			val.current_in_tot += msg4->current_in;
-		}
-	}
+	// 	can_status_msg_4 *msg4 = comm_can_get_status_msg_4_index(i);
+	// 	if (msg4->id >= 0 && UTILS_AGE_S(msg4->rx_time) < 0.1) {
+	// 		val.current_in_tot += msg4->current_in;
+	// 	}
+	// }
 
 	return val;
 }
@@ -1743,7 +1743,7 @@ void mc_interface_fault_stop(mc_fault_code fault, bool is_second_motor, bool is_
 }
 
 void mc_interface_mc_timer_isr(bool is_second_motor) {
-	ledpwm_update_pwm();
+	// ledpwm_update_pwm();
 
 #ifdef HW_HAS_DUAL_MOTORS
 	volatile motor_if_state_t *motor = is_second_motor ? &m_motor_2 : &m_motor_1;
@@ -2299,7 +2299,7 @@ static void update_override_limits(volatile motor_if_state_t *motor, volatile mc
 	float lo_in_min = lo_in_min_watt;
 
 	// BMS limits
-	bms_update_limits(&lo_in_min,  &lo_in_max, conf->l_in_current_min, conf->l_in_current_max);
+	// bms_update_limits(&lo_in_min,  &lo_in_max, conf->l_in_current_min, conf->l_in_current_max);
 
 	conf->lo_in_current_max = utils_min_abs(conf->l_in_current_max, lo_in_max);
 	conf->lo_in_current_min = utils_min_abs(conf->l_in_current_min, lo_in_min);
@@ -2452,54 +2452,54 @@ static void run_timer_tasks(volatile motor_if_state_t *motor) {
 
 	// Trigger encoder error rate fault, using 5% errors as threshold.
 	// Relevant only in FOC mode with encoder enabled
-	if(motor->m_conf.motor_type == MOTOR_TYPE_FOC &&
-			motor->m_conf.foc_sensor_mode == FOC_SENSOR_MODE_ENCODER &&
-			mcpwm_foc_is_using_encoder() &&
-			encoder_spi_get_error_rate() > 0.05) {
-		mc_interface_fault_stop(FAULT_CODE_ENCODER_SPI, !is_motor_1, false);
-	}
+	// if(motor->m_conf.motor_type == MOTOR_TYPE_FOC &&
+	// 		motor->m_conf.foc_sensor_mode == FOC_SENSOR_MODE_ENCODER &&
+	// 		mcpwm_foc_is_using_encoder() &&
+	// 		encoder_spi_get_error_rate() > 0.05) {
+	// 	mc_interface_fault_stop(FAULT_CODE_ENCODER_SPI, !is_motor_1, false);
+	// }
 
-	if(motor->m_conf.motor_type == MOTOR_TYPE_FOC &&
-			motor->m_conf.foc_sensor_mode == FOC_SENSOR_MODE_ENCODER &&
-			mcpwm_foc_is_using_encoder() &&
-			encoder_get_no_magnet_error_rate() > 0.05) {
-		mc_interface_fault_stop(FAULT_CODE_ENCODER_NO_MAGNET, !is_motor_1, false);
-	}
+	// if(motor->m_conf.motor_type == MOTOR_TYPE_FOC &&
+	// 		motor->m_conf.foc_sensor_mode == FOC_SENSOR_MODE_ENCODER &&
+	// 		mcpwm_foc_is_using_encoder() &&
+	// 		encoder_get_no_magnet_error_rate() > 0.05) {
+	// 	mc_interface_fault_stop(FAULT_CODE_ENCODER_NO_MAGNET, !is_motor_1, false);
+	// }
 
-	if(motor->m_conf.motor_type == MOTOR_TYPE_FOC &&
-			motor->m_conf.foc_sensor_mode == FOC_SENSOR_MODE_ENCODER &&
-			motor->m_conf.m_sensor_port_mode == SENSOR_PORT_MODE_SINCOS) {
+	// if(motor->m_conf.motor_type == MOTOR_TYPE_FOC &&
+	// 		motor->m_conf.foc_sensor_mode == FOC_SENSOR_MODE_ENCODER &&
+	// 		motor->m_conf.m_sensor_port_mode == SENSOR_PORT_MODE_SINCOS) {
 
-		if (encoder_sincos_get_signal_below_min_error_rate() > 0.05)
-			mc_interface_fault_stop(FAULT_CODE_ENCODER_SINCOS_BELOW_MIN_AMPLITUDE, !is_motor_1, false);
-		if (encoder_sincos_get_signal_above_max_error_rate() > 0.05)
-			mc_interface_fault_stop(FAULT_CODE_ENCODER_SINCOS_ABOVE_MAX_AMPLITUDE, !is_motor_1, false);
-	}
+	// 	if (encoder_sincos_get_signal_below_min_error_rate() > 0.05)
+	// 		mc_interface_fault_stop(FAULT_CODE_ENCODER_SINCOS_BELOW_MIN_AMPLITUDE, !is_motor_1, false);
+	// 	if (encoder_sincos_get_signal_above_max_error_rate() > 0.05)
+	// 		mc_interface_fault_stop(FAULT_CODE_ENCODER_SINCOS_ABOVE_MAX_AMPLITUDE, !is_motor_1, false);
+	// }
 
-	if (motor->m_conf.motor_type == MOTOR_TYPE_FOC &&
-				motor->m_conf.foc_sensor_mode == FOC_SENSOR_MODE_ENCODER &&
-				motor->m_conf.m_sensor_port_mode == SENSOR_PORT_MODE_AS5047_SPI) {
-		if (!encoder_AS504x_get_diag().is_connected) {
-			mc_interface_fault_stop(FAULT_CODE_ENCODER_SPI, !is_motor_1, false);
-		}
+	// if (motor->m_conf.motor_type == MOTOR_TYPE_FOC &&
+	// 			motor->m_conf.foc_sensor_mode == FOC_SENSOR_MODE_ENCODER &&
+	// 			motor->m_conf.m_sensor_port_mode == SENSOR_PORT_MODE_AS5047_SPI) {
+	// 	if (!encoder_AS504x_get_diag().is_connected) {
+	// 		mc_interface_fault_stop(FAULT_CODE_ENCODER_SPI, !is_motor_1, false);
+	// 	}
 
-		if (encoder_AS504x_get_diag().is_Comp_high) {
-			mc_interface_fault_stop(FAULT_CODE_ENCODER_NO_MAGNET, !is_motor_1, false);
-		} else if(encoder_AS504x_get_diag().is_Comp_low) {
-			mc_interface_fault_stop(FAULT_CODE_ENCODER_MAGNET_TOO_STRONG, !is_motor_1, false);
-		}
-	}
+	// 	if (encoder_AS504x_get_diag().is_Comp_high) {
+	// 		mc_interface_fault_stop(FAULT_CODE_ENCODER_NO_MAGNET, !is_motor_1, false);
+	// 	} else if(encoder_AS504x_get_diag().is_Comp_low) {
+	// 		mc_interface_fault_stop(FAULT_CODE_ENCODER_MAGNET_TOO_STRONG, !is_motor_1, false);
+	// 	}
+	// }
 
-	if(motor->m_conf.motor_type == MOTOR_TYPE_FOC &&
-			motor->m_conf.foc_sensor_mode == FOC_SENSOR_MODE_ENCODER &&
-			motor->m_conf.m_sensor_port_mode == SENSOR_PORT_MODE_AD2S1205) {
-		if (encoder_resolver_loss_of_tracking_error_rate() > 0.05)
-			mc_interface_fault_stop(FAULT_CODE_RESOLVER_LOT, !is_motor_1, false);
-		if (encoder_resolver_degradation_of_signal_error_rate() > 0.05)
-			mc_interface_fault_stop(FAULT_CODE_RESOLVER_DOS, !is_motor_1, false);
-		if (encoder_resolver_loss_of_signal_error_rate() > 0.04)
-			mc_interface_fault_stop(FAULT_CODE_RESOLVER_LOS, !is_motor_1, false);
-	}
+	// if(motor->m_conf.motor_type == MOTOR_TYPE_FOC &&
+	// 		motor->m_conf.foc_sensor_mode == FOC_SENSOR_MODE_ENCODER &&
+	// 		motor->m_conf.m_sensor_port_mode == SENSOR_PORT_MODE_AD2S1205) {
+	// 	if (encoder_resolver_loss_of_tracking_error_rate() > 0.05)
+	// 		mc_interface_fault_stop(FAULT_CODE_RESOLVER_LOT, !is_motor_1, false);
+	// 	if (encoder_resolver_degradation_of_signal_error_rate() > 0.05)
+	// 		mc_interface_fault_stop(FAULT_CODE_RESOLVER_DOS, !is_motor_1, false);
+	// 	if (encoder_resolver_loss_of_signal_error_rate() > 0.04)
+	// 		mc_interface_fault_stop(FAULT_CODE_RESOLVER_LOS, !is_motor_1, false);
+	// }
 	// TODO: Implement for BLDC and GPDRIVE
 	if(motor->m_conf.motor_type == MOTOR_TYPE_FOC) {
 		float curr0_offset;
@@ -2683,77 +2683,77 @@ static THD_FUNCTION(stat_thread, arg) {
 	}
 }
 
-static THD_FUNCTION(sample_send_thread, arg) {
-	(void)arg;
+// static THD_FUNCTION(sample_send_thread, arg) {
+// 	(void)arg;
 
-	chRegSetThreadName("SampleSender");
-	sample_send_tp = chThdGetSelfX();
+// 	chRegSetThreadName("SampleSender");
+// 	sample_send_tp = chThdGetSelfX();
 
-	for(;;) {
-		chEvtWaitAny((eventmask_t) 1);
+// 	for(;;) {
+// 		chEvtWaitAny((eventmask_t) 1);
 
-		int len = 0;
-		int offset = 0;
+// 		int len = 0;
+// 		int offset = 0;
 
-		switch (m_sample_mode_last) {
-		case DEBUG_SAMPLING_NOW:
-		case DEBUG_SAMPLING_START:
-			len = m_sample_len;
-			break;
+// 		switch (m_sample_mode_last) {
+// 		case DEBUG_SAMPLING_NOW:
+// 		case DEBUG_SAMPLING_START:
+// 			len = m_sample_len;
+// 			break;
 
-		case DEBUG_SAMPLING_TRIGGER_START:
-		case DEBUG_SAMPLING_TRIGGER_FAULT:
-		case DEBUG_SAMPLING_TRIGGER_START_NOSEND:
-		case DEBUG_SAMPLING_TRIGGER_FAULT_NOSEND:
-			len = ADC_SAMPLE_MAX_LEN;
-			offset = m_sample_trigger - m_sample_len;
-			break;
+// 		case DEBUG_SAMPLING_TRIGGER_START:
+// 		case DEBUG_SAMPLING_TRIGGER_FAULT:
+// 		case DEBUG_SAMPLING_TRIGGER_START_NOSEND:
+// 		case DEBUG_SAMPLING_TRIGGER_FAULT_NOSEND:
+// 			len = ADC_SAMPLE_MAX_LEN;
+// 			offset = m_sample_trigger - m_sample_len;
+// 			break;
 
-		default:
-			break;
-		}
+// 		default:
+// 			break;
+// 		}
 
-		for (int i = 0;i < len;i++) {
-			uint8_t buffer[40];
-			int32_t index = 0;
-			int ind_samp = i + offset;
+// 		for (int i = 0;i < len;i++) {
+// 			uint8_t buffer[40];
+// 			int32_t index = 0;
+// 			int ind_samp = i + offset;
 
-			while (ind_samp >= ADC_SAMPLE_MAX_LEN) {
-				ind_samp -= ADC_SAMPLE_MAX_LEN;
-			}
+// 			while (ind_samp >= ADC_SAMPLE_MAX_LEN) {
+// 				ind_samp -= ADC_SAMPLE_MAX_LEN;
+// 			}
 
-			while (ind_samp < 0) {
-				ind_samp += ADC_SAMPLE_MAX_LEN;
-			}
+// 			while (ind_samp < 0) {
+// 				ind_samp += ADC_SAMPLE_MAX_LEN;
+// 			}
 
-			buffer[index++] = COMM_SAMPLE_PRINT;
+// 			buffer[index++] = COMM_SAMPLE_PRINT;
 
-			if (m_sample_raw) {
-				buffer_append_float32_auto(buffer, (float)m_curr0_samples[ind_samp], &index);
-				buffer_append_float32_auto(buffer, (float)m_curr1_samples[ind_samp], &index);
-				buffer_append_float32_auto(buffer, (float)m_ph1_samples[ind_samp], &index);
-				buffer_append_float32_auto(buffer, (float)m_ph2_samples[ind_samp], &index);
-				buffer_append_float32_auto(buffer, (float)m_ph3_samples[ind_samp], &index);
-				buffer_append_float32_auto(buffer, (float)m_vzero_samples[ind_samp], &index);
-				buffer_append_float32_auto(buffer, (float)m_curr_fir_samples[ind_samp], &index);
-			} else {
-				buffer_append_float32_auto(buffer, (float)m_curr0_samples[ind_samp] * FAC_CURRENT, &index);
-				buffer_append_float32_auto(buffer, (float)m_curr1_samples[ind_samp] * FAC_CURRENT, &index);
-				buffer_append_float32_auto(buffer, ((float)m_ph1_samples[ind_samp] / 4096.0 * V_REG) * ((VIN_R1 + VIN_R2) / VIN_R2) * ADC_VOLTS_PH_FACTOR, &index);
-				buffer_append_float32_auto(buffer, ((float)m_ph2_samples[ind_samp] / 4096.0 * V_REG) * ((VIN_R1 + VIN_R2) / VIN_R2) * ADC_VOLTS_PH_FACTOR, &index);
-				buffer_append_float32_auto(buffer, ((float)m_ph3_samples[ind_samp] / 4096.0 * V_REG) * ((VIN_R1 + VIN_R2) / VIN_R2) * ADC_VOLTS_PH_FACTOR, &index);
-				buffer_append_float32_auto(buffer, ((float)m_vzero_samples[ind_samp] / 4096.0 * V_REG) * ((VIN_R1 + VIN_R2) / VIN_R2) * ADC_VOLTS_INPUT_FACTOR, &index);
-				buffer_append_float32_auto(buffer, (float)m_curr_fir_samples[ind_samp] / (8.0 / FAC_CURRENT), &index);
-			}
+// 			if (m_sample_raw) {
+// 				buffer_append_float32_auto(buffer, (float)m_curr0_samples[ind_samp], &index);
+// 				buffer_append_float32_auto(buffer, (float)m_curr1_samples[ind_samp], &index);
+// 				buffer_append_float32_auto(buffer, (float)m_ph1_samples[ind_samp], &index);
+// 				buffer_append_float32_auto(buffer, (float)m_ph2_samples[ind_samp], &index);
+// 				buffer_append_float32_auto(buffer, (float)m_ph3_samples[ind_samp], &index);
+// 				buffer_append_float32_auto(buffer, (float)m_vzero_samples[ind_samp], &index);
+// 				buffer_append_float32_auto(buffer, (float)m_curr_fir_samples[ind_samp], &index);
+// 			} else {
+// 				buffer_append_float32_auto(buffer, (float)m_curr0_samples[ind_samp] * FAC_CURRENT, &index);
+// 				buffer_append_float32_auto(buffer, (float)m_curr1_samples[ind_samp] * FAC_CURRENT, &index);
+// 				buffer_append_float32_auto(buffer, ((float)m_ph1_samples[ind_samp] / 4096.0 * V_REG) * ((VIN_R1 + VIN_R2) / VIN_R2) * ADC_VOLTS_PH_FACTOR, &index);
+// 				buffer_append_float32_auto(buffer, ((float)m_ph2_samples[ind_samp] / 4096.0 * V_REG) * ((VIN_R1 + VIN_R2) / VIN_R2) * ADC_VOLTS_PH_FACTOR, &index);
+// 				buffer_append_float32_auto(buffer, ((float)m_ph3_samples[ind_samp] / 4096.0 * V_REG) * ((VIN_R1 + VIN_R2) / VIN_R2) * ADC_VOLTS_PH_FACTOR, &index);
+// 				buffer_append_float32_auto(buffer, ((float)m_vzero_samples[ind_samp] / 4096.0 * V_REG) * ((VIN_R1 + VIN_R2) / VIN_R2) * ADC_VOLTS_INPUT_FACTOR, &index);
+// 				buffer_append_float32_auto(buffer, (float)m_curr_fir_samples[ind_samp] / (8.0 / FAC_CURRENT), &index);
+// 			}
 
-			buffer_append_float32_auto(buffer, (float)m_f_sw_samples[ind_samp] * 10.0, &index);
-			buffer[index++] = m_status_samples[ind_samp];
-			buffer[index++] = m_phase_samples[ind_samp];
+// 			buffer_append_float32_auto(buffer, (float)m_f_sw_samples[ind_samp] * 10.0, &index);
+// 			buffer[index++] = m_status_samples[ind_samp];
+// 			buffer[index++] = m_phase_samples[ind_samp];
 
-			commands_send_packet(buffer, index);
-		}
-	}
-}
+// 			commands_send_packet(buffer, index);
+// 		}
+// 	}
+// }
 
 static THD_FUNCTION(fault_stop_thread, arg) {
 	(void)arg;
@@ -2779,42 +2779,42 @@ static THD_FUNCTION(fault_stop_thread, arg) {
 		if (mc_interface_dccal_done() && motor->m_fault_now == FAULT_CODE_NONE) {
 			// Sent to terminal fault logger so that all faults and their conditions
 			// can be printed for debugging.
-			utils_sys_lock_cnt();
-			volatile int val_samp = TIM8->CCR1;
-			volatile int current_samp = TIM1->CCR4;
-			volatile int tim_top = TIM1->ARR;
-			utils_sys_unlock_cnt();
+			// utils_sys_lock_cnt();
+			// volatile int val_samp = TIM8->CCR1;
+			// volatile int current_samp = TIM1->CCR4;
+			// volatile int tim_top = TIM1->ARR;
+			// utils_sys_unlock_cnt();
 
-			fault_data fdata;
-			fdata.motor = m_fault_stop_is_second_motor ? 2 : 1;
-			fdata.fault = m_fault_stop_fault;
-			fdata.current = mc_interface_get_tot_current();
-			fdata.current_filtered = mc_interface_get_tot_current_filtered();
-			fdata.voltage = GET_INPUT_VOLTAGE();
-			fdata.gate_driver_voltage = motor->m_gate_driver_voltage;
-			fdata.duty = mc_interface_get_duty_cycle_now();
-			fdata.rpm = mc_interface_get_rpm();
-			fdata.tacho = mc_interface_get_tachometer_value(false);
-			fdata.cycles_running = motor->m_cycles_running;
-			fdata.tim_val_samp = val_samp;
-			fdata.tim_current_samp = current_samp;
-			fdata.tim_top = tim_top;
-			fdata.comm_step = mcpwm_get_comm_step();
-			fdata.temperature = NTC_TEMP(ADC_IND_TEMP_MOS);
-#ifdef HW_HAS_DRV8301
-			if (m_fault_stop_fault == FAULT_CODE_DRV) {
-				fdata.drv8301_faults = drv8301_read_faults();
-			}
-#elif defined(HW_HAS_DRV8320S)
-			if (m_fault_stop_fault == FAULT_CODE_DRV) {
-				fdata.drv8301_faults = drv8320s_read_faults();
-			}
-#elif defined(HW_HAS_DRV8323S)
-			if (m_fault_stop_fault == FAULT_CODE_DRV) {
-				fdata.drv8301_faults = drv8323s_read_faults();
-			}
-#endif
-			terminal_add_fault_data(&fdata);
+// 			fault_data fdata;
+// 			fdata.motor = m_fault_stop_is_second_motor ? 2 : 1;
+// 			fdata.fault = m_fault_stop_fault;
+// 			fdata.current = mc_interface_get_tot_current();
+// 			fdata.current_filtered = mc_interface_get_tot_current_filtered();
+// 			fdata.voltage = GET_INPUT_VOLTAGE();
+// 			fdata.gate_driver_voltage = motor->m_gate_driver_voltage;
+// 			fdata.duty = mc_interface_get_duty_cycle_now();
+// 			fdata.rpm = mc_interface_get_rpm();
+// 			fdata.tacho = mc_interface_get_tachometer_value(false);
+// 			fdata.cycles_running = motor->m_cycles_running;
+// 			fdata.tim_val_samp = val_samp;
+// 			fdata.tim_current_samp = current_samp;
+// 			fdata.tim_top = tim_top;
+// 			fdata.comm_step = mcpwm_get_comm_step();
+// 			fdata.temperature = NTC_TEMP(ADC_IND_TEMP_MOS);
+// #ifdef HW_HAS_DRV8301
+// 			if (m_fault_stop_fault == FAULT_CODE_DRV) {
+// 				fdata.drv8301_faults = drv8301_read_faults();
+// 			}
+// #elif defined(HW_HAS_DRV8320S)
+// 			if (m_fault_stop_fault == FAULT_CODE_DRV) {
+// 				fdata.drv8301_faults = drv8320s_read_faults();
+// 			}
+// #elif defined(HW_HAS_DRV8323S)
+// 			if (m_fault_stop_fault == FAULT_CODE_DRV) {
+// 				fdata.drv8301_faults = drv8323s_read_faults();
+// 			}
+// #endif
+// 			// terminal_add_fault_data(&fdata);
 		}
 
 		motor->m_ignore_iterations = motor->m_conf.m_fault_stop_time_ms;
@@ -2829,9 +2829,9 @@ static THD_FUNCTION(fault_stop_thread, arg) {
 			mcpwm_foc_stop_pwm(m_fault_stop_is_second_motor);
 			break;
 
-		case MOTOR_TYPE_GPD:
-			gpdrive_set_mode(GPD_OUTPUT_MODE_NONE);
-			break;
+		// case MOTOR_TYPE_GPD:
+		// 	gpdrive_set_mode(GPD_OUTPUT_MODE_NONE);
+		// 	break;
 
 		default:
 			break;
@@ -2853,24 +2853,24 @@ static THD_FUNCTION(fault_stop_thread, arg) {
  * @return
  * CRC16 (with crc field in struct temporarily set to zero).
  */
-unsigned mc_interface_calc_crc(mc_configuration* conf_in, bool is_motor_2) {
-	volatile mc_configuration* conf = conf_in;
+// unsigned mc_interface_calc_crc(mc_configuration* conf_in, bool is_motor_2) {
+// 	volatile mc_configuration* conf = conf_in;
 
-	if(conf == NULL) {
-		if(is_motor_2) {
-#ifdef HW_HAS_DUAL_MOTORS
-			conf = &(m_motor_2.m_conf);
-#else
-			return 0; //shouldn't be here
-#endif
-		} else {
-			conf = &(m_motor_1.m_conf);
-		}
-	}
+// 	if(conf == NULL) {
+// 		if(is_motor_2) {
+// #ifdef HW_HAS_DUAL_MOTORS
+// 			conf = &(m_motor_2.m_conf);
+// #else
+// 			return 0; //shouldn't be here
+// #endif
+// 		} else {
+// 			conf = &(m_motor_1.m_conf);
+// 		}
+// 	}
 
-	unsigned crc_old = conf->crc;
-	conf->crc = 0;
-	unsigned crc_new = crc16((uint8_t*)conf, sizeof(mc_configuration));
-	conf->crc = crc_old;
-	return crc_new;
-}
+// 	unsigned crc_old = conf->crc;
+// 	conf->crc = 0;
+// 	unsigned crc_new = crc16((uint8_t*)conf, sizeof(mc_configuration));
+// 	conf->crc = crc_old;
+// 	return crc_new;
+// }

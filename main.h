@@ -20,6 +20,6 @@
 #ifndef MAIN_H_
 #define MAIN_H_
 
-bool main_init_done(void);
+// bool main_init_done(void);
 
 #endif /* MAIN_H_ */

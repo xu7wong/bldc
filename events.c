@@ -18,8 +18,8 @@
     */
 
 #include "events.h"
-#include "terminal.h"
-#include "commands.h"
+// #include "terminal.h"
+// #include "commands.h"
 #include "utils.h"
 #include "ch.h"
 #include <string.h>
@@ -40,28 +40,28 @@ typedef struct {
 // Private variables
 static volatile event_t m_events[EVENTS_LEN];
 static volatile int m_event_now = 0;
-static mutex_t m_mtx;
+// static mutex_t m_mtx;
 
 // Private functions
 static void terminal_print(int argc, const char **argv);
 
 void events_init(void) {
-	chMtxObjectInit(&m_mtx);
+	// chMtxObjectInit(&m_mtx);
 
 	for (int i = 0;i < EVENTS_LEN;i++) {
 		volatile event_t *e = &m_events[i];
 		e->set = false;
 	}
 
-	terminal_register_command_callback(
-			"events",
-			"Print recent motor events",
-			0,
-			terminal_print);
+	// terminal_register_command_callback(
+	// 		"events",
+	// 		"Print recent motor events",
+	// 		0,
+	// 		terminal_print);
 }
 
 void events_add(const char *name, float param) {
-	chMtxLock(&m_mtx);
+	// chMtxLock(&m_mtx);
 
 	int event = m_event_now;
 
@@ -91,7 +91,7 @@ void events_add(const char *name, float param) {
 	event = (event + 1) % EVENTS_LEN;
 	m_event_now = event;
 
-	chMtxUnlock(&m_mtx);
+	// chMtxUnlock(&m_mtx);
 }
 
 static void terminal_print(int argc, const char **argv) {

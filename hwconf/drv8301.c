@@ -21,15 +21,15 @@
 #ifdef HW_HAS_DRV8301
 
 #include "drv8301.h"
-#include "ch.h"
+// #include "ch.h"
 #include "hal.h"
 #include "stm32f4xx_conf.h"
 #include "utils.h"
-#include "terminal.h"
-#include "commands.h"
+// #include "terminal.h"
+// #include "commands.h"
 #include <string.h>
 #include <stdio.h>
-#include "mc_interface.h"
+// #include "mc_interface.h"
 
 // Private functions
 static uint16_t spi_exchange(uint16_t x);
@@ -37,17 +37,17 @@ static void spi_transfer(uint16_t *in_buf, const uint16_t *out_buf, int length);
 static void spi_begin(void);
 static void spi_end(void);
 static void spi_delay(void);
-static void terminal_read_reg(int argc, const char **argv);
-static void terminal_write_reg(int argc, const char **argv);
-static void terminal_set_oc_adj(int argc, const char **argv);
-static void terminal_print_faults(int argc, const char **argv);
+// static void terminal_read_reg(int argc, const char **argv);
+// static void terminal_write_reg(int argc, const char **argv);
+// static void terminal_set_oc_adj(int argc, const char **argv);
+// static void terminal_print_faults(int argc, const char **argv);
 
 // Private variables
 static char m_fault_print_buffer[120];
-static mutex_t m_spi_mutex;
+// static mutex_t m_spi_mutex;
 
 void drv8301_init(void) {
-	chMtxObjectInit(&m_spi_mutex);
+	// chMtxObjectInit(&m_spi_mutex);
 
 	// DRV8301 SPI
 	palSetPadMode(DRV8301_MISO_GPIO, DRV8301_MISO_PIN, PAL_MODE_INPUT);
@@ -67,29 +67,29 @@ void drv8301_init(void) {
 
 	drv8301_set_current_amp_gain(CURRENT_AMP_GAIN);
 
-	terminal_register_command_callback(
-			"drv8301_read_reg",
-			"Read a register from the DRV8301 and print it.",
-			"[reg]",
-			terminal_read_reg);
+	// terminal_register_command_callback(
+	// 		"drv8301_read_reg",
+	// 		"Read a register from the DRV8301 and print it.",
+	// 		"[reg]",
+	// 		terminal_read_reg);
 
-	terminal_register_command_callback(
-			"drv8301_write_reg",
-			"Write to a DRV8301 register.",
-			"[reg] [hexvalue]",
-			terminal_write_reg);
+	// terminal_register_command_callback(
+	// 		"drv8301_write_reg",
+	// 		"Write to a DRV8301 register.",
+	// 		"[reg] [hexvalue]",
+	// 		terminal_write_reg);
 
-	terminal_register_command_callback(
-			"drv8301_set_oc_adj",
-			"Set the DRV8301 OC ADJ register.",
-			"[value]",
-			terminal_set_oc_adj);
+	// terminal_register_command_callback(
+	// 		"drv8301_set_oc_adj",
+	// 		"Set the DRV8301 OC ADJ register.",
+	// 		"[value]",
+	// 		terminal_set_oc_adj);
 
-	terminal_register_command_callback(
-			"drv8301_print_faults",
-			"Print all current DRV8301 faults.",
-			0,
-			terminal_print_faults);
+	// terminal_register_command_callback(
+	// 		"drv8301_print_faults",
+	// 		"Print all current DRV8301 faults.",
+	// 		0,
+	// 		terminal_print_faults);
 }
 
 /**
@@ -244,7 +244,7 @@ unsigned int drv8301_read_reg(int reg) {
 	out |= (reg & 0x0F) << 11;
 	out |= 0x807F;
 
-	chMtxLock(&m_spi_mutex);
+	// chMtxLock(&m_spi_mutex);
 
 	if (reg != 0) {
 		spi_begin();
@@ -256,7 +256,7 @@ unsigned int drv8301_read_reg(int reg) {
 	uint16_t res = spi_exchange(0xFFFF);
 	spi_end();
 
-	chMtxUnlock(&m_spi_mutex);
+	// chMtxUnlock(&m_spi_mutex);
 
 	return res;
 }
@@ -266,11 +266,11 @@ void drv8301_write_reg(int reg, int data) {
 	out |= (reg & 0x0F) << 11;
 	out |= data & 0x7FF;
 
-	chMtxLock(&m_spi_mutex);
+	// chMtxLock(&m_spi_mutex);
 	spi_begin();
 	spi_exchange(out);
 	spi_end();
-	chMtxUnlock(&m_spi_mutex);
+	// chMtxUnlock(&m_spi_mutex);
 }
 
 // Software SPI
@@ -345,80 +345,80 @@ static void spi_delay(void) {
 	}
 }
 
-static void terminal_read_reg(int argc, const char **argv) {
-	if (argc == 2) {
-		int reg = -1;
-		sscanf(argv[1], "%d", &reg);
+// static void terminal_read_reg(int argc, const char **argv) {
+// 	if (argc == 2) {
+// 		int reg = -1;
+// 		sscanf(argv[1], "%d", &reg);
 
-		if (reg >= 0) {
-			unsigned int res = drv8301_read_reg(reg);
-			char bl[9];
-			char bh[9];
+// 		if (reg >= 0) {
+// 			unsigned int res = drv8301_read_reg(reg);
+// 			char bl[9];
+// 			char bh[9];
 
-			utils_byte_to_binary((res >> 8) & 0xFF, bh);
-			utils_byte_to_binary(res & 0xFF, bl);
+// 			utils_byte_to_binary((res >> 8) & 0xFF, bh);
+// 			utils_byte_to_binary(res & 0xFF, bl);
 
-			commands_printf("Reg 0x%02x: %s %s (0x%04x)\n", reg, bh, bl, res);
-		} else {
-			commands_printf("Invalid argument(s).\n");
-		}
-	} else {
-		commands_printf("This command requires one argument.\n");
-	}
-}
+// 			commands_printf("Reg 0x%02x: %s %s (0x%04x)\n", reg, bh, bl, res);
+// 		} else {
+// 			commands_printf("Invalid argument(s).\n");
+// 		}
+// 	} else {
+// 		commands_printf("This command requires one argument.\n");
+// 	}
+// }
 
-static void terminal_write_reg(int argc, const char **argv) {
-	if (argc == 3) {
-		int reg = -1;
-		int val = -1;
-		sscanf(argv[1], "%d", &reg);
-		sscanf(argv[2], "%x", &val);
+// static void terminal_write_reg(int argc, const char **argv) {
+// 	if (argc == 3) {
+// 		int reg = -1;
+// 		int val = -1;
+// 		sscanf(argv[1], "%d", &reg);
+// 		sscanf(argv[2], "%x", &val);
 
-		if (reg >= 0 && val >= 0) {
-			drv8301_write_reg(reg, val);
-			unsigned int res = drv8301_read_reg(reg);
-			char bl[9];
-			char bh[9];
+// 		if (reg >= 0 && val >= 0) {
+// 			drv8301_write_reg(reg, val);
+// 			unsigned int res = drv8301_read_reg(reg);
+// 			char bl[9];
+// 			char bh[9];
 
-			utils_byte_to_binary((res >> 8) & 0xFF, bh);
-			utils_byte_to_binary(res & 0xFF, bl);
+// 			utils_byte_to_binary((res >> 8) & 0xFF, bh);
+// 			utils_byte_to_binary(res & 0xFF, bl);
 
-			commands_printf("New reg value 0x%02x: %s %s (0x%04x)\n", reg, bh, bl, res);
-		} else {
-			commands_printf("Invalid argument(s).\n");
-		}
-	} else {
-		commands_printf("This command requires two arguments.\n");
-	}
-}
+// 			commands_printf("New reg value 0x%02x: %s %s (0x%04x)\n", reg, bh, bl, res);
+// 		} else {
+// 			commands_printf("Invalid argument(s).\n");
+// 		}
+// 	} else {
+// 		commands_printf("This command requires two arguments.\n");
+// 	}
+// }
 
-static void terminal_set_oc_adj(int argc, const char **argv) {
-	if (argc == 2) {
-		int val = -1;
-		sscanf(argv[1], "%d", &val);
+// static void terminal_set_oc_adj(int argc, const char **argv) {
+// 	if (argc == 2) {
+// 		int val = -1;
+// 		sscanf(argv[1], "%d", &val);
 
-		if (val >= 0 && val < 32) {
-			drv8301_set_oc_adj(val);
-			unsigned int res = drv8301_read_reg(5);
-			char bl[9];
-			char bh[9];
+// 		if (val >= 0 && val < 32) {
+// 			drv8301_set_oc_adj(val);
+// 			unsigned int res = drv8301_read_reg(5);
+// 			char bl[9];
+// 			char bh[9];
 
-			utils_byte_to_binary((res >> 8) & 0xFF, bh);
-			utils_byte_to_binary(res & 0xFF, bl);
+// 			utils_byte_to_binary((res >> 8) & 0xFF, bh);
+// 			utils_byte_to_binary(res & 0xFF, bl);
 
-			commands_printf("New reg value 0x%02x: %s %s (0x%04x)\n", 2, bh, bl, res);
-		} else {
-			commands_printf("Invalid argument(s).\n");
-		}
-	} else {
-		commands_printf("This command requires one argument.\n");
-	}
-}
+// 			commands_printf("New reg value 0x%02x: %s %s (0x%04x)\n", 2, bh, bl, res);
+// 		} else {
+// 			commands_printf("Invalid argument(s).\n");
+// 		}
+// 	} else {
+// 		commands_printf("This command requires one argument.\n");
+// 	}
+// }
 
-static void terminal_print_faults(int argc, const char **argv) {
-	(void)argc;
-	(void)argv;
-	commands_printf(drv8301_faults_to_string(drv8301_read_faults()));
-}
+// static void terminal_print_faults(int argc, const char **argv) {
+// 	(void)argc;
+// 	(void)argv;
+// 	commands_printf(drv8301_faults_to_string(drv8301_read_faults()));
+// }
 
 #endif

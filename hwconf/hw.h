@@ -420,7 +420,7 @@
 
 // Default ID
 #ifndef HW_DEFAULT_ID
-#define HW_DEFAULT_ID			(APPCONF_CONTROLLER_ID >= 0 ? APPCONF_CONTROLLER_ID : hw_id_from_uuid())
+#define HW_DEFAULT_ID			APPCONF_CONTROLLER_ID//(APPCONF_CONTROLLER_ID >= 0 ? APPCONF_CONTROLLER_ID : hw_id_from_uuid())
 #endif
 
 #ifndef HW_LIM_CURRENT
@@ -538,7 +538,7 @@ void hw_setup_adc_channels(void);
 void hw_start_i2c(void);
 void hw_stop_i2c(void);
 void hw_try_restore_i2c(void);
-uint8_t hw_id_from_uuid(void);
+// uint8_t hw_id_from_uuid(void);
 uint8_t hw_id_from_pins(void);
 
 #endif /* HW_H_ */

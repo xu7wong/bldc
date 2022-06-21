@@ -27,7 +27,7 @@
 #elif defined(HW60_IS_MK5)
 #define HW_NAME					"60_MK5"
 #else
-#define HW_NAME					"60"
+#define HW_NAME					"UBCO"
 #endif
 
 #define HW_MAJOR				6
@@ -53,10 +53,10 @@
 #define DCCAL_OFF()
 #define IS_DRV_FAULT()			(!palReadPad(GPIOB, 7))
 
-#define LED_GREEN_ON()			palSetPad(GPIOB, 0)
-#define LED_GREEN_OFF()			palClearPad(GPIOB, 0)
-#define LED_RED_ON()			palSetPad(GPIOB, 1)
-#define LED_RED_OFF()			palClearPad(GPIOB, 1)
+// #define LED_GREEN_ON()			palSetPad(GPIOB, 0)
+// #define LED_GREEN_OFF()			palClearPad(GPIOB, 0)
+// #define LED_RED_ON()			palSetPad(GPIOB, 1)
+// #define LED_RED_OFF()			palClearPad(GPIOB, 1)
 
 #define CURRENT_FILTER_ON()		palSetPad(GPIOD, 2)
 #define CURRENT_FILTER_OFF()	palClearPad(GPIOD, 2)
@@ -224,35 +224,35 @@
 #define HW_UART_RX_PORT			GPIOB
 #define HW_UART_RX_PIN			11
 
-#if defined(HW60_IS_MK3) || defined(HW60_IS_MK4) || defined(HW60_IS_MK5)
-// Permanent UART Peripheral (for NRF51)
-#define HW_UART_P_BAUD			115200
-#define HW_UART_P_DEV			SD4
-#define HW_UART_P_DEV_TX		SD5 // UART for TX, due to mistake below
-#define HW_UART_P_GPIO_AF		GPIO_AF_UART4
-#define HW_UART_P_TX_PORT		GPIOC
-#define HW_UART_P_TX_PIN		12 // This is a mistake in the HW. We have to use a hack to use UART5.
-#define HW_UART_P_RX_PORT		GPIOC
-#define HW_UART_P_RX_PIN		11
-#endif
+// #if defined(HW60_IS_MK3) || defined(HW60_IS_MK4) || defined(HW60_IS_MK5)
+// // Permanent UART Peripheral (for NRF51)
+// #define HW_UART_P_BAUD			115200
+// #define HW_UART_P_DEV			SD4
+// #define HW_UART_P_DEV_TX		SD5 // UART for TX, due to mistake below
+// #define HW_UART_P_GPIO_AF		GPIO_AF_UART4
+// #define HW_UART_P_TX_PORT		GPIOC
+// #define HW_UART_P_TX_PIN		12 // This is a mistake in the HW. We have to use a hack to use UART5.
+// #define HW_UART_P_RX_PORT		GPIOC
+// #define HW_UART_P_RX_PIN		11
+// #endif
 
 // ICU Peripheral for servo decoding
-#define HW_USE_SERVO_TIM4
-#define HW_ICU_TIMER			TIM4
-#define HW_ICU_TIM_CLK_EN()		RCC_APB1PeriphClockCmd(RCC_APB1Periph_TIM4, ENABLE)
-#define HW_ICU_DEV				ICUD4
-#define HW_ICU_CHANNEL			ICU_CHANNEL_1
-#define HW_ICU_GPIO_AF			GPIO_AF_TIM4
-#define HW_ICU_GPIO				GPIOB
-#define HW_ICU_PIN				6
+#define HW_USE_SERVO_TIM4	0
+// #define HW_ICU_TIMER			TIM4
+// #define HW_ICU_TIM_CLK_EN()		RCC_APB1PeriphClockCmd(RCC_APB1Periph_TIM4, ENABLE)
+// #define HW_ICU_DEV				ICUD4
+// #define HW_ICU_CHANNEL			ICU_CHANNEL_1
+// #define HW_ICU_GPIO_AF			GPIO_AF_TIM4
+// #define HW_ICU_GPIO				GPIOB
+// #define HW_ICU_PIN				6
 
 // I2C Peripheral
-#define HW_I2C_DEV				I2CD2
-#define HW_I2C_GPIO_AF			GPIO_AF_I2C2
-#define HW_I2C_SCL_PORT			GPIOB
-#define HW_I2C_SCL_PIN			10
-#define HW_I2C_SDA_PORT			GPIOB
-#define HW_I2C_SDA_PIN			11
+// #define HW_I2C_DEV				I2CD2
+// #define HW_I2C_GPIO_AF			GPIO_AF_I2C2
+// #define HW_I2C_SCL_PORT			GPIOB
+// #define HW_I2C_SCL_PIN			10
+// #define HW_I2C_SDA_PORT			GPIOB
+// #define HW_I2C_SDA_PIN			11
 
 // Hall/encoder pins
 #define HW_HALL_ENC_GPIO1		GPIOC
@@ -261,40 +261,40 @@
 #define HW_HALL_ENC_PIN2		7
 #define HW_HALL_ENC_GPIO3		GPIOC
 #define HW_HALL_ENC_PIN3		8
-#define HW_ENC_TIM				TIM3
-#define HW_ENC_TIM_AF			GPIO_AF_TIM3
-#define HW_ENC_TIM_CLK_EN()		RCC_APB1PeriphClockCmd(RCC_APB1Periph_TIM3, ENABLE)
-#define HW_ENC_EXTI_PORTSRC		EXTI_PortSourceGPIOC
-#define HW_ENC_EXTI_PINSRC		EXTI_PinSource8
-#define HW_ENC_EXTI_CH			EXTI9_5_IRQn
-#define HW_ENC_EXTI_LINE		EXTI_Line8
-#define HW_ENC_EXTI_ISR_VEC		EXTI9_5_IRQHandler
-#define HW_ENC_TIM_ISR_CH		TIM3_IRQn
-#define HW_ENC_TIM_ISR_VEC		TIM3_IRQHandler
+// #define HW_ENC_TIM				TIM3
+// #define HW_ENC_TIM_AF			GPIO_AF_TIM3
+// #define HW_ENC_TIM_CLK_EN()		RCC_APB1PeriphClockCmd(RCC_APB1Periph_TIM3, ENABLE)
+// #define HW_ENC_EXTI_PORTSRC		EXTI_PortSourceGPIOC
+// #define HW_ENC_EXTI_PINSRC		EXTI_PinSource8
+// #define HW_ENC_EXTI_CH			EXTI9_5_IRQn
+// #define HW_ENC_EXTI_LINE		EXTI_Line8
+// #define HW_ENC_EXTI_ISR_VEC		EXTI9_5_IRQHandler
+// #define HW_ENC_TIM_ISR_CH		TIM3_IRQn
+// #define HW_ENC_TIM_ISR_VEC		TIM3_IRQHandler
 
-#if !defined(HW60_IS_MK3) && !defined(HW60_IS_MK4) && !defined(HW60_IS_MK5)
-// NRF pins
-#define NRF_PORT_CSN			GPIOB
-#define NRF_PIN_CSN				12
-#define NRF_PORT_SCK			GPIOB
-#define NRF_PIN_SCK				4
-#define NRF_PORT_MOSI			GPIOB
-#define NRF_PIN_MOSI			3
-#define NRF_PORT_MISO			GPIOD
-#define NRF_PIN_MISO			2
-#endif
+// #if !defined(HW60_IS_MK3) && !defined(HW60_IS_MK4) && !defined(HW60_IS_MK5)
+// // NRF pins
+// #define NRF_PORT_CSN			GPIOB
+// #define NRF_PIN_CSN				12
+// #define NRF_PORT_SCK			GPIOB
+// #define NRF_PIN_SCK				4
+// #define NRF_PORT_MOSI			GPIOB
+// #define NRF_PIN_MOSI			3
+// #define NRF_PORT_MISO			GPIOD
+// #define NRF_PIN_MISO			2
+// #endif
 
 // SPI pins
-#define HW_SPI_DEV				SPID1
-#define HW_SPI_GPIO_AF			GPIO_AF_SPI1
-#define HW_SPI_PORT_NSS			GPIOA
-#define HW_SPI_PIN_NSS			4
-#define HW_SPI_PORT_SCK			GPIOA
-#define HW_SPI_PIN_SCK			5
-#define HW_SPI_PORT_MOSI		GPIOA
-#define HW_SPI_PIN_MOSI			7
-#define HW_SPI_PORT_MISO		GPIOA
-#define HW_SPI_PIN_MISO			6
+// #define HW_SPI_DEV				SPID1
+// #define HW_SPI_GPIO_AF			GPIO_AF_SPI1
+// #define HW_SPI_PORT_NSS			GPIOA
+// #define HW_SPI_PIN_NSS			4
+// #define HW_SPI_PORT_SCK			GPIOA
+// #define HW_SPI_PIN_SCK			5
+// #define HW_SPI_PORT_MOSI		GPIOA
+// #define HW_SPI_PIN_MOSI			7
+// #define HW_SPI_PORT_MISO		GPIOA
+// #define HW_SPI_PIN_MISO			6
 
 // SPI for DRV8301
 #if !defined(HW60_IS_MK3) && !defined(HW60_IS_MK4) && !defined(HW60_IS_MK5)
@@ -317,21 +317,21 @@
 #define DRV8301_CS_PIN			9
 #endif
 
-// MPU9250
-#if !defined(HW60_IS_MK4) && !defined(HW60_IS_MK5)
-#define MPU9X50_SDA_GPIO		GPIOB
-#define MPU9X50_SDA_PIN			2
-#define MPU9X50_SCL_GPIO		GPIOA
-#define MPU9X50_SCL_PIN			15
-#define IMU_FLIP
-#else
-#define BMI160_SDA_GPIO			GPIOB
-#define BMI160_SDA_PIN			2
-#define BMI160_SCL_GPIO			GPIOA
-#define BMI160_SCL_PIN			15
-#define IMU_FLIP
-#define IMU_ROT_180
-#endif
+// // MPU9250
+// #if !defined(HW60_IS_MK4) && !defined(HW60_IS_MK5)
+// #define MPU9X50_SDA_GPIO		GPIOB
+// #define MPU9X50_SDA_PIN			2
+// #define MPU9X50_SCL_GPIO		GPIOA
+// #define MPU9X50_SCL_PIN			15
+// #define IMU_FLIP
+// #else
+// #define BMI160_SDA_GPIO			GPIOB
+// #define BMI160_SDA_PIN			2
+// #define BMI160_SCL_GPIO			GPIOA
+// #define BMI160_SCL_PIN			15
+// #define IMU_FLIP
+// #define IMU_ROT_180
+// #endif
 
 #if defined(HW60_IS_MK3) || defined(HW60_IS_MK4) || defined(HW60_IS_MK5)
 // NRF SWD

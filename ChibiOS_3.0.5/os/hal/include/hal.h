@@ -32,34 +32,34 @@
 #include "hal_lld.h"
 
 /* Abstract interfaces.*/
-#include "hal_streams.h"
-#include "hal_channels.h"
-#include "hal_files.h"
-#include "hal_ioblock.h"
-#include "hal_mmcsd.h"
+// #include "hal_streams.h"
+// #include "hal_channels.h"
+// #include "hal_files.h"
+// #include "hal_ioblock.h"
+// #include "hal_mmcsd.h"
 
 /* Shared headers.*/
-#include "hal_queues.h"
+// #include "hal_queues.h"
 
 /* Normal drivers.*/
 #include "pal.h"
-#include "adc.h"
-#include "can.h"
-#include "dac.h"
-#include "ext.h"
-#include "gpt.h"
-#include "i2c.h"
-#include "i2s.h"
-#include "icu.h"
-#include "mac.h"
-#include "mii.h"
-#include "pwm.h"
-#include "rtc.h"
-#include "serial.h"
-#include "sdc.h"
+// #include "adc.h"
+// #include "can.h"
+// #include "dac.h"
+// #include "ext.h"
+// #include "gpt.h"
+// #include "i2c.h"
+// #include "i2s.h"
+// #include "icu.h"
+// #include "mac.h"
+// #include "mii.h"
+// #include "pwm.h"
+// #include "rtc.h"
+// #include "serial.h"
+// #include "sdc.h"
 #include "spi.h"
-#include "uart.h"
-#include "usb.h"
+// #include "uart.h"
+// #include "usb.h"
 
 /*
  *  The ST driver is a special case, it is only included if the OSAL is
@@ -70,8 +70,8 @@
 #endif
 
 /* Complex drivers.*/
-#include "mmc_spi.h"
-#include "serial_usb.h"
+// #include "mmc_spi.h"
+// #include "serial_usb.h"
 
 /* Community drivers.*/
 #if defined(HAL_USE_COMMUNITY) || defined(__DOXYGEN__)

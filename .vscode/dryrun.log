@@ -1,0 +1,5 @@
+make --dry-run --keep-going --print-directory
+make: Entering directory `/Users/carlw/Documents/GitHub/bldc'
+make: Nothing to be done for `all'.
+make: Leaving directory `/Users/carlw/Documents/GitHub/bldc'
+ 

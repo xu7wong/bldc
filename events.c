@@ -43,7 +43,7 @@ static volatile int m_event_now = 0;
 // static mutex_t m_mtx;
 
 // Private functions
-static void terminal_print(int argc, const char **argv);
+// static void terminal_print(int argc, const char **argv);
 
 void events_init(void) {
 	// chMtxObjectInit(&m_mtx);
@@ -94,26 +94,26 @@ void events_add(const char *name, float param) {
 	// chMtxUnlock(&m_mtx);
 }
 
-static void terminal_print(int argc, const char **argv) {
-	(void)argc; (void)argv;
+// static void terminal_print(int argc, const char **argv) {
+// 	(void)argc; (void)argv;
 
-	int event = m_event_now;
-	int print_cnt = 0;
+// 	int event = m_event_now;
+// 	int print_cnt = 0;
 
-	do {
-		volatile event_t *e = &m_events[event];
+// 	do {
+// 		volatile event_t *e = &m_events[event];
 
-		if (e->set) {
-			print_cnt++;
-			commands_printf("Age    : %.2f s", (double)UTILS_AGE_S(e->time));
-			commands_printf("Thread : %s", e->thread->p_name);
-			commands_printf("Motor  : %i", e->thread->motor_selected);
-			commands_printf("Command: %s", e->name);
-			commands_printf("Param  : %.3f\n", (double)e->param);
-		}
+// 		if (e->set) {
+// 			print_cnt++;
+// 			commands_printf("Age    : %.2f s", (double)UTILS_AGE_S(e->time));
+// 			commands_printf("Thread : %s", e->thread->p_name);
+// 			commands_printf("Motor  : %i", e->thread->motor_selected);
+// 			commands_printf("Command: %s", e->name);
+// 			commands_printf("Param  : %.3f\n", (double)e->param);
+// 		}
 
-		event = (event + 1) % EVENTS_LEN;
-	} while (event != m_event_now);
+// 		event = (event + 1) % EVENTS_LEN;
+// 	} while (event != m_event_now);
 
-	commands_printf("Events total: %d\n", print_cnt);
-}
+// 	commands_printf("Events total: %d\n", print_cnt);
+// }

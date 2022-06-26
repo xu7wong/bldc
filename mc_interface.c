@@ -38,7 +38,7 @@
 #include "mempools.h"
 // #include "crc.h"
 // #include "bms.h"
-#include "events.h"
+// #include "events.h"
 
 #include <math.h>
 #include <stdlib.h>
@@ -633,7 +633,7 @@ void mc_interface_set_duty(float dutyCycle) {
 		break;
 	}
 
-	events_add("set_duty", dutyCycle);
+	// events_add("set_duty", dutyCycle);
 }
 
 void mc_interface_set_duty_noramp(float dutyCycle) {
@@ -659,7 +659,7 @@ void mc_interface_set_duty_noramp(float dutyCycle) {
 		break;
 	}
 
-	events_add("set_duty_noramp", dutyCycle);
+	// events_add("set_duty_noramp", dutyCycle);
 }
 
 void mc_interface_set_pid_speed(float rpm) {
@@ -685,7 +685,7 @@ void mc_interface_set_pid_speed(float rpm) {
 		break;
 	}
 
-	events_add("set_pid_speed", rpm);
+	// events_add("set_pid_speed", rpm);
 }
 
 void mc_interface_set_pid_pos(float pos) {
@@ -724,7 +724,7 @@ void mc_interface_set_pid_pos(float pos) {
 		break;
 	}
 
-	events_add("set_pid_pos", pos);
+	// events_add("set_pid_pos", pos);
 }
 
 void mc_interface_set_current(float current) {
@@ -750,7 +750,7 @@ void mc_interface_set_current(float current) {
 		break;
 	}
 
-	events_add("set_current", current);
+	// events_add("set_current", current);
 }
 
 void mc_interface_set_brake_current(float current) {
@@ -781,7 +781,7 @@ void mc_interface_set_brake_current(float current) {
 		break;
 	}
 
-	events_add("set_current_brake", current);
+	// events_add("set_current_brake", current);
 }
 
 /**
@@ -842,7 +842,7 @@ void mc_interface_set_handbrake(float current) {
 		break;
 	}
 
-	events_add("set_handbrake", current);
+	// events_add("set_handbrake", current);
 }
 
 /**
@@ -887,7 +887,7 @@ void mc_interface_release_motor_override(void) {
 		break;
 	}
 
-	events_add("release_motor_override", 0.0);
+	// events_add("release_motor_override", 0.0);
 }
 
 bool mc_interface_wait_for_motor_release(float timeout) {

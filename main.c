@@ -35,7 +35,7 @@
 // #include "terminal.h"
 #include "hw.h"
 // #include "app.h"
-#include "packet.h"
+// #include "packet.h"
 // #include "commands.h"
 #include "timeout.h"
 // #include "comm_can.h"
@@ -53,7 +53,7 @@
 // #endif
 //#include "shutdown.h"
 #include "mempools.h"
-#include "events.h"
+// #include "events.h"
 #include "main.h"
 
 // #ifdef USE_LISPBM
@@ -227,7 +227,7 @@ int main(void) {
 
 	chThdSleepMilliseconds(100);
 
-	events_init();
+	// events_init();
 	hw_init_gpio();
 	// LED_RED_OFF();
 	// LED_GREEN_OFF();

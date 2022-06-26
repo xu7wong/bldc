@@ -136,7 +136,6 @@ CSRC = $(STM32SRC) $(STARTUPSRC) \
        irq_handlers.c \
        buffer.c \
        digital_filter.c \
-       mcpwm.c \
        utils.c \
        conf_general.c \
        timeout.c \

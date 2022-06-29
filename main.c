@@ -314,18 +314,10 @@ int main(void) {
 	// m_init_done = true;
 
 	for(;;) {
-		// chThdSleepMilliseconds(1000);
-		for(uint8_t x = 0; x < 10; x++){
-			mc_interface_set_current((float)2.0);
+		chThdSleepMilliseconds(1000);
+		mc_interface_set_current((float)2.0);
 		// mc_interface_set_pid_speed((float)2500.0);
 		//mcpwm_foc_set_pid_speed((float)2500.0);
-			timeout_reset();
-			chThdSleepMilliseconds(500);
-		}
-		for(uint8_t y = 0; y < 5; y++){
-			mc_interface_set_brake_current((float)0.2);
-			chThdSleepMilliseconds(500);
-		}
-		chThdSleepMilliseconds(500);
+		timeout_reset();
 	}
 }

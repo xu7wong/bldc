@@ -127,7 +127,7 @@ void halInit(void) {
 #endif
 
   /* Board specific initialization.*/
-  // boardInit();
+  boardInit();
 
 /*
  *  The ST driver is a special case, it is only initialized if the OSAL is

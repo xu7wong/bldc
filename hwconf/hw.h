@@ -539,6 +539,6 @@ void hw_start_i2c(void);
 void hw_stop_i2c(void);
 void hw_try_restore_i2c(void);
 // uint8_t hw_id_from_uuid(void);
-// uint8_t hw_id_from_pins(void);
+uint8_t hw_id_from_pins(void);
 
 #endif /* HW_H_ */

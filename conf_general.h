@@ -74,7 +74,7 @@
 //#define HW60_IS_MK4
 //#define HW60_IS_MK5
 
-#define HW_SOURCE //"hw_60.c"
+#define HW_SOURCE "hw_60.c"
 #define HW_HEADER "hw_60.h"
 
 //#define HW_SOURCE "hw_r2.c"
@@ -352,13 +352,13 @@ extern volatile backup_data g_backup;
 // bool conf_general_store_eeprom_var_custom(eeprom_var *v, int address);
 // void conf_general_read_app_configuration(app_configuration *conf);
 // bool conf_general_store_app_configuration(app_configuration *conf);
-// void conf_general_read_mc_configuration(mc_configuration *conf, bool is_motor_2);
+void conf_general_read_mc_configuration(mc_configuration *conf, bool is_motor_2);
 // bool conf_general_store_mc_configuration(mc_configuration *conf, bool is_motor_2);
 // bool conf_general_detect_motor_param(float current, float min_rpm, float low_duty,
 // 		float *int_limit, float *bemf_coupling_k, int8_t *hall_table, int *hall_res);
 // bool conf_general_measure_flux_linkage(float current, float duty,
 // 		float min_erpm, float res, float *linkage);
-
+uint8_t conf_general_calculate_deadtime(float deadtime_ns, float core_clock_freq);
 // bool conf_general_measure_flux_linkage_openloop(float current, float duty,
 // 		float erpm_per_sec, float res, float ind, float *linkage,
 // 		float *linkage_undriven, float *undriven_samples);

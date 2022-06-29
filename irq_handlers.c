@@ -26,12 +26,12 @@
 #include "hw.h"
 // #include "encoder.h"
 
-CH_IRQ_HANDLER(ADC1_2_3_IRQHandler) {
-	CH_IRQ_PROLOGUE();
-	ADC_ClearITPendingBit(ADC1, ADC_IT_JEOC);
-	mc_interface_adc_inj_int_handler();
-	CH_IRQ_EPILOGUE();
-}
+// CH_IRQ_HANDLER(ADC1_2_3_IRQHandler) {
+// 	CH_IRQ_PROLOGUE();
+// 	ADC_ClearITPendingBit(ADC1, ADC_IT_JEOC);
+// 	mc_interface_adc_inj_int_handler();
+// 	CH_IRQ_EPILOGUE();
+// }
 
 // CH_IRQ_HANDLER(HW_ENC_EXTI_ISR_VEC) {
 // 	if (EXTI_GetITStatus(HW_ENC_EXTI_LINE) != RESET) {

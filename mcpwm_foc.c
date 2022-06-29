@@ -212,8 +212,8 @@ static void control_current(volatile motor_all_state_t *motor, float dt);
 static void update_valpha_vbeta(volatile motor_all_state_t *motor, float mod_alpha, float mod_beta);
 static void svm(float alpha, float beta, uint32_t PWMFullDutyCycle,
 				uint32_t* tAout, uint32_t* tBout, uint32_t* tCout, uint32_t *svm_sector);
-static void run_pid_control_pos(float dt, volatile motor_all_state_t *motor);
-static void run_pid_control_speed(float dt, volatile motor_all_state_t *motor);
+// static void run_pid_control_pos(float dt, volatile motor_all_state_t *motor);
+// static void run_pid_control_speed(float dt, volatile motor_all_state_t *motor);
 static void stop_pwm_hw(volatile motor_all_state_t *motor);
 static void start_pwm_hw(volatile motor_all_state_t *motor);
 static float correct_encoder(float obs_angle, float enc_angle, float speed, float sl_erpm, volatile motor_all_state_t *motor);
@@ -223,19 +223,19 @@ static float correct_hall(float angle, float dt, volatile motor_all_state_t *mot
 static void run_fw(volatile motor_all_state_t *motor, float dt);
 static void timer_update(volatile motor_all_state_t *motor, float dt);
 static void input_current_offset_measurement( void );
-static void hfi_update(volatile motor_all_state_t *motor);
+// static void hfi_update(volatile motor_all_state_t *motor);
 
 // Threads
 static THD_WORKING_AREA(timer_thread_wa, 1024);
 static THD_FUNCTION(timer_thread, arg);
 static volatile bool timer_thd_stop;
 
-static THD_WORKING_AREA(hfi_thread_wa, 1024);
-static THD_FUNCTION(hfi_thread, arg);
+// static THD_WORKING_AREA(hfi_thread_wa, 1024);
+// static THD_FUNCTION(hfi_thread, arg);
 static volatile bool hfi_thd_stop;
 
-static THD_WORKING_AREA(pid_thread_wa, 512);
-static THD_FUNCTION(pid_thread, arg);
+// static THD_WORKING_AREA(pid_thread_wa, 512);
+// static THD_FUNCTION(pid_thread, arg);
 static volatile bool pid_thd_stop;
 
 // Macros
@@ -3470,186 +3470,186 @@ static THD_FUNCTION(timer_thread, arg) {
 	}
 }
 
-static void hfi_update(volatile motor_all_state_t *motor) {
-	float rpm_abs = fabsf(RADPS2RPM_f(motor->m_speed_est_fast));
+// static void hfi_update(volatile motor_all_state_t *motor) {
+// 	float rpm_abs = fabsf(RADPS2RPM_f(motor->m_speed_est_fast));
 
-	if (rpm_abs > motor->m_conf->foc_sl_erpm_hfi) {
-		motor->m_hfi.angle = motor->m_phase_now_observer;
-	}
+// 	if (rpm_abs > motor->m_conf->foc_sl_erpm_hfi) {
+// 		motor->m_hfi.angle = motor->m_phase_now_observer;
+// 	}
 
-	if (motor->m_hfi.ready) {
-		float real_bin1, imag_bin1, real_bin2, imag_bin2;
-		motor->m_hfi.fft_bin1_func((float*)motor->m_hfi.buffer, &real_bin1, &imag_bin1);
-		motor->m_hfi.fft_bin2_func((float*)motor->m_hfi.buffer, &real_bin2, &imag_bin2);
+// 	if (motor->m_hfi.ready) {
+// 		float real_bin1, imag_bin1, real_bin2, imag_bin2;
+// 		motor->m_hfi.fft_bin1_func((float*)motor->m_hfi.buffer, &real_bin1, &imag_bin1);
+// 		motor->m_hfi.fft_bin2_func((float*)motor->m_hfi.buffer, &real_bin2, &imag_bin2);
 
-		// float mag_bin_1 = sqrtf(SQ(imag_bin1) + SQ(real_bin1));
-		float angle_bin_1 = -utils_fast_atan2(imag_bin1, real_bin1);
+// 		// float mag_bin_1 = sqrtf(SQ(imag_bin1) + SQ(real_bin1));
+// 		float angle_bin_1 = -utils_fast_atan2(imag_bin1, real_bin1);
 
-		angle_bin_1 += M_PI / 1.7; // Why 1.7??
-		utils_norm_angle_rad(&angle_bin_1);
+// 		angle_bin_1 += M_PI / 1.7; // Why 1.7??
+// 		utils_norm_angle_rad(&angle_bin_1);
 
-		// float mag_bin_2 = sqrtf(SQ(imag_bin2) + SQ(real_bin2));
-		float angle_bin_2 = -utils_fast_atan2(imag_bin2, real_bin2) / 2.0;
+// 		// float mag_bin_2 = sqrtf(SQ(imag_bin2) + SQ(real_bin2));
+// 		float angle_bin_2 = -utils_fast_atan2(imag_bin2, real_bin2) / 2.0;
 
-		// Assuming this thread is much faster than it takes to fill the HFI buffer completely,
-		// we should lag 1/2 HFI buffer behind in phase. Compensate for that here.
-		float dt_sw;
-		if (motor->m_conf->foc_sample_v0_v7) {
-			dt_sw = 1.0 / motor->m_conf->foc_f_zv;
-		} else {
-			dt_sw = 1.0 / (motor->m_conf->foc_f_zv / 2.0);
-		}
-		angle_bin_2 += motor->m_motor_state.speed_rad_s * ((float)motor->m_hfi.samples / 2.0) * dt_sw;
+// 		// Assuming this thread is much faster than it takes to fill the HFI buffer completely,
+// 		// we should lag 1/2 HFI buffer behind in phase. Compensate for that here.
+// 		float dt_sw;
+// 		if (motor->m_conf->foc_sample_v0_v7) {
+// 			dt_sw = 1.0 / motor->m_conf->foc_f_zv;
+// 		} else {
+// 			dt_sw = 1.0 / (motor->m_conf->foc_f_zv / 2.0);
+// 		}
+// 		angle_bin_2 += motor->m_motor_state.speed_rad_s * ((float)motor->m_hfi.samples / 2.0) * dt_sw;
 
-		if (fabsf(utils_angle_difference_rad(angle_bin_2 + M_PI, motor->m_hfi.angle)) <
-				fabsf(utils_angle_difference_rad(angle_bin_2, motor->m_hfi.angle))) {
-			angle_bin_2 += M_PI;
-		}
+// 		if (fabsf(utils_angle_difference_rad(angle_bin_2 + M_PI, motor->m_hfi.angle)) <
+// 				fabsf(utils_angle_difference_rad(angle_bin_2, motor->m_hfi.angle))) {
+// 			angle_bin_2 += M_PI;
+// 		}
 
-		if (motor->m_hfi.est_done_cnt < motor->m_conf->foc_hfi_start_samples) {
-			motor->m_hfi.est_done_cnt++;
+// 		if (motor->m_hfi.est_done_cnt < motor->m_conf->foc_hfi_start_samples) {
+// 			motor->m_hfi.est_done_cnt++;
 
-			if (fabsf(utils_angle_difference_rad(angle_bin_2, angle_bin_1)) > (M_PI / 2.0)) {
-				motor->m_hfi.flip_cnt++;
-			}
-		}
+// 			if (fabsf(utils_angle_difference_rad(angle_bin_2, angle_bin_1)) > (M_PI / 2.0)) {
+// 				motor->m_hfi.flip_cnt++;
+// 			}
+// 		}
 
-		if (motor->m_hfi.est_done_cnt >= motor->m_conf->foc_hfi_start_samples) {
-			if (motor->m_hfi.flip_cnt >= (motor->m_conf->foc_hfi_start_samples / 2)) {
-				angle_bin_2 += M_PI;
-			}
-			motor->m_hfi.flip_cnt = 0;
+// 		if (motor->m_hfi.est_done_cnt >= motor->m_conf->foc_hfi_start_samples) {
+// 			if (motor->m_hfi.flip_cnt >= (motor->m_conf->foc_hfi_start_samples / 2)) {
+// 				angle_bin_2 += M_PI;
+// 			}
+// 			motor->m_hfi.flip_cnt = 0;
 
-			if (motor->m_conf->foc_sensor_mode == FOC_SENSOR_MODE_HFI_START) {
-				float s, c;
-				utils_norm_angle_rad(&angle_bin_2);
-				utils_fast_sincos_better(angle_bin_2, &s, &c);
-				motor->m_observer_x1 = c * motor->m_conf->foc_motor_flux_linkage;
-				motor->m_observer_x2 = s * motor->m_conf->foc_motor_flux_linkage;
-			}
-		}
+// 			if (motor->m_conf->foc_sensor_mode == FOC_SENSOR_MODE_HFI_START) {
+// 				float s, c;
+// 				utils_norm_angle_rad(&angle_bin_2);
+// 				utils_fast_sincos_better(angle_bin_2, &s, &c);
+// 				motor->m_observer_x1 = c * motor->m_conf->foc_motor_flux_linkage;
+// 				motor->m_observer_x2 = s * motor->m_conf->foc_motor_flux_linkage;
+// 			}
+// 		}
 
-		motor->m_hfi.angle = angle_bin_2;
-		utils_norm_angle_rad((float*)&motor->m_hfi.angle);
+// 		motor->m_hfi.angle = angle_bin_2;
+// 		utils_norm_angle_rad((float*)&motor->m_hfi.angle);
 
-		// As angle_bin_1 is based on saturation, it is only accurate when the motor current is low. It
-		// might be possible to compensate for that, which would allow HFI on non-salient motors.
-		//			m_hfi.angle = angle_bin_1;
+// 		// As angle_bin_1 is based on saturation, it is only accurate when the motor current is low. It
+// 		// might be possible to compensate for that, which would allow HFI on non-salient motors.
+// 		//			m_hfi.angle = angle_bin_1;
 
-		if (motor->m_hfi_plot_en == 1) {
-			static float hfi_plot_div = 0;
-			hfi_plot_div++;
+// 		if (motor->m_hfi_plot_en == 1) {
+// 			static float hfi_plot_div = 0;
+// 			hfi_plot_div++;
 
-			if (hfi_plot_div >= 8) {
-				hfi_plot_div = 0;
+// 			if (hfi_plot_div >= 8) {
+// 				hfi_plot_div = 0;
 
-				float real_bin0, imag_bin0;
-				motor->m_hfi.fft_bin0_func((float*)motor->m_hfi.buffer, &real_bin0, &imag_bin0);
+// 				float real_bin0, imag_bin0;
+// 				motor->m_hfi.fft_bin0_func((float*)motor->m_hfi.buffer, &real_bin0, &imag_bin0);
 
-				// commands_plot_set_graph(0);
-				// commands_send_plot_points(motor->m_hfi_plot_sample, motor->m_hfi.angle);
+// 				// commands_plot_set_graph(0);
+// 				// commands_send_plot_points(motor->m_hfi_plot_sample, motor->m_hfi.angle);
 
-				// commands_plot_set_graph(1);
-				// commands_send_plot_points(motor->m_hfi_plot_sample, angle_bin_1);
+// 				// commands_plot_set_graph(1);
+// 				// commands_send_plot_points(motor->m_hfi_plot_sample, angle_bin_1);
 
-				// commands_plot_set_graph(2);
-				// commands_send_plot_points(motor->m_hfi_plot_sample, 2.0 * mag_bin_2 * 1e6);
+// 				// commands_plot_set_graph(2);
+// 				// commands_send_plot_points(motor->m_hfi_plot_sample, 2.0 * mag_bin_2 * 1e6);
 
-				// commands_plot_set_graph(3);
-				// commands_send_plot_points(motor->m_hfi_plot_sample, 2.0 * mag_bin_1 * 1e6);
+// 				// commands_plot_set_graph(3);
+// 				// commands_send_plot_points(motor->m_hfi_plot_sample, 2.0 * mag_bin_1 * 1e6);
 
-				// commands_plot_set_graph(4);
-				// commands_send_plot_points(motor->m_hfi_plot_sample, real_bin0 * 1e6);
+// 				// commands_plot_set_graph(4);
+// 				// commands_send_plot_points(motor->m_hfi_plot_sample, real_bin0 * 1e6);
 
-//					commands_plot_set_graph(0);
-//					commands_send_plot_points(motor->m_hfi_plot_sample, motor->m_motor_state.speed_rad_s);
-//
-//					commands_plot_set_graph(1);
-//					commands_send_plot_points(motor->m_hfi_plot_sample, motor->m_speed_est_fast);
+// //					commands_plot_set_graph(0);
+// //					commands_send_plot_points(motor->m_hfi_plot_sample, motor->m_motor_state.speed_rad_s);
+// //
+// //					commands_plot_set_graph(1);
+// //					commands_send_plot_points(motor->m_hfi_plot_sample, motor->m_speed_est_fast);
 
-				motor->m_hfi_plot_sample++;
-			}
-		} else if (motor->m_hfi_plot_en == 2) {
-			static float hfi_plot_div = 0;
-			hfi_plot_div++;
+// 				motor->m_hfi_plot_sample++;
+// 			}
+// 		} else if (motor->m_hfi_plot_en == 2) {
+// 			static float hfi_plot_div = 0;
+// 			hfi_plot_div++;
 
-			if (hfi_plot_div >= 8) {
-				hfi_plot_div = 0;
+// 			if (hfi_plot_div >= 8) {
+// 				hfi_plot_div = 0;
 
-				if (motor->m_hfi_plot_sample >= motor->m_hfi.samples) {
-					motor->m_hfi_plot_sample = 0;
-				}
+// 				if (motor->m_hfi_plot_sample >= motor->m_hfi.samples) {
+// 					motor->m_hfi_plot_sample = 0;
+// 				}
 
-				// commands_plot_set_graph(0);
-				// commands_send_plot_points(motor->m_hfi_plot_sample, motor->m_hfi.buffer_current[(int)motor->m_hfi_plot_sample]);
+// 				// commands_plot_set_graph(0);
+// 				// commands_send_plot_points(motor->m_hfi_plot_sample, motor->m_hfi.buffer_current[(int)motor->m_hfi_plot_sample]);
 
-				// commands_plot_set_graph(1);
-				// commands_send_plot_points(motor->m_hfi_plot_sample, motor->m_hfi.buffer[(int)motor->m_hfi_plot_sample] * 1e6);
+// 				// commands_plot_set_graph(1);
+// 				// commands_send_plot_points(motor->m_hfi_plot_sample, motor->m_hfi.buffer[(int)motor->m_hfi_plot_sample] * 1e6);
 
-				motor->m_hfi_plot_sample++;
-			}
-		}
-	} else {
-		motor->m_hfi.angle = motor->m_phase_now_observer;
-	}
-}
+// 				motor->m_hfi_plot_sample++;
+// 			}
+// 		}
+// 	} else {
+// 		motor->m_hfi.angle = motor->m_phase_now_observer;
+// 	}
+// }
 
-static THD_FUNCTION(hfi_thread, arg) {
-	(void)arg;
+// static THD_FUNCTION(hfi_thread, arg) {
+// 	(void)arg;
 
-	chRegSetThreadName("foc hfi");
+// 	chRegSetThreadName("foc hfi");
 
-	for(;;) {
-		if (hfi_thd_stop) {
-			hfi_thd_stop = false;
-			return;
-		}
+// 	for(;;) {
+// 		if (hfi_thd_stop) {
+// 			hfi_thd_stop = false;
+// 			return;
+// 		}
 
-		hfi_update(&m_motor_1);
-#ifdef HW_HAS_DUAL_MOTORS
-		hfi_update(&m_motor_2);
-#endif
+// 		hfi_update(&m_motor_1);
+// #ifdef HW_HAS_DUAL_MOTORS
+// 		hfi_update(&m_motor_2);
+// #endif
 
-		chThdSleepMicroseconds(500);
-	}
-}
+// 		chThdSleepMicroseconds(500);
+// 	}
+// }
 
-static THD_FUNCTION(pid_thread, arg) {
-	(void)arg;
+// static THD_FUNCTION(pid_thread, arg) {
+// 	(void)arg;
 
-	chRegSetThreadName("foc pid");
+// 	chRegSetThreadName("foc pid");
 
-	uint32_t last_time = timer_time_now();
+// 	uint32_t last_time = timer_time_now();
 
-	for(;;) {
-		if (pid_thd_stop) {
-			pid_thd_stop = false;
-			return;
-		}
+// 	for(;;) {
+// 		if (pid_thd_stop) {
+// 			pid_thd_stop = false;
+// 			return;
+// 		}
 
-		switch (m_motor_1.m_conf->sp_pid_loop_rate) {
-		case PID_RATE_25_HZ: chThdSleepMicroseconds(1000000 / 25); break;
-		case PID_RATE_50_HZ: chThdSleepMicroseconds(1000000 / 50); break;
-		case PID_RATE_100_HZ: chThdSleepMicroseconds(1000000 / 100); break;
-		case PID_RATE_250_HZ: chThdSleepMicroseconds(1000000 / 250); break;
-		case PID_RATE_500_HZ: chThdSleepMicroseconds(1000000 / 500); break;
-		case PID_RATE_1000_HZ: chThdSleepMicroseconds(1000000 / 1000); break;
-		case PID_RATE_2500_HZ: chThdSleepMicroseconds(1000000 / 2500); break;
-		case PID_RATE_5000_HZ: chThdSleepMicroseconds(1000000 / 5000); break;
-		case PID_RATE_10000_HZ: chThdSleepMicroseconds(1000000 / 10000); break;
-		}
+// 		switch (m_motor_1.m_conf->sp_pid_loop_rate) {
+// 		case PID_RATE_25_HZ: chThdSleepMicroseconds(1000000 / 25); break;
+// 		case PID_RATE_50_HZ: chThdSleepMicroseconds(1000000 / 50); break;
+// 		case PID_RATE_100_HZ: chThdSleepMicroseconds(1000000 / 100); break;
+// 		case PID_RATE_250_HZ: chThdSleepMicroseconds(1000000 / 250); break;
+// 		case PID_RATE_500_HZ: chThdSleepMicroseconds(1000000 / 500); break;
+// 		case PID_RATE_1000_HZ: chThdSleepMicroseconds(1000000 / 1000); break;
+// 		case PID_RATE_2500_HZ: chThdSleepMicroseconds(1000000 / 2500); break;
+// 		case PID_RATE_5000_HZ: chThdSleepMicroseconds(1000000 / 5000); break;
+// 		case PID_RATE_10000_HZ: chThdSleepMicroseconds(1000000 / 10000); break;
+// 		}
 
-		float dt = timer_seconds_elapsed_since(last_time);
-		last_time = timer_time_now();
+// 		float dt = timer_seconds_elapsed_since(last_time);
+// 		last_time = timer_time_now();
 
-		run_pid_control_pos(dt, &m_motor_1);
-		run_pid_control_speed(dt, &m_motor_1);
-#ifdef HW_HAS_DUAL_MOTORS
-		run_pid_control_pos(dt, &m_motor_2);
-		run_pid_control_speed(dt, &m_motor_2);
-#endif
-	}
-}
+// 		run_pid_control_pos(dt, &m_motor_1);
+// 		run_pid_control_speed(dt, &m_motor_1);
+// #ifdef HW_HAS_DUAL_MOTORS
+// 		run_pid_control_pos(dt, &m_motor_2);
+// 		run_pid_control_speed(dt, &m_motor_2);
+// #endif
+// 	}
+// }
 
 // See http://cas.ensmp.fr/~praly/Telechargement/Journaux/2010-IEEE_TPEL-Lee-Hong-Nam-Ortega-Praly-Astolfi.pdf
 void observer_update(float v_alpha, float v_beta, float i_alpha, float i_beta,
@@ -3846,7 +3846,7 @@ static void control_current(volatile motor_all_state_t *motor, float dt) {
 	// Decoupling. Using feedforward this compensates for the fact that the equations of a PMSM
 	// are not really decoupled (the d axis current has impact on q axis voltage and visa-versa):
     //      Resistance  Inductance   Cross terms   Back-EMF   (see www.mathworks.com/help/physmod/sps/ref/pmsm.html)
-    // vd = Rs*id   +   Ld*did/dt �??  ωe*iq*Lq
+    // vd = Rs*id   +   Ld*did/dt �??  ωe*iq*Lq
     // vq = Rs*iq   +   Lq*diq/dt +  ωe*id*Ld     + ωe*ψm
 	float dec_vd = 0.0;
 	float dec_vq = 0.0;
@@ -4317,178 +4317,178 @@ static void svm(float alpha, float beta, uint32_t PWMFullDutyCycle,
 	*svm_sector = sector;
 }
 
-static void run_pid_control_pos(float dt, volatile motor_all_state_t *motor) {
-	volatile mc_configuration *conf_now = motor->m_conf;
+// static void run_pid_control_pos(float dt, volatile motor_all_state_t *motor) {
+// 	volatile mc_configuration *conf_now = motor->m_conf;
 
-	float angle_now = motor->m_pos_pid_now;
-	float angle_set = motor->m_pos_pid_set;
+// 	float angle_now = motor->m_pos_pid_now;
+// 	float angle_set = motor->m_pos_pid_set;
 
-	float p_term;
-	float d_term;
-	float d_term_proc;
+// 	float p_term;
+// 	float d_term;
+// 	float d_term_proc;
 
-	// PID is off. Return.
-	if (motor->m_control_mode != CONTROL_MODE_POS) {
-		motor->m_pos_i_term = 0;
-		motor->m_pos_prev_error = 0;
-		motor->m_pos_prev_proc = angle_now;
-		motor->m_pos_d_filter = 0.0;
-		motor->m_pos_d_filter_proc = 0.0;
-		return;
-	}
+// 	// PID is off. Return.
+// 	if (motor->m_control_mode != CONTROL_MODE_POS) {
+// 		motor->m_pos_i_term = 0;
+// 		motor->m_pos_prev_error = 0;
+// 		motor->m_pos_prev_proc = angle_now;
+// 		motor->m_pos_d_filter = 0.0;
+// 		motor->m_pos_d_filter_proc = 0.0;
+// 		return;
+// 	}
 
-	// Compute parameters
-	float error = utils_angle_difference(angle_set, angle_now);
-	float error_sign = 1.0;
+// 	// Compute parameters
+// 	float error = utils_angle_difference(angle_set, angle_now);
+// 	float error_sign = 1.0;
 
-	// if (encoder_is_configured()) {
-	// 	if (conf_now->foc_encoder_inverted) {
-	// 		error_sign = -1.0;
-	// 	}
-	// }
+// 	// if (encoder_is_configured()) {
+// 	// 	if (conf_now->foc_encoder_inverted) {
+// 	// 		error_sign = -1.0;
+// 	// 	}
+// 	// }
 
-	error *= error_sign;
+// 	error *= error_sign;
 
-	float kp = conf_now->p_pid_kp;
-	float ki = conf_now->p_pid_ki;
-	float kd = conf_now->p_pid_kd;
-	float kd_proc = conf_now->p_pid_kd_proc;
+// 	float kp = conf_now->p_pid_kp;
+// 	float ki = conf_now->p_pid_ki;
+// 	float kd = conf_now->p_pid_kd;
+// 	float kd_proc = conf_now->p_pid_kd_proc;
 
-	if (conf_now->p_pid_gain_dec_angle > 0.1) {
-		float min_error = conf_now->p_pid_gain_dec_angle / conf_now->p_pid_ang_div;
-		float error_abs = fabs(error);
+// 	if (conf_now->p_pid_gain_dec_angle > 0.1) {
+// 		float min_error = conf_now->p_pid_gain_dec_angle / conf_now->p_pid_ang_div;
+// 		float error_abs = fabs(error);
 
-		if (error_abs < min_error) {
-			float scale = error_abs / min_error;
-			kp *= scale;
-			ki *= scale;
-			kd *= scale;
-			kd_proc *= scale;
-		}
-	}
+// 		if (error_abs < min_error) {
+// 			float scale = error_abs / min_error;
+// 			kp *= scale;
+// 			ki *= scale;
+// 			kd *= scale;
+// 			kd_proc *= scale;
+// 		}
+// 	}
 
-	p_term = error * kp;
-	motor->m_pos_i_term += error * (ki * dt);
+// 	p_term = error * kp;
+// 	motor->m_pos_i_term += error * (ki * dt);
 
-	// Average DT for the D term when the error does not change. This likely
-	// happens at low speed when the position resolution is low and several
-	// control iterations run without position updates.
-	// TODO: Are there problems with this approach?
-	motor->m_pos_dt_int += dt;
-	if (error == motor->m_pos_prev_error) {
-		d_term = 0.0;
-	} else {
-		d_term = (error - motor->m_pos_prev_error) * (kd / motor->m_pos_dt_int);
-		motor->m_pos_dt_int = 0.0;
-	}
+// 	// Average DT for the D term when the error does not change. This likely
+// 	// happens at low speed when the position resolution is low and several
+// 	// control iterations run without position updates.
+// 	// TODO: Are there problems with this approach?
+// 	motor->m_pos_dt_int += dt;
+// 	if (error == motor->m_pos_prev_error) {
+// 		d_term = 0.0;
+// 	} else {
+// 		d_term = (error - motor->m_pos_prev_error) * (kd / motor->m_pos_dt_int);
+// 		motor->m_pos_dt_int = 0.0;
+// 	}
 
-	// Filter D
-	UTILS_LP_FAST(motor->m_pos_d_filter, d_term, conf_now->p_pid_kd_filter);
-	d_term = motor->m_pos_d_filter;
+// 	// Filter D
+// 	UTILS_LP_FAST(motor->m_pos_d_filter, d_term, conf_now->p_pid_kd_filter);
+// 	d_term = motor->m_pos_d_filter;
 
-	// Process D term
-	motor->m_pos_dt_int_proc += dt;
-	if (angle_now == motor->m_pos_prev_proc) {
-		d_term_proc = 0.0;
-	} else {
-		d_term_proc = -utils_angle_difference(angle_now, motor->m_pos_prev_proc) * error_sign * (kd_proc / motor->m_pos_dt_int_proc);
-		motor->m_pos_dt_int_proc = 0.0;
-	}
+// 	// Process D term
+// 	motor->m_pos_dt_int_proc += dt;
+// 	if (angle_now == motor->m_pos_prev_proc) {
+// 		d_term_proc = 0.0;
+// 	} else {
+// 		d_term_proc = -utils_angle_difference(angle_now, motor->m_pos_prev_proc) * error_sign * (kd_proc / motor->m_pos_dt_int_proc);
+// 		motor->m_pos_dt_int_proc = 0.0;
+// 	}
 
-	// Filter D process
-	UTILS_LP_FAST(motor->m_pos_d_filter_proc, d_term_proc, conf_now->p_pid_kd_filter);
-	d_term_proc = motor->m_pos_d_filter_proc;
+// 	// Filter D process
+// 	UTILS_LP_FAST(motor->m_pos_d_filter_proc, d_term_proc, conf_now->p_pid_kd_filter);
+// 	d_term_proc = motor->m_pos_d_filter_proc;
 
-	// I-term wind-up protection
-	float p_tmp = p_term;
-	utils_truncate_number_abs(&p_tmp, 1.0);
-	utils_truncate_number_abs((float*)&motor->m_pos_i_term, 1.0 - fabsf(p_tmp));
+// 	// I-term wind-up protection
+// 	float p_tmp = p_term;
+// 	utils_truncate_number_abs(&p_tmp, 1.0);
+// 	utils_truncate_number_abs((float*)&motor->m_pos_i_term, 1.0 - fabsf(p_tmp));
 
-	// Store previous error
-	motor->m_pos_prev_error = error;
-	motor->m_pos_prev_proc = angle_now;
+// 	// Store previous error
+// 	motor->m_pos_prev_error = error;
+// 	motor->m_pos_prev_proc = angle_now;
 
-	// Calculate output
-	float output = p_term + motor->m_pos_i_term + d_term + d_term_proc;
-	utils_truncate_number(&output, -1.0, 1.0);
+// 	// Calculate output
+// 	float output = p_term + motor->m_pos_i_term + d_term + d_term_proc;
+// 	utils_truncate_number(&output, -1.0, 1.0);
 
-	// if (encoder_is_configured()) {
-	// 	if (encoder_index_found()) {
-	// 		motor->m_iq_set = output * conf_now->l_current_max * conf_now->l_current_max_scale;;
-	// 	} else {
-	// 		// Rotate the motor with 40 % power until the encoder index is found.
-	// 		motor->m_iq_set = 0.4 * conf_now->l_current_max * conf_now->l_current_max_scale;;
-	// 	}
-	// } else {
-		motor->m_iq_set = output * conf_now->l_current_max * conf_now->l_current_max_scale;;
-	// }
-}
+// 	// if (encoder_is_configured()) {
+// 	// 	if (encoder_index_found()) {
+// 	// 		motor->m_iq_set = output * conf_now->l_current_max * conf_now->l_current_max_scale;;
+// 	// 	} else {
+// 	// 		// Rotate the motor with 40 % power until the encoder index is found.
+// 	// 		motor->m_iq_set = 0.4 * conf_now->l_current_max * conf_now->l_current_max_scale;;
+// 	// 	}
+// 	// } else {
+// 		motor->m_iq_set = output * conf_now->l_current_max * conf_now->l_current_max_scale;;
+// 	// }
+// }
 
-static void run_pid_control_speed(float dt, volatile motor_all_state_t *motor) {
-	volatile mc_configuration *conf_now = motor->m_conf;
-	float p_term;
-	float d_term;
+// static void run_pid_control_speed(float dt, volatile motor_all_state_t *motor) {
+// 	volatile mc_configuration *conf_now = motor->m_conf;
+// 	float p_term;
+// 	float d_term;
 
-	// PID is off. Return.
-	if (motor->m_control_mode != CONTROL_MODE_SPEED) {
-		motor->m_speed_i_term = 0.0;
-		motor->m_speed_prev_error = 0.0;
-		motor->m_speed_d_filter = 0.0;
-		return;
-	}
+// 	// PID is off. Return.
+// 	if (motor->m_control_mode != CONTROL_MODE_SPEED) {
+// 		motor->m_speed_i_term = 0.0;
+// 		motor->m_speed_prev_error = 0.0;
+// 		motor->m_speed_d_filter = 0.0;
+// 		return;
+// 	}
 
-	if (conf_now->s_pid_ramp_erpms_s > 0.0) {
-		utils_step_towards((float*)&motor->m_speed_pid_set_rpm, motor->m_speed_command_rpm, conf_now->s_pid_ramp_erpms_s * dt);
-	}
+// 	if (conf_now->s_pid_ramp_erpms_s > 0.0) {
+// 		utils_step_towards((float*)&motor->m_speed_pid_set_rpm, motor->m_speed_command_rpm, conf_now->s_pid_ramp_erpms_s * dt);
+// 	}
 
-	const float rpm = mcpwm_foc_get_rpm();
-	float error = motor->m_speed_pid_set_rpm - rpm;
+// 	const float rpm = mcpwm_foc_get_rpm();
+// 	float error = motor->m_speed_pid_set_rpm - rpm;
 
-	// Too low RPM set. Reset state and return.
-	if (fabsf(motor->m_speed_pid_set_rpm) < conf_now->s_pid_min_erpm) {
-		motor->m_speed_i_term = 0.0;
-		motor->m_speed_prev_error = error;
-		return;
-	}
+// 	// Too low RPM set. Reset state and return.
+// 	if (fabsf(motor->m_speed_pid_set_rpm) < conf_now->s_pid_min_erpm) {
+// 		motor->m_speed_i_term = 0.0;
+// 		motor->m_speed_prev_error = error;
+// 		return;
+// 	}
 
-	// Compute parameters
-	p_term = error * conf_now->s_pid_kp * (1.0 / 20.0);
-	d_term = (error - motor->m_speed_prev_error) * (conf_now->s_pid_kd / dt) * (1.0 / 20.0);
+// 	// Compute parameters
+// 	p_term = error * conf_now->s_pid_kp * (1.0 / 20.0);
+// 	d_term = (error - motor->m_speed_prev_error) * (conf_now->s_pid_kd / dt) * (1.0 / 20.0);
 
-	// Filter D
-	UTILS_LP_FAST(motor->m_speed_d_filter, d_term, conf_now->s_pid_kd_filter);
-	d_term = motor->m_speed_d_filter;
+// 	// Filter D
+// 	UTILS_LP_FAST(motor->m_speed_d_filter, d_term, conf_now->s_pid_kd_filter);
+// 	d_term = motor->m_speed_d_filter;
 
-	// Store previous error
-	motor->m_speed_prev_error = error;
+// 	// Store previous error
+// 	motor->m_speed_prev_error = error;
 
-	// Calculate output
-	utils_truncate_number_abs(&p_term, 1.0);
-	utils_truncate_number_abs(&d_term, 1.0);
-	float output = p_term + motor->m_speed_i_term + d_term;
-	float pre_output = output;
-	utils_truncate_number_abs(&output, 1.0);
+// 	// Calculate output
+// 	utils_truncate_number_abs(&p_term, 1.0);
+// 	utils_truncate_number_abs(&d_term, 1.0);
+// 	float output = p_term + motor->m_speed_i_term + d_term;
+// 	float pre_output = output;
+// 	utils_truncate_number_abs(&output, 1.0);
 
-	float output_saturation = output - pre_output;
+// 	float output_saturation = output - pre_output;
 
-	motor->m_speed_i_term += error * (conf_now->s_pid_ki * dt) * (1.0 / 20.0) + output_saturation;
-	if (conf_now->s_pid_ki < 1e-9) {
-		motor->m_speed_i_term = 0.0;
-	}
+// 	motor->m_speed_i_term += error * (conf_now->s_pid_ki * dt) * (1.0 / 20.0) + output_saturation;
+// 	if (conf_now->s_pid_ki < 1e-9) {
+// 		motor->m_speed_i_term = 0.0;
+// 	}
 
-	// Optionally disable braking
-	if (!conf_now->s_pid_allow_braking) {
-		if (rpm > 20.0 && output < 0.0) {
-			output = 0.0;
-		}
+// 	// Optionally disable braking
+// 	if (!conf_now->s_pid_allow_braking) {
+// 		if (rpm > 20.0 && output < 0.0) {
+// 			output = 0.0;
+// 		}
 
-		if (rpm < -20.0 && output > 0.0) {
-			output = 0.0;
-		}
-	}
+// 		if (rpm < -20.0 && output > 0.0) {
+// 			output = 0.0;
+// 		}
+// 	}
 
-	motor->m_iq_set = output * conf_now->l_current_max * conf_now->l_current_max_scale;
-}
+// 	motor->m_iq_set = output * conf_now->l_current_max * conf_now->l_current_max_scale;
+// }
 
 static void stop_pwm_hw(volatile motor_all_state_t *motor) {
 	motor->m_id_set = 0.0;

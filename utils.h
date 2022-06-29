@@ -67,6 +67,7 @@ uint16_t utils_median_filter_uint16_run(uint16_t *buffer,
 		unsigned int *buffer_index, unsigned int filter_len, uint16_t sample);
 const char* utils_hw_type_to_string(HW_TYPE hw);
 
+uint8_t conf_general_calculate_deadtime(float deadtime_ns, float core_clock_freq);
 // Return the sign of the argument. -1.0 if negative, 1.0 if zero or positive.
 #define SIGN(x)				(((x) < 0.0) ? -1.0 : 1.0)
 

@@ -121,7 +121,7 @@ int mc_interface_try_input(void);
 void mc_interface_mc_timer_isr(bool is_second_motor);
 
 // Interrupt handlers
-void mc_interface_adc_inj_int_handler(void);
+// void mc_interface_adc_inj_int_handler(void);
 
 // External variables
 extern volatile uint16_t ADC_Value[];

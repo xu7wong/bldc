@@ -101,7 +101,7 @@ void halInit(void) {
   sdcInit();
 #endif
 #if (HAL_USE_SPI == TRUE) || defined(__DOXYGEN__)
-  spiInit();
+  // spiInit();
 #endif
 #if (HAL_USE_UART == TRUE) || defined(__DOXYGEN__)
   uartInit();

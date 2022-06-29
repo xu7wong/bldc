@@ -58,10 +58,10 @@ endif
 # ifneq ($(findstring HAL_USE_SERIAL_USB TRUE,$(HALCONF)),)
 # HALSRC += $(CHIBIOS)/os/hal/src/serial_usb.c
 # endif
-ifneq ($(findstring HAL_USE_SPI TRUE,$(HALCONF)),)
-HALSRC += $(CHIBIOS)/os/hal/src/spi_lld.c
-HALSRC += $(CHIBIOS)/os/hal/src/spi.c
-endif
+# ifneq ($(findstring HAL_USE_SPI TRUE,$(HALCONF)),)
+# HALSRC += $(CHIBIOS)/os/hal/src/spi_lld.c
+# HALSRC += $(CHIBIOS)/os/hal/src/spi.c
+# endif
 # ifneq ($(findstring HAL_USE_UART TRUE,$(HALCONF)),)
 # HALSRC += $(CHIBIOS)/os/hal/src/uart.c
 # endif

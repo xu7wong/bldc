@@ -6,7 +6,6 @@ HALCONF := $(strip $(shell cat halconf.h | egrep -e "define"))
 HALSRC := $(CHIBIOS)/os/hal/src/hal.c \
           $(CHIBIOS)/os/hal/src/st.c \
           $(CHIBIOS)/os/hal/src/nvic.c \
-          $(CHIBIOS)/os/hal/src/stm32_dma.c \
           $(CHIBIOS)/os/hal/src/hal_lld.c \
           $(CHIBIOS)/os/hal/src/st_lld.c
 # ifneq ($(findstring HAL_USE_ADC TRUE,$(HALCONF)),)

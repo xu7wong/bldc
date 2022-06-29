@@ -127,7 +127,7 @@ void hal_lld_init(void) {
   hal_lld_backup_domain_init();
 
 #if defined(STM32_DMA_REQUIRED)
-  dmaInit();
+  // dmaInit();
 #endif
 
   /* Programmable voltage detector enable.*/

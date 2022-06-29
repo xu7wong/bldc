@@ -331,6 +331,9 @@
 
 #if !defined(STM32_DMA_REQUIRED)
 #define STM32_DMA_REQUIRED
+
+#define STM32_DMA_ISR_MASK          0x3D
+
 #endif
 
 #endif /* _HALCONF_H_ */

@@ -26,7 +26,7 @@
 
 // Functions
 void mcpwm_foc_init(volatile mc_configuration *conf_m1, volatile mc_configuration *conf_m2);
-void mcpwm_foc_deinit(void);
+// void mcpwm_foc_deinit(void);
 bool mcpwm_foc_init_done(void);
 void mcpwm_foc_set_configuration(volatile mc_configuration *configuration);
 mc_state mcpwm_foc_get_state(void);
@@ -78,7 +78,7 @@ float mcpwm_foc_measure_resistance(float current, int samples, bool stop_after);
 float mcpwm_foc_measure_inductance(float duty, int samples, float *curr, float *ld_lq_diff);
 float mcpwm_foc_measure_inductance_current(float curr_goal, int samples, float *curr, float *ld_lq_diff);
 bool mcpwm_foc_measure_res_ind(float *res, float *ind, float *ld_lq_diff);
-bool mcpwm_foc_hall_detect(float current, uint8_t *hall_table);
+// bool mcpwm_foc_hall_detect(float current, uint8_t *hall_table);
 int mcpwm_foc_dc_cal(bool cal_undriven);
 void mcpwm_foc_print_state(void);
 float mcpwm_foc_get_last_adc_isr_duration(void);

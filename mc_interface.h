@@ -116,7 +116,7 @@ float mc_interface_stat_count_time(void);
 void mc_interface_stat_reset(void);
 
 // MC implementation functions
-void mc_interface_fault_stop(mc_fault_code fault, bool is_second_motor, bool is_isr);
+// void mc_interface_fault_stop(mc_fault_code fault, bool is_second_motor, bool is_isr);
 int mc_interface_try_input(void);
 void mc_interface_mc_timer_isr(bool is_second_motor);
 

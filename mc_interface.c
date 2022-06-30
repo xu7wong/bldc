@@ -29,13 +29,13 @@
 #include "hal.h"
 // #include "commands.h"
 // #include "encoder.h"
-#include "buffer.h"
+// #include "buffer.h"
 // #include "gpdrive.h"
 // #include "comm_can.h"
 // #include "shutdown.h"
 // #include "app.h"
 #include "utils.h"
-#include "mempools.h"
+// #include "mempools.h"
 // #include "crc.h"
 // #include "bms.h"
 // #include "events.h"
@@ -132,27 +132,27 @@ static volatile motor_if_state_t *motor_now(void);
 static void(*pwn_done_func)(void) = 0;
 
 // Threads
-static THD_WORKING_AREA(timer_thread_wa, 1024);
-static THD_FUNCTION(timer_thread, arg);
+// static THD_WORKING_AREA(timer_thread_wa, 1024);
+// static THD_FUNCTION(timer_thread, arg);
 // static THD_WORKING_AREA(sample_send_thread_wa, 512);
 // static THD_FUNCTION(sample_send_thread, arg);
-static thread_t *sample_send_tp;
-static THD_WORKING_AREA(fault_stop_thread_wa, 512);
-static THD_FUNCTION(fault_stop_thread, arg);
-static thread_t *fault_stop_tp;
-static THD_WORKING_AREA(stat_thread_wa, 512);
-static THD_FUNCTION(stat_thread, arg);
+// static thread_t *sample_send_tp;
+// static THD_WORKING_AREA(fault_stop_thread_wa, 512);
+// static THD_FUNCTION(fault_stop_thread, arg);
+// static thread_t *fault_stop_tp;
+// static THD_WORKING_AREA(stat_thread_wa, 512);
+// static THD_FUNCTION(stat_thread, arg);
 
 void mc_interface_init(void) {
 	memset((void*)&m_motor_1, 0, sizeof(motor_if_state_t));
 #ifdef HW_HAS_DUAL_MOTORS
 	memset((void*)&m_motor_2, 0, sizeof(motor_if_state_t));
 #endif
-
-	conf_general_read_mc_configuration((mc_configuration*)&m_motor_1.m_conf, false);
-#ifdef HW_HAS_DUAL_MOTORS
-	conf_general_read_mc_configuration((mc_configuration*)&m_motor_2.m_conf, true);
-#endif
+	confgenerator_set_defaults_mcconf(&m_motor_1.m_conf);
+	// conf_general_read_mc_configuration((mc_configuration*)&m_motor_1.m_conf, false);
+// #ifdef HW_HAS_DUAL_MOTORS
+// 	conf_general_read_mc_configuration((mc_configuration*)&m_motor_2.m_conf, true);
+// #endif
 
 #ifdef HW_HAS_DUAL_MOTORS
 	m_motor_1.m_conf.motor_type = MOTOR_TYPE_FOC;
@@ -423,33 +423,34 @@ void mc_interface_set_configuration(mc_configuration *configuration) {
 	mc_interface_select_motor_thread(1);
 #endif
 
-	if (motor->m_conf.motor_type != configuration->motor_type) {
-		// mcpwm_deinit();
-		mcpwm_foc_deinit();
-		// gpdrive_deinit();
+// 	if (motor->m_conf.motor_type != configuration->motor_type) {
+// 		// mcpwm_deinit();
+// 		mcpwm_foc_deinit();
+// 		// gpdrive_deinit();
 
+// 		motor->m_conf = *configuration;
+
+// 		switch (motor->m_conf.motor_type) {
+
+// 		case MOTOR_TYPE_FOC:
+// #ifdef HW_HAS_DUAL_MOTORS
+// 			mcpwm_foc_init(&m_motor_1.m_conf, &m_motor_2.m_conf);
+// #else
+// 			mcpwm_foc_init(&m_motor_1.m_conf, &m_motor_1.m_conf);
+// #endif
+// 			break;
+
+// 		// case MOTOR_TYPE_GPD:
+// 		// 	gpdrive_init(&motor->m_conf);
+// 		// 	break;
+
+// 		default:
+// 			break;
+// 		}
+// 	} 
+// 	else {
 		motor->m_conf = *configuration;
-
-		switch (motor->m_conf.motor_type) {
-
-		case MOTOR_TYPE_FOC:
-#ifdef HW_HAS_DUAL_MOTORS
-			mcpwm_foc_init(&m_motor_1.m_conf, &m_motor_2.m_conf);
-#else
-			mcpwm_foc_init(&m_motor_1.m_conf, &m_motor_1.m_conf);
-#endif
-			break;
-
-		// case MOTOR_TYPE_GPD:
-		// 	gpdrive_init(&motor->m_conf);
-		// 	break;
-
-		default:
-			break;
-		}
-	} else {
-		motor->m_conf = *configuration;
-	}
+	// }
 	//&motor->m_conf.lo_current_max = 80;
 	motor->m_conf.lo_current_max = 80;//lo_max;
 	motor->m_conf.lo_current_min = 0;//lo_min;
@@ -1321,25 +1322,25 @@ float mc_interface_get_last_sample_adc_isr_duration(void) {
 	return m_last_adc_duration_sample;
 }
 
-void mc_interface_sample_print_data(debug_sampling_mode mode, uint16_t len, uint8_t decimation, bool raw) {
-	if (len > ADC_SAMPLE_MAX_LEN) {
-		len = ADC_SAMPLE_MAX_LEN;
-	}
+// void mc_interface_sample_print_data(debug_sampling_mode mode, uint16_t len, uint8_t decimation, bool raw) {
+// 	if (len > ADC_SAMPLE_MAX_LEN) {
+// 		len = ADC_SAMPLE_MAX_LEN;
+// 	}
 
-	if (mode == DEBUG_SAMPLING_SEND_LAST_SAMPLES) {
-		chEvtSignal(sample_send_tp, (eventmask_t) 1);
-	} else {
-		m_sample_trigger = -1;
-		m_sample_now = 0;
-		m_sample_len = len;
-		m_sample_int = decimation;
-		m_sample_mode = mode;
-		m_sample_raw = raw;
-#ifdef HW_HAS_DUAL_MOTORS
-		m_sample_is_second_motor = motor_now() == &m_motor_2;
-#endif
-	}
-}
+// 	if (mode == DEBUG_SAMPLING_SEND_LAST_SAMPLES) {
+// 		chEvtSignal(sample_send_tp, (eventmask_t) 1);
+// 	} else {
+// 		m_sample_trigger = -1;
+// 		m_sample_now = 0;
+// 		m_sample_len = len;
+// 		m_sample_int = decimation;
+// 		m_sample_mode = mode;
+// 		m_sample_raw = raw;
+// #ifdef HW_HAS_DUAL_MOTORS
+// 		m_sample_is_second_motor = motor_now() == &m_motor_2;
+// #endif
+// 	}
+// }
 
 /**
  * Get filtered MOSFET temperature. The temperature is pre-calculated, so this
@@ -1609,18 +1610,18 @@ int mc_interface_try_input(void) {
 	return retval;
 }
 
-void mc_interface_fault_stop(mc_fault_code fault, bool is_second_motor, bool is_isr) {
-	m_fault_stop_fault = fault;
-	m_fault_stop_is_second_motor = is_second_motor;
+// void mc_interface_fault_stop(mc_fault_code fault, bool is_second_motor, bool is_isr) {
+// 	m_fault_stop_fault = fault;
+// 	m_fault_stop_is_second_motor = is_second_motor;
 
-	if (is_isr) {
-		chSysLockFromISR();
-		chEvtSignalI(fault_stop_tp, (eventmask_t) 1);
-		chSysUnlockFromISR();
-	} else {
-		chEvtSignal(fault_stop_tp, (eventmask_t) 1);
-	}
-}
+// 	if (is_isr) {
+// 		chSysLockFromISR();
+// 		chEvtSignalI(fault_stop_tp, (eventmask_t) 1);
+// 		chSysUnlockFromISR();
+// 	} else {
+// 		chEvtSignal(fault_stop_tp, (eventmask_t) 1);
+// 	}
+// }
 
 void mc_interface_mc_timer_isr(bool is_second_motor) {
 	// ledpwm_update_pwm();
@@ -1652,8 +1653,8 @@ void mc_interface_mc_timer_isr(bool is_second_motor) {
 
 		const float max_voltage = (conf_now->l_max_vin * 0.05);
 		if (wrong_voltage_integrator > max_voltage) {
-			mc_interface_fault_stop(input_voltage < conf_now->l_min_vin ?
-					FAULT_CODE_UNDER_VOLTAGE : FAULT_CODE_OVER_VOLTAGE, is_second_motor, true);
+			// mc_interface_fault_stop(input_voltage < conf_now->l_min_vin ?
+			// 		FAULT_CODE_UNDER_VOLTAGE : FAULT_CODE_OVER_VOLTAGE, is_second_motor, true);
 
 			// Windup protection
 			wrong_voltage_integrator = max_voltage * 2.0;
@@ -1717,45 +1718,45 @@ void mc_interface_mc_timer_isr(bool is_second_motor) {
 	motor->m_motor_vq_iterations++;
 
 	// Current fault code
-	if (conf_now->l_slow_abs_current) {
-		if (fabsf(abs_current_filtered) > conf_now->l_abs_current_max) {
-			mc_interface_fault_stop(FAULT_CODE_ABS_OVER_CURRENT, is_second_motor, true);
-		}
-	} else {
-		if (fabsf(abs_current) > conf_now->l_abs_current_max) {
-			mc_interface_fault_stop(FAULT_CODE_ABS_OVER_CURRENT, is_second_motor, true);
-		}
-	}
+	// if (conf_now->l_slow_abs_current) {
+	// 	if (fabsf(abs_current_filtered) > conf_now->l_abs_current_max) {
+	// 		mc_interface_fault_stop(FAULT_CODE_ABS_OVER_CURRENT, is_second_motor, true);
+	// 	}
+	// } else {
+	// 	if (fabsf(abs_current) > conf_now->l_abs_current_max) {
+	// 		mc_interface_fault_stop(FAULT_CODE_ABS_OVER_CURRENT, is_second_motor, true);
+	// 	}
+	// }
 
-	// DRV fault code
-#ifdef HW_HAS_DUAL_PARALLEL
-	if (IS_DRV_FAULT() || IS_DRV_FAULT_2()) {
-		is_second_motor = IS_DRV_FAULT_2();
-#else
-	if (is_second_motor ? IS_DRV_FAULT_2() : IS_DRV_FAULT()) {
-#endif
-		mc_interface_fault_stop(FAULT_CODE_DRV, is_second_motor, true);
-	}
+// 	// DRV fault code
+// #ifdef HW_HAS_DUAL_PARALLEL
+// 	if (IS_DRV_FAULT() || IS_DRV_FAULT_2()) {
+// 		is_second_motor = IS_DRV_FAULT_2();
+// #else
+// 	if (is_second_motor ? IS_DRV_FAULT_2() : IS_DRV_FAULT()) {
+// #endif
+// 		mc_interface_fault_stop(FAULT_CODE_DRV, is_second_motor, true);
+// 	}
 
-#ifdef HW_USE_BRK
-	// BRK fault code
-	if (TIM_GetFlagStatus(TIM1, TIM_FLAG_Break) != RESET) {
-		mc_interface_fault_stop(FAULT_CODE_BRK, is_second_motor, true);
-		// latch the BRK/FAULT pin to low until next MCU reset
-		palSetPadMode(BRK_GPIO, BRK_PIN, PAL_MODE_OUTPUT_PUSHPULL);
-		palClearPad(BRK_GPIO, BRK_PIN);
-	}
-#endif
+// #ifdef HW_USE_BRK
+// 	// BRK fault code
+// 	if (TIM_GetFlagStatus(TIM1, TIM_FLAG_Break) != RESET) {
+// 		mc_interface_fault_stop(FAULT_CODE_BRK, is_second_motor, true);
+// 		// latch the BRK/FAULT pin to low until next MCU reset
+// 		palSetPadMode(BRK_GPIO, BRK_PIN, PAL_MODE_OUTPUT_PUSHPULL);
+// 		palClearPad(BRK_GPIO, BRK_PIN);
+// 	}
+// #endif
 
-#ifdef HW_HAS_GATE_DRIVER_SUPPLY_MONITOR
-	if(motor->m_gate_driver_voltage > HW_GATE_DRIVER_SUPPLY_MAX_VOLTAGE) {
-		mc_interface_fault_stop(FAULT_CODE_GATE_DRIVER_OVER_VOLTAGE, is_second_motor, true);
-	}
+// #ifdef HW_HAS_GATE_DRIVER_SUPPLY_MONITOR
+// 	if(motor->m_gate_driver_voltage > HW_GATE_DRIVER_SUPPLY_MAX_VOLTAGE) {
+// 		mc_interface_fault_stop(FAULT_CODE_GATE_DRIVER_OVER_VOLTAGE, is_second_motor, true);
+// 	}
 
-	if(motor->m_gate_driver_voltage < HW_GATE_DRIVER_SUPPLY_MIN_VOLTAGE) {
-		mc_interface_fault_stop(FAULT_CODE_GATE_DRIVER_UNDER_VOLTAGE, is_second_motor, true);
-	}
-#endif
+// 	if(motor->m_gate_driver_voltage < HW_GATE_DRIVER_SUPPLY_MIN_VOLTAGE) {
+// 		mc_interface_fault_stop(FAULT_CODE_GATE_DRIVER_UNDER_VOLTAGE, is_second_motor, true);
+// 	}
+// #endif
 
 	float f_samp = motor->m_f_samp_now;
 
@@ -2545,20 +2546,20 @@ void mc_interface_stat_reset(void) {
 	s->max_temp_motor = -300.0;
 }
 
-static THD_FUNCTION(stat_thread, arg) {
-	(void)arg;
+// static THD_FUNCTION(stat_thread, arg) {
+// 	(void)arg;
 
-	chRegSetThreadName("StatCounter");
+// 	chRegSetThreadName("StatCounter");
 
-	for(;;) {
-		update_stats(&m_motor_1);
-#ifdef HW_HAS_DUAL_MOTORS
-		update_stats(&m_motor_2);
-#endif
+// 	for(;;) {
+// 		update_stats(&m_motor_1);
+// #ifdef HW_HAS_DUAL_MOTORS
+// 		update_stats(&m_motor_2);
+// #endif
 
-		chThdSleepMilliseconds(10);
-	}
-}
+// 		chThdSleepMilliseconds(10);
+// 	}
+// }
 
 // static THD_FUNCTION(sample_send_thread, arg) {
 // 	(void)arg;
@@ -2632,87 +2633,87 @@ static THD_FUNCTION(stat_thread, arg) {
 // 	}
 // }
 
-static THD_FUNCTION(fault_stop_thread, arg) {
-	(void)arg;
+// static THD_FUNCTION(fault_stop_thread, arg) {
+// 	(void)arg;
 
-	chRegSetThreadName("Fault Stop");
-	fault_stop_tp = chThdGetSelfX();
+// 	chRegSetThreadName("Fault Stop");
+// 	fault_stop_tp = chThdGetSelfX();
 
-	for(;;) {
-		chEvtWaitAny((eventmask_t) 1);
-#ifdef HW_HAS_DUAL_MOTORS
-		volatile motor_if_state_t *motor = m_fault_stop_is_second_motor ? &m_motor_2 : &m_motor_1;
-#else
-		volatile motor_if_state_t *motor = &m_motor_1;
-#endif
-
-		mc_interface_select_motor_thread(m_fault_stop_is_second_motor ? 2 : 1);
-
-		if (motor->m_fault_now == m_fault_stop_fault) {
-			motor->m_ignore_iterations = motor->m_conf.m_fault_stop_time_ms;
-			continue;
-		}
-
-		if (mc_interface_dccal_done() && motor->m_fault_now == FAULT_CODE_NONE) {
-			// Sent to terminal fault logger so that all faults and their conditions
-			// can be printed for debugging.
-			// utils_sys_lock_cnt();
-			// volatile int val_samp = TIM8->CCR1;
-			// volatile int current_samp = TIM1->CCR4;
-			// volatile int tim_top = TIM1->ARR;
-			// utils_sys_unlock_cnt();
-
-// 			fault_data fdata;
-// 			fdata.motor = m_fault_stop_is_second_motor ? 2 : 1;
-// 			fdata.fault = m_fault_stop_fault;
-// 			fdata.current = mc_interface_get_tot_current();
-// 			fdata.current_filtered = mc_interface_get_tot_current_filtered();
-// 			fdata.voltage = GET_INPUT_VOLTAGE();
-// 			fdata.gate_driver_voltage = motor->m_gate_driver_voltage;
-// 			fdata.duty = mc_interface_get_duty_cycle_now();
-// 			fdata.rpm = mc_interface_get_rpm();
-// 			fdata.tacho = mc_interface_get_tachometer_value(false);
-// 			fdata.cycles_running = motor->m_cycles_running;
-// 			fdata.tim_val_samp = val_samp;
-// 			fdata.tim_current_samp = current_samp;
-// 			fdata.tim_top = tim_top;
-// 			fdata.comm_step = mcpwm_get_comm_step();
-// 			fdata.temperature = NTC_TEMP(ADC_IND_TEMP_MOS);
-// #ifdef HW_HAS_DRV8301
-// 			if (m_fault_stop_fault == FAULT_CODE_DRV) {
-// 				fdata.drv8301_faults = drv8301_read_faults();
-// 			}
-// #elif defined(HW_HAS_DRV8320S)
-// 			if (m_fault_stop_fault == FAULT_CODE_DRV) {
-// 				fdata.drv8301_faults = drv8320s_read_faults();
-// 			}
-// #elif defined(HW_HAS_DRV8323S)
-// 			if (m_fault_stop_fault == FAULT_CODE_DRV) {
-// 				fdata.drv8301_faults = drv8323s_read_faults();
-// 			}
+// 	for(;;) {
+// 		chEvtWaitAny((eventmask_t) 1);
+// #ifdef HW_HAS_DUAL_MOTORS
+// 		volatile motor_if_state_t *motor = m_fault_stop_is_second_motor ? &m_motor_2 : &m_motor_1;
+// #else
+// 		volatile motor_if_state_t *motor = &m_motor_1;
 // #endif
-// 			// terminal_add_fault_data(&fdata);
-		}
 
-		motor->m_ignore_iterations = motor->m_conf.m_fault_stop_time_ms;
+// 		mc_interface_select_motor_thread(m_fault_stop_is_second_motor ? 2 : 1);
 
-		switch (motor->m_conf.motor_type) {
+// 		if (motor->m_fault_now == m_fault_stop_fault) {
+// 			motor->m_ignore_iterations = motor->m_conf.m_fault_stop_time_ms;
+// 			continue;
+// 		}
 
-		case MOTOR_TYPE_FOC:
-			mcpwm_foc_stop_pwm(m_fault_stop_is_second_motor);
-			break;
+// 		if (mc_interface_dccal_done() && motor->m_fault_now == FAULT_CODE_NONE) {
+// 			// Sent to terminal fault logger so that all faults and their conditions
+// 			// can be printed for debugging.
+// 			// utils_sys_lock_cnt();
+// 			// volatile int val_samp = TIM8->CCR1;
+// 			// volatile int current_samp = TIM1->CCR4;
+// 			// volatile int tim_top = TIM1->ARR;
+// 			// utils_sys_unlock_cnt();
 
-		// case MOTOR_TYPE_GPD:
-		// 	gpdrive_set_mode(GPD_OUTPUT_MODE_NONE);
-		// 	break;
+// // 			fault_data fdata;
+// // 			fdata.motor = m_fault_stop_is_second_motor ? 2 : 1;
+// // 			fdata.fault = m_fault_stop_fault;
+// // 			fdata.current = mc_interface_get_tot_current();
+// // 			fdata.current_filtered = mc_interface_get_tot_current_filtered();
+// // 			fdata.voltage = GET_INPUT_VOLTAGE();
+// // 			fdata.gate_driver_voltage = motor->m_gate_driver_voltage;
+// // 			fdata.duty = mc_interface_get_duty_cycle_now();
+// // 			fdata.rpm = mc_interface_get_rpm();
+// // 			fdata.tacho = mc_interface_get_tachometer_value(false);
+// // 			fdata.cycles_running = motor->m_cycles_running;
+// // 			fdata.tim_val_samp = val_samp;
+// // 			fdata.tim_current_samp = current_samp;
+// // 			fdata.tim_top = tim_top;
+// // 			fdata.comm_step = mcpwm_get_comm_step();
+// // 			fdata.temperature = NTC_TEMP(ADC_IND_TEMP_MOS);
+// // #ifdef HW_HAS_DRV8301
+// // 			if (m_fault_stop_fault == FAULT_CODE_DRV) {
+// // 				fdata.drv8301_faults = drv8301_read_faults();
+// // 			}
+// // #elif defined(HW_HAS_DRV8320S)
+// // 			if (m_fault_stop_fault == FAULT_CODE_DRV) {
+// // 				fdata.drv8301_faults = drv8320s_read_faults();
+// // 			}
+// // #elif defined(HW_HAS_DRV8323S)
+// // 			if (m_fault_stop_fault == FAULT_CODE_DRV) {
+// // 				fdata.drv8301_faults = drv8323s_read_faults();
+// // 			}
+// // #endif
+// // 			// terminal_add_fault_data(&fdata);
+// 		}
 
-		default:
-			break;
-		}
+// 		motor->m_ignore_iterations = motor->m_conf.m_fault_stop_time_ms;
 
-		motor->m_fault_now = m_fault_stop_fault;
-	}
-}
+// 		switch (motor->m_conf.motor_type) {
+
+// 		case MOTOR_TYPE_FOC:
+// 			mcpwm_foc_stop_pwm(m_fault_stop_is_second_motor);
+// 			break;
+
+// 		// case MOTOR_TYPE_GPD:
+// 		// 	gpdrive_set_mode(GPD_OUTPUT_MODE_NONE);
+// 		// 	break;
+
+// 		default:
+// 			break;
+// 		}
+
+// 		motor->m_fault_now = m_fault_stop_fault;
+// 	}
+// }
 
 /**
  * Get mc_configuration CRC (motor 1 or 2)

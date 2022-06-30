@@ -65,24 +65,24 @@ void hw_init_gpio(void) {
 			PAL_STM32_OSPEED_HIGHEST);
 
 	// ENABLE_GATE
-#ifdef HW60_VEDDER_FIRST_PCB
-	palSetPadMode(GPIOB, 6,
-			PAL_MODE_OUTPUT_PUSHPULL |
-			PAL_STM32_OSPEED_HIGHEST);
-#else
+// #ifdef HW60_VEDDER_FIRST_PCB
+// 	palSetPadMode(GPIOB, 6,
+// 			PAL_MODE_OUTPUT_PUSHPULL |
+// 			PAL_STM32_OSPEED_HIGHEST);
+// #else
 	palSetPadMode(GPIOB, 5,
 			PAL_MODE_OUTPUT_PUSHPULL |
 			PAL_STM32_OSPEED_HIGHEST);
-#endif
+// #endif
 
 	ENABLE_GATE();
 
 	// Current filter
-	palSetPadMode(GPIOD, 2,
-			PAL_MODE_OUTPUT_PUSHPULL |
-			PAL_STM32_OSPEED_HIGHEST);
+	// palSetPadMode(GPIOD, 2,
+	// 		PAL_MODE_OUTPUT_PUSHPULL |
+	// 		PAL_STM32_OSPEED_HIGHEST);
 
-	CURRENT_FILTER_OFF();
+	// CURRENT_FILTER_OFF();
 
 	// GPIOA Configuration: Channel 1 to 3 as alternate function push-pull
 	palSetPadMode(GPIOA, 8, PAL_MODE_ALTERNATE(GPIO_AF_TIM1) |
@@ -111,12 +111,12 @@ void hw_init_gpio(void) {
 	palSetPadMode(HW_HALL_ENC_GPIO3, HW_HALL_ENC_PIN3, PAL_MODE_INPUT_PULLUP);
 
 	// Phase filters
-#ifdef PHASE_FILTER_GPIO
-	palSetPadMode(PHASE_FILTER_GPIO, PHASE_FILTER_PIN,
-			PAL_MODE_OUTPUT_PUSHPULL |
-			PAL_STM32_OSPEED_HIGHEST);
-	PHASE_FILTER_OFF();
-#endif
+// #ifdef PHASE_FILTER_GPIO
+// 	palSetPadMode(PHASE_FILTER_GPIO, PHASE_FILTER_PIN,
+// 			PAL_MODE_OUTPUT_PUSHPULL |
+// 			PAL_STM32_OSPEED_HIGHEST);
+// 	PHASE_FILTER_OFF();
+// #endif
 
 	// Fault pin
 	palSetPadMode(GPIOB, 7, PAL_MODE_INPUT_PULLUP);
@@ -134,25 +134,25 @@ void hw_init_gpio(void) {
 	palSetPadMode(GPIOC, 2, PAL_MODE_INPUT_ANALOG);
 	palSetPadMode(GPIOC, 3, PAL_MODE_INPUT_ANALOG);
 	palSetPadMode(GPIOC, 4, PAL_MODE_INPUT_ANALOG);
-#if !defined(HW60_IS_MK3) && !defined(HW60_IS_MK4) && !defined(HW60_IS_MK5)
-	palSetPadMode(GPIOC, 5, PAL_MODE_INPUT_ANALOG);
-#endif
+// #if !defined(HW60_IS_MK3) && !defined(HW60_IS_MK4) && !defined(HW60_IS_MK5)
+// 	palSetPadMode(GPIOC, 5, PAL_MODE_INPUT_ANALOG);
+// #endif
 
 	drv8301_init();
 
-#if defined(HW60_IS_MK3) || defined(HW60_IS_MK4) || defined(HW60_IS_MK5)
-	terminal_register_command_callback(
-		"shutdown",
-		"Shutdown VESC now.",
-		0,
-		terminal_shutdown_now);
+// #if defined(HW60_IS_MK3) || defined(HW60_IS_MK4) || defined(HW60_IS_MK5)
+// 	terminal_register_command_callback(
+// 		"shutdown",
+// 		"Shutdown VESC now.",
+// 		0,
+// 		terminal_shutdown_now);
 
-	terminal_register_command_callback(
-		"test_button",
-		"Try sampling the shutdown button",
-		0,
-		terminal_button_test);
-#endif
+// 	terminal_register_command_callback(
+// 		"test_button",
+// 		"Try sampling the shutdown button",
+// 		0,
+// 		terminal_button_test);
+// #endif
 }
 
 void hw_setup_adc_channels(void) {

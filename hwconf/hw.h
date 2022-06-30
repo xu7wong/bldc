@@ -200,12 +200,12 @@
 #ifndef DISABLE_GATE
 #define DISABLE_GATE()
 #endif
-#ifndef DCCAL_ON
-#define DCCAL_ON()
-#endif
-#ifndef DCCAL_OFF
-#define DCCAL_OFF()
-#endif
+// #ifndef DCCAL_ON
+// #define DCCAL_ON()
+// #endif
+// #ifndef DCCAL_OFF
+// #define DCCAL_OFF()
+// #endif
 #ifndef IS_DRV_FAULT
 #define IS_DRV_FAULT()			0
 #endif
@@ -245,12 +245,12 @@
 #define PHASE_FILTER_OFF_M2()
 #endif
 
-#ifndef CURRENT_FILTER_ON
-#define CURRENT_FILTER_ON()
-#endif
-#ifndef CURRENT_FILTER_OFF
-#define CURRENT_FILTER_OFF()
-#endif
+// #ifndef CURRENT_FILTER_ON
+// #define CURRENT_FILTER_ON()
+// #endif
+// #ifndef CURRENT_FILTER_OFF
+// #define CURRENT_FILTER_OFF()
+// #endif
 
 #ifndef SENSOR_PORT_5V
 #define SENSOR_PORT_5V()
@@ -414,9 +414,9 @@
 #define HW_PERMANENT_NRF_FAILED_HOOK()
 #endif
 
-#ifndef HW_EARLY_INIT
-#define HW_EARLY_INIT()
-#endif
+// #ifndef HW_EARLY_INIT
+// #define HW_EARLY_INIT()
+// #endif
 
 // Default ID
 #ifndef HW_DEFAULT_ID
@@ -535,10 +535,11 @@
 // Functions
 void hw_init_gpio(void);
 void hw_setup_adc_channels(void);
-void hw_start_i2c(void);
-void hw_stop_i2c(void);
-void hw_try_restore_i2c(void);
+// void hw_start_i2c(void);
+// void hw_stop_i2c(void);
+// void hw_try_restore_i2c(void);
 // uint8_t hw_id_from_uuid(void);
-uint8_t hw_id_from_pins(void);
+// uint8_t hw_id_from_pins(void);
 
+void confgenerator_set_defaults_mcconf(mc_configuration *conf);
 #endif /* HW_H_ */

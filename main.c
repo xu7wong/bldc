@@ -37,7 +37,7 @@
 // #include "app.h"
 // #include "packet.h"
 // #include "commands.h"
-#include "timeout.h"
+// #include "timeout.h"
 // #include "comm_can.h"
 // #include "encoder.h"
 //#include "servo_simple.h"
@@ -52,7 +52,7 @@
 // #include "bm_if.h"
 // #endif
 //#include "shutdown.h"
-#include "mempools.h"
+// #include "mempools.h"
 // #include "events.h"
 #include "main.h"
 
@@ -218,7 +218,7 @@ int main(void) {
 // 	INIT_BR();
 // #endif
 
-	HW_EARLY_INIT();
+	// HW_EARLY_INIT();
 
 // #ifdef BOOT_OK_GPIO
 // 	palSetPadMode(BOOT_OK_GPIO, BOOT_OK_PIN, PAL_MODE_OUTPUT_PUSHPULL);
@@ -232,7 +232,7 @@ int main(void) {
 	// LED_RED_OFF();
 	// LED_GREEN_OFF();
 
-	timer_init();
+	// timer_init();
 	// conf_general_init();
 
 	// if( flash_helper_verify_flash_memory() == FAULT_CODE_FLASH_CORRUPTION )	{
@@ -287,7 +287,7 @@ int main(void) {
 	// chThdCreateStatic(periodic_thread_wa, sizeof(periodic_thread_wa), NORMALPRIO, periodic_thread, NULL);
 	// chThdCreateStatic(flash_integrity_check_thread_wa, sizeof(flash_integrity_check_thread_wa), LOWPRIO, flash_integrity_check_thread, NULL);
 
-	timeout_init();
+	// timeout_init();
 	// timeout_configure(appconf->timeout_msec, appconf->timeout_brake_current, appconf->kill_sw_mode);
 
 	// mempools_free_appconf(appconf);
@@ -314,10 +314,14 @@ int main(void) {
 	// m_init_done = true;
 
 	for(;;) {
-		chThdSleepMilliseconds(1000);
+		
 		mc_interface_set_current((float)2.0);
+
+		chThdSleepMilliseconds(5000);
+		mc_interface_set_brake_current((float)0.5);
+		chThdSleepMilliseconds(5000);
 		// mc_interface_set_pid_speed((float)2500.0);
 		//mcpwm_foc_set_pid_speed((float)2500.0);
-		timeout_reset();
+		// timeout_reset();
 	}
 }

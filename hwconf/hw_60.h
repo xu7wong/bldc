@@ -37,20 +37,20 @@
 #define HW_HAS_DRV8301
 #define HW_HAS_3_SHUNTS
 #define HW_HAS_PHASE_SHUNTS
-#if !defined(HW60_IS_MK3) && !defined(HW60_IS_MK4) && !defined(HW60_IS_MK5)
-#define HW_HAS_PERMANENT_NRF
-#endif
+// #if !defined(HW60_IS_MK3) && !defined(HW60_IS_MK4) && !defined(HW60_IS_MK5)
+// #define HW_HAS_PERMANENT_NRF
+// #endif
 
 // Macros
-#ifdef HW60_VEDDER_FIRST_PCB
-#define ENABLE_GATE()			palSetPad(GPIOB, 6)
-#define DISABLE_GATE()			palClearPad(GPIOB, 6)
-#else
+// #ifdef HW60_VEDDER_FIRST_PCB
+// #define ENABLE_GATE()			palSetPad(GPIOB, 6)
+// #define DISABLE_GATE()			palClearPad(GPIOB, 6)
+// #else
 #define ENABLE_GATE()			palSetPad(GPIOB, 5)
 #define DISABLE_GATE()			palClearPad(GPIOB, 5)
-#endif
-#define DCCAL_ON()
-#define DCCAL_OFF()
+// #endif
+// #define DCCAL_ON()
+// #define DCCAL_OFF()
 #define IS_DRV_FAULT()			(!palReadPad(GPIOB, 7))
 
 // #define LED_GREEN_ON()			palSetPad(GPIOB, 0)
@@ -58,43 +58,43 @@
 // #define LED_RED_ON()			palSetPad(GPIOB, 1)
 // #define LED_RED_OFF()			palClearPad(GPIOB, 1)
 
-#define CURRENT_FILTER_ON()		palSetPad(GPIOD, 2)
-#define CURRENT_FILTER_OFF()	palClearPad(GPIOD, 2)
+// #define CURRENT_FILTER_ON()		palSetPad(GPIOD, 2)
+// #define CURRENT_FILTER_OFF()	palClearPad(GPIOD, 2)
 
-#ifdef HW60_IS_MK5
-#define HW_HAS_PHASE_FILTERS
-#define PHASE_FILTER_GPIO		GPIOC
-#define PHASE_FILTER_PIN		13
-#define PHASE_FILTER_ON()		palSetPad(PHASE_FILTER_GPIO, PHASE_FILTER_PIN)
-#define PHASE_FILTER_OFF()		palClearPad(PHASE_FILTER_GPIO, PHASE_FILTER_PIN)
-#endif
+// #ifdef HW60_IS_MK5
+// #define HW_HAS_PHASE_FILTERS
+// #define PHASE_FILTER_GPIO		GPIOC
+// #define PHASE_FILTER_PIN		13
+// #define PHASE_FILTER_ON()		palSetPad(PHASE_FILTER_GPIO, PHASE_FILTER_PIN)
+// #define PHASE_FILTER_OFF()		palClearPad(PHASE_FILTER_GPIO, PHASE_FILTER_PIN)
+// #endif
 
-#if defined(HW60_IS_MK3) || defined(HW60_IS_MK4) || defined(HW60_IS_MK5)
-// Shutdown pin
-#define HW_SHUTDOWN_GPIO		GPIOC
-#define HW_SHUTDOWN_PIN			5
-#define HW_SHUTDOWN_HOLD_ON()	palSetPad(HW_SHUTDOWN_GPIO, HW_SHUTDOWN_PIN)
-#define HW_SHUTDOWN_HOLD_OFF()	palClearPad(HW_SHUTDOWN_GPIO, HW_SHUTDOWN_PIN)
-#define HW_SAMPLE_SHUTDOWN()	hw_sample_shutdown_button()
+// #if defined(HW60_IS_MK3) || defined(HW60_IS_MK4) || defined(HW60_IS_MK5)
+// // Shutdown pin
+// #define HW_SHUTDOWN_GPIO		GPIOC
+// #define HW_SHUTDOWN_PIN			5
+// #define HW_SHUTDOWN_HOLD_ON()	palSetPad(HW_SHUTDOWN_GPIO, HW_SHUTDOWN_PIN)
+// #define HW_SHUTDOWN_HOLD_OFF()	palClearPad(HW_SHUTDOWN_GPIO, HW_SHUTDOWN_PIN)
+// #define HW_SAMPLE_SHUTDOWN()	hw_sample_shutdown_button()
 
-// Hold shutdown pin early to wake up on short pulses
-#define HW_EARLY_INIT()			palSetPadMode(HW_SHUTDOWN_GPIO, HW_SHUTDOWN_PIN, PAL_MODE_OUTPUT_PUSHPULL); \
-								HW_SHUTDOWN_HOLD_ON(); \
-								palSetPadMode(GPIOD, 2, \
-								PAL_MODE_OUTPUT_PUSHPULL | \
-								PAL_STM32_OSPEED_HIGHEST); \
-								CURRENT_FILTER_ON()
-#else
-// Switch on current filter if a permanent
-// NRF24 cannot be found, as the later
-// HW60 has changed one of the permanent NRF
-// pins to the current filter activation pin.
-#define HW_PERMANENT_NRF_FAILED_HOOK() \
-			palSetPadMode(GPIOD, 2, \
-			PAL_MODE_OUTPUT_PUSHPULL | \
-			PAL_STM32_OSPEED_HIGHEST); \
-			CURRENT_FILTER_ON()
-#endif
+// // Hold shutdown pin early to wake up on short pulses
+// #define HW_EARLY_INIT()			palSetPadMode(HW_SHUTDOWN_GPIO, HW_SHUTDOWN_PIN, PAL_MODE_OUTPUT_PUSHPULL); \
+// 								HW_SHUTDOWN_HOLD_ON(); \
+// 								palSetPadMode(GPIOD, 2, \
+// 								PAL_MODE_OUTPUT_PUSHPULL | \
+// 								PAL_STM32_OSPEED_HIGHEST); \
+// 								CURRENT_FILTER_ON()
+// #else
+// // Switch on current filter if a permanent
+// // NRF24 cannot be found, as the later
+// // HW60 has changed one of the permanent NRF
+// // pins to the current filter activation pin.
+// #define HW_PERMANENT_NRF_FAILED_HOOK() \
+// 			palSetPadMode(GPIOD, 2, \
+// 			PAL_MODE_OUTPUT_PUSHPULL | \
+// 			PAL_STM32_OSPEED_HIGHEST); \
+// 			CURRENT_FILTER_ON()
+// #endif
 
 /*
  * ADC Vector
@@ -137,32 +137,32 @@
 #define ADC_IND_SHUTDOWN		10
 #endif
 
-// -------- Current sensor test
-#if 0
+// // -------- Current sensor test
+// #if 0
 
-#undef ADC_IND_CURR1
-#undef ADC_IND_CURR2
-#undef ADC_IND_CURR3
-#undef CURRENT_FILTER_ON
-#undef CURRENT_FILTER_OFF
+// #undef ADC_IND_CURR1
+// #undef ADC_IND_CURR2
+// #undef ADC_IND_CURR3
+// #undef CURRENT_FILTER_ON
+// #undef CURRENT_FILTER_OFF
 
-#define CURRENT_FILTER_OFF()	palClearPad(HW_UART_RX_PORT, HW_UART_RX_PIN)
-#define CURRENT_FILTER_ON()		palClearPad(HW_UART_RX_PORT, HW_UART_RX_PIN)
+// #define CURRENT_FILTER_OFF()	palClearPad(HW_UART_RX_PORT, HW_UART_RX_PIN)
+// #define CURRENT_FILTER_ON()		palClearPad(HW_UART_RX_PORT, HW_UART_RX_PIN)
 
-#define ADC_IND_CURR1			6
-#define ADC_IND_CURR2			7
-#define ADC_IND_CURR3			10
+// #define ADC_IND_CURR1			6
+// #define ADC_IND_CURR2			7
+// #define ADC_IND_CURR3			10
 
-#define HW_EARLY_INIT()			palSetPadMode(HW_UART_TX_PORT, HW_UART_TX_PIN, PAL_MODE_OUTPUT_PUSHPULL); \
-								palSetPadMode(HW_UART_RX_PORT, HW_UART_RX_PIN, PAL_MODE_OUTPUT_PUSHPULL); \
-								palSetPad(HW_UART_TX_PORT, HW_UART_TX_PIN)
+// #define HW_EARLY_INIT()			palSetPadMode(HW_UART_TX_PORT, HW_UART_TX_PIN, PAL_MODE_OUTPUT_PUSHPULL); \
+// 								palSetPadMode(HW_UART_RX_PORT, HW_UART_RX_PIN, PAL_MODE_OUTPUT_PUSHPULL); \
+// 								palSetPad(HW_UART_TX_PORT, HW_UART_TX_PIN)
 
-#define CURRENT_SHUNT_RES		1
-#define CURRENT_AMP_GAIN		(2.22e-3 * (4.7 / (4.7 + 2.2)))
+// #define CURRENT_SHUNT_RES		1
+// #define CURRENT_AMP_GAIN		(2.22e-3 * (4.7 / (4.7 + 2.2)))
 
-#define APPCONF_APP_TO_USE		APP_NONE
+// #define APPCONF_APP_TO_USE		APP_NONE
 
-#endif
+// #endif
 
 // ----------------------------
 

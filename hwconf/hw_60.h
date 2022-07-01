@@ -58,44 +58,6 @@
 // #define LED_RED_ON()			palSetPad(GPIOB, 1)
 // #define LED_RED_OFF()			palClearPad(GPIOB, 1)
 
-// #define CURRENT_FILTER_ON()		palSetPad(GPIOD, 2)
-// #define CURRENT_FILTER_OFF()	palClearPad(GPIOD, 2)
-
-// #ifdef HW60_IS_MK5
-// #define HW_HAS_PHASE_FILTERS
-// #define PHASE_FILTER_GPIO		GPIOC
-// #define PHASE_FILTER_PIN		13
-// #define PHASE_FILTER_ON()		palSetPad(PHASE_FILTER_GPIO, PHASE_FILTER_PIN)
-// #define PHASE_FILTER_OFF()		palClearPad(PHASE_FILTER_GPIO, PHASE_FILTER_PIN)
-// #endif
-
-// #if defined(HW60_IS_MK3) || defined(HW60_IS_MK4) || defined(HW60_IS_MK5)
-// // Shutdown pin
-// #define HW_SHUTDOWN_GPIO		GPIOC
-// #define HW_SHUTDOWN_PIN			5
-// #define HW_SHUTDOWN_HOLD_ON()	palSetPad(HW_SHUTDOWN_GPIO, HW_SHUTDOWN_PIN)
-// #define HW_SHUTDOWN_HOLD_OFF()	palClearPad(HW_SHUTDOWN_GPIO, HW_SHUTDOWN_PIN)
-// #define HW_SAMPLE_SHUTDOWN()	hw_sample_shutdown_button()
-
-// // Hold shutdown pin early to wake up on short pulses
-// #define HW_EARLY_INIT()			palSetPadMode(HW_SHUTDOWN_GPIO, HW_SHUTDOWN_PIN, PAL_MODE_OUTPUT_PUSHPULL); \
-// 								HW_SHUTDOWN_HOLD_ON(); \
-// 								palSetPadMode(GPIOD, 2, \
-// 								PAL_MODE_OUTPUT_PUSHPULL | \
-// 								PAL_STM32_OSPEED_HIGHEST); \
-// 								CURRENT_FILTER_ON()
-// #else
-// // Switch on current filter if a permanent
-// // NRF24 cannot be found, as the later
-// // HW60 has changed one of the permanent NRF
-// // pins to the current filter activation pin.
-// #define HW_PERMANENT_NRF_FAILED_HOOK() \
-// 			palSetPadMode(GPIOD, 2, \
-// 			PAL_MODE_OUTPUT_PUSHPULL | \
-// 			PAL_STM32_OSPEED_HIGHEST); \
-// 			CURRENT_FILTER_ON()
-// #endif
-
 /*
  * ADC Vector
  *
@@ -152,10 +114,6 @@
 // #define ADC_IND_CURR1			6
 // #define ADC_IND_CURR2			7
 // #define ADC_IND_CURR3			10
-
-// #define HW_EARLY_INIT()			palSetPadMode(HW_UART_TX_PORT, HW_UART_TX_PIN, PAL_MODE_OUTPUT_PUSHPULL); \
-// 								palSetPadMode(HW_UART_RX_PORT, HW_UART_RX_PIN, PAL_MODE_OUTPUT_PUSHPULL); \
-// 								palSetPad(HW_UART_TX_PORT, HW_UART_TX_PIN)
 
 // #define CURRENT_SHUNT_RES		1
 // #define CURRENT_AMP_GAIN		(2.22e-3 * (4.7 / (4.7 + 2.2)))

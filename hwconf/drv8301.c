@@ -316,27 +316,27 @@ static void spi_transfer(uint16_t *in_buf, const uint16_t *out_buf, int length) 
 }
 
 static void spi_begin(void) {
-#ifdef DRV8301_CS_GPIO2
-	if (mc_interface_motor_now() == 2) {
-		palClearPad(DRV8301_CS_GPIO2, DRV8301_CS_PIN2);
-	} else {
-		palClearPad(DRV8301_CS_GPIO, DRV8301_CS_PIN);
-	}
-#else
+// #ifdef DRV8301_CS_GPIO2
+// 	if (mc_interface_motor_now() == 2) {
+// 		palClearPad(DRV8301_CS_GPIO2, DRV8301_CS_PIN2);
+// 	} else {
+// 		palClearPad(DRV8301_CS_GPIO, DRV8301_CS_PIN);
+// 	}
+// #else
 	palClearPad(DRV8301_CS_GPIO, DRV8301_CS_PIN);
-#endif
+// #endif
 }
 
 static void spi_end(void) {
-#ifdef DRV8301_CS_GPIO2
-	if (mc_interface_motor_now() == 2) {
-		palSetPad(DRV8301_CS_GPIO2, DRV8301_CS_PIN2);
-	} else {
-		palSetPad(DRV8301_CS_GPIO, DRV8301_CS_PIN);
-	}
-#else
+// #ifdef DRV8301_CS_GPIO2
+// 	if (mc_interface_motor_now() == 2) {
+// 		palSetPad(DRV8301_CS_GPIO2, DRV8301_CS_PIN2);
+// 	} else {
+// 		palSetPad(DRV8301_CS_GPIO, DRV8301_CS_PIN);
+// 	}
+// #else
 	palSetPad(DRV8301_CS_GPIO, DRV8301_CS_PIN);
-#endif
+// #endif
 }
 
 static void spi_delay(void) {

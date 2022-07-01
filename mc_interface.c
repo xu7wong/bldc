@@ -123,8 +123,8 @@ static volatile mc_fault_code m_fault_stop_fault;
 static volatile bool m_fault_stop_is_second_motor;
 
 // Private functions
-static void update_override_limits(volatile motor_if_state_t *motor, volatile mc_configuration *conf);
-static void run_timer_tasks(volatile motor_if_state_t *motor);
+// static void update_override_limits(volatile motor_if_state_t *motor, volatile mc_configuration *conf);
+// static void run_timer_tasks(volatile motor_if_state_t *motor);
 static void update_stats(volatile motor_if_state_t *motor);
 static volatile motor_if_state_t *motor_now(void);
 
@@ -266,11 +266,7 @@ void mc_interface_init(void) {
 	switch (motor_now()->m_conf.motor_type) {
 
 	case MOTOR_TYPE_FOC:
-#ifdef HW_HAS_DUAL_MOTORS
-		mcpwm_foc_init(&m_motor_1.m_conf, &m_motor_2.m_conf);
-#else
 		mcpwm_foc_init(&m_motor_1.m_conf, &m_motor_1.m_conf);
-#endif
 		break;
 
 	// case MOTOR_TYPE_GPD:
@@ -284,22 +280,22 @@ void mc_interface_init(void) {
 	// bms_init((bms_config*)&m_motor_1.m_conf.bms);
 }
 
-int mc_interface_motor_now(void) {
-#if defined HW_HAS_DUAL_MOTORS || defined HW_HAS_DUAL_PARALLEL
-	int isr_motor = mcpwm_foc_isr_motor();
-	int thd_motor = chThdGetSelfX()->motor_selected;
+// int mc_interface_motor_now(void) {
+// #if defined HW_HAS_DUAL_MOTORS || defined HW_HAS_DUAL_PARALLEL
+// 	int isr_motor = mcpwm_foc_isr_motor();
+// 	int thd_motor = chThdGetSelfX()->motor_selected;
 
-	if (isr_motor > 0) {
-		return isr_motor;
-	} else if (thd_motor > 0) {
-		return thd_motor;
-	} else {
-		return 1;
-	}
-#else
-	return 1;
-#endif
-}
+// 	if (isr_motor > 0) {
+// 		return isr_motor;
+// 	} else if (thd_motor > 0) {
+// 		return thd_motor;
+// 	} else {
+// 		return 1;
+// 	}
+// #else
+// 	return 1;
+// #endif
+// }
 
 /**
  * Select motor for current thread. When a thread has a motor selected,
@@ -460,7 +456,7 @@ void mc_interface_set_configuration(mc_configuration *configuration) {
 	
 	motor->m_conf.lo_current_motor_max_now = 80;//conf->lo_current_max;
 	motor->m_conf.lo_current_motor_min_now = 0;//conf->lo_current_min;
-	update_override_limits(motor, &motor->m_conf);
+	// update_override_limits(motor, &motor->m_conf);
 
 	switch (motor->m_conf.motor_type) {
 
@@ -1943,16 +1939,16 @@ void mc_interface_mc_timer_isr(bool is_second_motor) {
 // 	}
 }
 
-void mc_interface_adc_inj_int_handler(void) {
-	switch (m_motor_1.m_conf.motor_type) {
+// void mc_interface_adc_inj_int_handler(void) {
+// 	switch (m_motor_1.m_conf.motor_type) {
 
-	case MOTOR_TYPE_FOC:
-		break;
+// 	case MOTOR_TYPE_FOC:
+// 		break;
 
-	default:
-		break;
-	}
-}
+// 	default:
+// 		break;
+// 	}
+// }
 
 /**
  * Update the override limits for a configuration based on MOSFET temperature etc.
@@ -1960,7 +1956,7 @@ void mc_interface_adc_inj_int_handler(void) {
  * @param conf
  * The configaration to update.
  */
-static void update_override_limits(volatile motor_if_state_t *motor, volatile mc_configuration *conf) {
+// static void update_override_limits(volatile motor_if_state_t *motor, volatile mc_configuration *conf) {
 // 	bool is_motor_1 = motor == &m_motor_1;
 
 // 	const float v_in = motor->m_input_voltage_filtered;
@@ -2155,8 +2151,8 @@ static void update_override_limits(volatile motor_if_state_t *motor, volatile mc
 	// 	lo_min = -conf->cc_min_current;
 	// }
 
-	conf->lo_current_max = 80;//lo_max;
-	conf->lo_current_min = 0;//lo_min;
+	// conf->lo_current_max = 80;//lo_max;
+	// conf->lo_current_min = 0;//lo_min;
 
 	// // Battery cutoff
 	// float lo_in_max_batt = 0.0;
@@ -2179,8 +2175,8 @@ static void update_override_limits(volatile motor_if_state_t *motor, volatile mc
 	// BMS limits
 	// bms_update_limits(&lo_in_min,  &lo_in_max, conf->l_in_current_min, conf->l_in_current_max);
 
-	conf->lo_in_current_max = 80;//utils_min_abs(conf->l_in_current_max, lo_in_max);
-	conf->lo_in_current_min = 0;//utils_min_abs(conf->l_in_current_min, lo_in_min);
+	// conf->lo_in_current_max = 80;//utils_min_abs(conf->l_in_current_max, lo_in_max);
+	// conf->lo_in_current_min = 0;//utils_min_abs(conf->l_in_current_min, lo_in_min);
 
 	// Maximum current right now
 //	float duty_abs = fabsf(mc_interface_get_duty_cycle_now());
@@ -2200,19 +2196,19 @@ static void update_override_limits(volatile motor_if_state_t *motor, volatile mc
 
 	// Note: The above code should work, but many people have reported issues with it. Leaving it
 	// disabled for now until I have done more investigation.
-	conf->lo_current_motor_max_now = 80;//conf->lo_current_max;
-	conf->lo_current_motor_min_now = 0;//conf->lo_current_min;
-}
+// 	conf->lo_current_motor_max_now = 80;//conf->lo_current_max;
+// 	conf->lo_current_motor_min_now = 0;//conf->lo_current_min;
+// }
 
 static volatile motor_if_state_t *motor_now(void) {
-#ifdef HW_HAS_DUAL_MOTORS
-	return mc_interface_motor_now() == 1 ? &m_motor_1 : &m_motor_2;
-#else
+// #ifdef HW_HAS_DUAL_MOTORS
+// 	return mc_interface_motor_now() == 1 ? &m_motor_1 : &m_motor_2;
+// #else
 	return &m_motor_1;
-#endif
+// #endif
 }
 
-static void run_timer_tasks(volatile motor_if_state_t *motor) {
+// static void run_timer_tasks(volatile motor_if_state_t *motor) {
 	// bool is_motor_1 = motor == &m_motor_1;
 	// mc_interface_select_motor_thread(is_motor_1 ? 1 : 2);
 
@@ -2256,7 +2252,7 @@ static void run_timer_tasks(volatile motor_if_state_t *motor) {
 	// 	motor->m_drv_fault_iterations = 0;
 	// }
 
-	update_override_limits(motor, &motor->m_conf);
+	// update_override_limits(motor, &motor->m_conf);
 
 	// Update auxiliary output
 	// switch (motor->m_conf.m_out_aux_mode) {
@@ -2429,22 +2425,22 @@ static void run_timer_tasks(volatile motor_if_state_t *motor) {
 // #ifdef HW_HAS_WHEEL_SPEED_SENSOR
 // 	hw_update_speed_sensor();
 // #endif
-}
+// }
 
-static THD_FUNCTION(timer_thread, arg) {
-	(void)arg;
+// static THD_FUNCTION(timer_thread, arg) {
+// 	(void)arg;
 
-	chRegSetThreadName("mcif timer");
+// 	chRegSetThreadName("mcif timer");
 
-	for(;;) {
-		run_timer_tasks(&m_motor_1);
-#ifdef HW_HAS_DUAL_MOTORS
-		run_timer_tasks(&m_motor_2);
-#endif
+// 	for(;;) {
+// 		run_timer_tasks(&m_motor_1);
+// #ifdef HW_HAS_DUAL_MOTORS
+// 		run_timer_tasks(&m_motor_2);
+// #endif
 
-		chThdSleepMilliseconds(1);
-	}
-}
+// 		chThdSleepMilliseconds(1);
+// 	}
+// }
 
 static void update_stats(volatile motor_if_state_t *motor) {
 	mc_interface_select_motor_thread(motor == (&m_motor_1) ? 1 : 2);

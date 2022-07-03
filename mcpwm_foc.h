@@ -20,7 +20,7 @@
 #ifndef MCPWM_FOC_H_
 #define MCPWM_FOC_H_
 
-#include "conf_general.h"
+// #include "conf_general.h"
 #include "datatypes.h"
 #include <stdbool.h>
 
@@ -80,7 +80,7 @@ float mcpwm_foc_measure_inductance_current(float curr_goal, int samples, float *
 bool mcpwm_foc_measure_res_ind(float *res, float *ind, float *ld_lq_diff);
 // bool mcpwm_foc_hall_detect(float current, uint8_t *hall_table);
 int mcpwm_foc_dc_cal(bool cal_undriven);
-void mcpwm_foc_print_state(void);
+// void mcpwm_foc_print_state(void);
 float mcpwm_foc_get_last_adc_isr_duration(void);
 void mcpwm_foc_get_current_offsets(
 		volatile float *curr0_offset,
@@ -117,7 +117,7 @@ mc_state mcpwm_foc_get_state_motor(bool is_second_motor);
 
 // Interrupt handlers
 void mcpwm_foc_tim_sample_int_handler(void);
-// void mcpwm_foc_adc_int_handler();
+void mcpwm_foc_adc_int_handler(void);
 
 // Defines
 #define MCPWM_FOC_CURRENT_SAMP_OFFSET				(2) // Offset from timer top for ADC samples

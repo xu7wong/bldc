@@ -20,7 +20,7 @@
 #ifndef MC_INTERFACE_H_
 #define MC_INTERFACE_H_
 
-#include "conf_general.h"
+// #include "conf_general.h"
 #include "hw.h"
 
 // Functions

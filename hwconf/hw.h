@@ -21,448 +21,31 @@
 #define HW_H_
 
 #include "stm32f4xx_conf.h"
-#include HW_HEADER
+#include "datatypes.h"
+#include "mcconf_default.h"
+#include "appconf_default.h"
 
-#ifdef HW_HAS_DRV8301
-#include "drv8301.h"
-#endif
-#ifdef HW_HAS_DRV8305
-#include "drv8305.h"
-#endif
-#ifdef HW_HAS_DRV8320S
-#include "drv8320s.h"
-#endif
-#ifdef HW_HAS_DRV8323S
-#include "drv8323s.h"
+#define HW_NAME					"UBCO"
+
+#ifndef SYSTEM_CORE_CLOCK
+#define SYSTEM_CORE_CLOCK			168000000
 #endif
 
-#ifndef HW_NAME
-#error "No hardware name set"
+#ifndef FOC_CONTROL_LOOP_FREQ_DIVIDER
+#define FOC_CONTROL_LOOP_FREQ_DIVIDER	1
 #endif
 
-// Possible HW properties.
+#define HW_HALL_ENC_GPIO1		GPIOC
+#define HW_HALL_ENC_PIN1		6
+#define HW_HALL_ENC_GPIO2		GPIOC
+#define HW_HALL_ENC_PIN2		7
+#define HW_HALL_ENC_GPIO3		GPIOC
+#define HW_HALL_ENC_PIN3		8
 
-/*
- * #define HW_HAS_DRV8301
- *
- * Use the DRV8301 driver
- *
- * Requires defining SPI pins for the driver:
- *
- * #define DRV8301_MOSI_GPIO	GPIOC
- * #define DRV8301_MOSI_PIN		12
- * #define DRV8301_MISO_GPIO	GPIOC
- * #define DRV8301_MISO_PIN		11
- * #define DRV8301_SCK_GPIO		GPIOC
- * #define DRV8301_SCK_PIN		10
- * #define DRV8301_CS_GPIO		GPIOC
- * #define DRV8301_CS_PIN		9
- *
- * Requires running
- * drv8301_init();
- * at the end of void hw_init_gpio(void)
- */
+#define READ_HALL1()			palReadPad(HW_HALL_ENC_GPIO1, HW_HALL_ENC_PIN1)
+#define READ_HALL2()			palReadPad(HW_HALL_ENC_GPIO2, HW_HALL_ENC_PIN2)
+#define READ_HALL3()			palReadPad(HW_HALL_ENC_GPIO3, HW_HALL_ENC_PIN3)
 
-/*
- * #define HW_HAS_DRV8313
- *
- * Use the DRV8313 driver. Changes how the
- * output is switched off and runs an early init hook.
- */
-
-/*
- * #define HW_HAS_DRV8305
- *
- * Use the DRV8305 gate driver. Note that support
- * for this driver is incomplete.
- *
- * Requires defining SPI pins for the driver:
- *
- * #define DRV8305_MOSI_GPIO		GPIOC
- * #define DRV8305_MOSI_PIN			12
- * #define DRV8305_MISO_GPIO		GPIOC
- * #define DRV8305_MISO_PIN			11
- * #define DRV8305_SCK_GPIO			GPIOC
- * #define DRV8305_SCK_PIN			10
- * #define DRV8305_CS_GPIO			GPIOD
- * #define DRV8305_CS_PIN			8
- *
- * Requires running
- * drv8305_init();
- * at the end of void hw_init_gpio(void)
- */
-
-/*
- * #define HW_HAS_DRV8320S
- *
- * Use the DRV8320S driver.
- *
- * Requires defining SPI pins for the driver:
- *
- * #define DRV8320S_MOSI_GPIO		GPIOC
- * #define DRV8320S_MOSI_PIN		12
- * #define DRV8320S_MISO_GPIO		GPIOC
- * #define DRV8320S_MISO_PIN		11
- * #define DRV8320S_SCK_GPIO		GPIOC
- * #define DRV8320S_SCK_PIN			10
- * #define DRV8320S_CS_GPIO			GPIOC
- * #define DRV8320S_CS_PIN			9
- *
- * Requires running
- * drv8320s_init();
- * at the end of void hw_init_gpio(void)
- */
-
-/*
- * #define HW_HAS_DRV8323S
- *
- * Use the DRV8323S driver.
- *
- * Requires defining SPI pins for the driver:
- *
- * #define DRV8323S_MOSI_GPIO		GPIOC
- * #define DRV8323S_MOSI_PIN		12
- * #define DRV8323S_MISO_GPIO		GPIOB
- * #define DRV8323S_MISO_PIN		4
- * #define DRV8323S_SCK_GPIO		GPIOB
- * #define DRV8323S_SCK_PIN			3
- * #define DRV8323S_CS_GPIO			GPIOC
- * #define DRV8323S_CS_PIN			9
- *
- * Requires running
- * drv8323s_init();
- * at the end of void hw_init_gpio(void)
- */
-
-/*
- * #define HW_USE_INTERNAL_RC
- *
- * Use the internal RC clock instead of an external crystal.
- */
-
-/*
- * define HW_HAS_3_SHUNTS
- *
- * The hardware has 3 current sensors.
- */
-
-/*
- * #define HW_HAS_PHASE_SHUNTS
- *
- * The current sensors are in line with the motor phases,
- * which allows sampling in V0 and V7, and some extra filtering.
- */
-
-/*
- * #define HW_HAS_NO_CAN
- *
- * The hardware is missing CAN-bus.
- */
-
-/*
- * Define these to enable MPU9150 or MPU9250 support
- * on these pins.
- *
- * #define MPU9X50_SDA_GPIO		GPIOB
- * #define MPU9X50_SDA_PIN		7
- * #define MPU9X50_SCL_GPIO		GPIOB
- * #define MPU9X50_SCL_PIN		6
- *
- * This will flip the axes of the IMU around the horizontal plane
- * #define MPU9x50_FLIP
- */
-
-/*
- * #define HW_HAS_PERMANENT_NRF
- *
- * The hardware has a permanently mounted NRF24. Also requires defining its pins:
- * #define NRF_PORT_CSN			GPIOB
- * #define NRF_PIN_CSN			12
- * #define NRF_PORT_SCK			GPIOB
- * #define NRF_PIN_SCK			4
- * #define NRF_PORT_MOSI		GPIOB
- * #define NRF_PIN_MOSI			3
- * #define NRF_PORT_MISO		GPIOD
- * #define NRF_PIN_MISO			2
- *
- * If the NRF is not detected during initialization, the pins will be remapped
- * to the COMM port if the NRF app is used. A hook to run if initialization fails
- * can also be defined:
- *
- * #define HW_PERMANENT_NRF_FAILED_HOOK()
- */
-
-// Default macros in case there is no hardware support or no need to change them.
-
-#ifndef ENABLE_GATE
-#define ENABLE_GATE()
-#endif
-#ifndef DISABLE_GATE
-#define DISABLE_GATE()
-#endif
-// #ifndef DCCAL_ON
-// #define DCCAL_ON()
-// #endif
-// #ifndef DCCAL_OFF
-// #define DCCAL_OFF()
-// #endif
-#ifndef IS_DRV_FAULT
-#define IS_DRV_FAULT()			0
-#endif
-#ifndef IS_DRV_FAULT_2
-#define IS_DRV_FAULT_2()		IS_DRV_FAULT()
-#endif
-
-// Double samples in beginning and end for positive current measurement.
-// Useful when the shunt sense traces have noise that causes offset.
-#ifndef CURR1_DOUBLE_SAMPLE
-#define CURR1_DOUBLE_SAMPLE		0
-#endif
-#ifndef CURR2_DOUBLE_SAMPLE
-#define CURR2_DOUBLE_SAMPLE		0
-#endif
-#ifndef CURR3_DOUBLE_SAMPLE
-#define CURR3_DOUBLE_SAMPLE		0
-#endif
-
-#ifndef AUX_ON
-#define AUX_ON()
-#endif
-#ifndef AUX_OFF
-#define AUX_OFF()
-#endif
-
-#ifndef PHASE_FILTER_ON
-#define PHASE_FILTER_ON()
-#endif
-#ifndef PHASE_FILTER_OFF
-#define PHASE_FILTER_OFF()
-#endif
-#ifndef PHASE_FILTER_ON_M2
-#define PHASE_FILTER_ON_M2()
-#endif
-#ifndef PHASE_FILTER_OFF_M2
-#define PHASE_FILTER_OFF_M2()
-#endif
-
-// #ifndef CURRENT_FILTER_ON
-// #define CURRENT_FILTER_ON()
-// #endif
-// #ifndef CURRENT_FILTER_OFF
-// #define CURRENT_FILTER_OFF()
-// #endif
-
-#ifndef SENSOR_PORT_5V
-#define SENSOR_PORT_5V()
-#endif
-#ifndef SENSOR_PORT_3V3
-#define SENSOR_PORT_3V3()
-#endif
-
-// VCC net voltage
-#ifndef V_REG
-#define V_REG				3.3
-#endif
-
-// Individual MOSFET temperature sensors. Override if available.
-#ifndef NTC_TEMP_MOS1
-#define NTC_TEMP_MOS1()		0.0
-#endif
-#ifndef NTC_TEMP_MOS2
-#define NTC_TEMP_MOS2()		0.0
-#endif
-#ifndef NTC_TEMP_MOS3
-#define NTC_TEMP_MOS3()		0.0
-#endif
-
-// Sin/Cos Encoder Signals. Override if available
-#ifndef ENCODER_SIN_VOLTS
-#define ENCODER_SIN_VOLTS()		0.0
-#endif
-#ifndef ENCODER_COS_VOLTS
-#define ENCODER_COS_VOLTS()		0.0
-#endif
-
-// Current ADC macros. Override them for custom current measurement functions.
-#ifndef GET_CURRENT1
-#ifdef INVERTED_SHUNT_POLARITY
-#define GET_CURRENT1()		(4095 - ADC_Value[ADC_IND_CURR1])
-#else
-#define GET_CURRENT1()		ADC_Value[ADC_IND_CURR1]
-#endif
-#endif
-#ifndef GET_CURRENT2
-#ifdef INVERTED_SHUNT_POLARITY
-#define GET_CURRENT2()		(4095 - ADC_Value[ADC_IND_CURR2])
-#else
-#define GET_CURRENT2()		ADC_Value[ADC_IND_CURR2]
-#endif
-#endif
-#ifndef GET_CURRENT3
-#ifdef INVERTED_SHUNT_POLARITY
-#define GET_CURRENT3()		(4095 - ADC_Value[ADC_IND_CURR3])
-#else
-#ifdef ADC_IND_CURR3
-#define GET_CURRENT3()		ADC_Value[ADC_IND_CURR3]
-#else
-#define GET_CURRENT3()		0
-#endif
-#endif
-#endif
-
-#ifndef GET_CURRENT1_M2
-#ifdef INVERTED_SHUNT_POLARITY
-#define GET_CURRENT1_M2()	(4095 - ADC_Value[ADC_IND_CURR4])
-#else
-#define GET_CURRENT1_M2()	ADC_Value[ADC_IND_CURR4]
-#endif
-#endif
-#ifndef GET_CURRENT2_M2
-#ifdef INVERTED_SHUNT_POLARITY
-#define GET_CURRENT2_M2()	(4095 - ADC_Value[ADC_IND_CURR5])
-#else
-#define GET_CURRENT2_M2()	ADC_Value[ADC_IND_CURR5]
-#endif
-#endif
-#ifndef GET_CURRENT3_M2
-#ifdef INVERTED_SHUNT_POLARITY
-#define GET_CURRENT3_M2()	(4095 - ADC_Value[ADC_IND_CURR6])
-#else
-#ifdef ADC_IND_CURR6
-#define GET_CURRENT3_M2()	ADC_Value[ADC_IND_CURR6]
-#else
-#define GET_CURRENT3_M2()			0
-#endif
-#endif
-#endif
-
-#ifndef HW_MAX_CURRENT_OFFSET
-#define HW_MAX_CURRENT_OFFSET 				620
-#endif
-#ifndef MCCONF_MAX_CURRENT_UNBALANCE
-#define MCCONF_MAX_CURRENT_UNBALANCE		(FAC_CURRENT * 512)
-#endif
-#ifndef MCCONF_MAX_CURRENT_UNBALANCE_RATE
-#define MCCONF_MAX_CURRENT_UNBALANCE_RATE	0.3
-#endif
-
-// ADC Channels
-#ifndef ADC_IND_EXT3
-#define ADC_IND_EXT3 			ADC_IND_EXT
-#endif
-#ifndef ADC_IND_EXT2
-#define ADC_IND_EXT2 			ADC_IND_EXT
-#endif
-
-// Adc voltage scaling on phases and input
-#ifndef ADC_VOLTS_PH_FACTOR
-#define ADC_VOLTS_PH_FACTOR		1.0
-#endif
-#ifndef ADC_VOLTS_INPUT_FACTOR
-#define ADC_VOLTS_INPUT_FACTOR	1.0
-#endif
-
-// NRF SW SPI (default to spi header pins)
-#ifndef NRF_PORT_CSN
-#define NRF_PORT_CSN			HW_SPI_PORT_NSS
-#endif
-#ifndef NRF_PIN_CSN
-#define NRF_PIN_CSN				HW_SPI_PIN_NSS
-#endif
-#ifndef NRF_PORT_SCK
-#define NRF_PORT_SCK			HW_SPI_PORT_SCK
-#endif
-#ifndef NRF_PIN_SCK
-#define NRF_PIN_SCK				HW_SPI_PIN_SCK
-#endif
-#ifndef NRF_PORT_MOSI
-#define NRF_PORT_MOSI			HW_SPI_PORT_MOSI
-#endif
-#ifndef NRF_PIN_MOSI
-#define NRF_PIN_MOSI			HW_SPI_PIN_MOSI
-#endif
-#ifndef NRF_PORT_MISO
-#define NRF_PORT_MISO			HW_SPI_PORT_MISO
-#endif
-#ifndef NRF_PIN_MISO
-#define NRF_PIN_MISO			HW_SPI_PIN_MISO
-#endif
-
-// CAN device and port (default CAN1)
-#ifndef HW_CANRX_PORT
-#define HW_CANRX_PORT			GPIOB
-#endif
-#ifndef HW_CANRX_PIN
-#define HW_CANRX_PIN			8
-#endif
-#ifndef HW_CANTX_PORT
-#define HW_CANTX_PORT			GPIOB
-#endif
-#ifndef HW_CANTX_PIN
-#define HW_CANTX_PIN			9
-#endif
-#ifndef HW_CAN_GPIO_AF
-#define HW_CAN_GPIO_AF			GPIO_AF_CAN1
-#endif
-#ifndef HW_CAN_DEV
-#define HW_CAN_DEV				CAND1
-#endif
-
-// Hook to call when trying to initialize the permanent NRF failed. Can be
-// used to e.g. reconfigure pins.
-#ifndef HW_PERMANENT_NRF_FAILED_HOOK
-#define HW_PERMANENT_NRF_FAILED_HOOK()
-#endif
-
-// #ifndef HW_EARLY_INIT
-// #define HW_EARLY_INIT()
-// #endif
-
-// Default ID
-#ifndef HW_DEFAULT_ID
-#define HW_DEFAULT_ID			APPCONF_CONTROLLER_ID//(APPCONF_CONTROLLER_ID >= 0 ? APPCONF_CONTROLLER_ID : hw_id_from_uuid())
-#endif
-
-#ifndef HW_LIM_CURRENT
-#define HW_LIM_CURRENT			-100.0, 100.0
-#endif
-#ifndef HW_LIM_CURRENT_ABS
-#define HW_LIM_CURRENT_ABS		0.0, 140.0
-#endif
-
-#ifndef HW_LIM_FOC_CTRL_LOOP_FREQ
-#define HW_LIM_FOC_CTRL_LOOP_FREQ	3000.0, 30000.0
-#endif
-
-#ifndef HW_FOC_CURRENT_FILTER_LIM
-#define HW_FOC_CURRENT_FILTER_LIM	0.05, 1.0
-#endif
-
-#ifndef COMM_USE_USB
-#define COMM_USE_USB				1
-#endif
-
-#ifndef PTC_TEMP_MOTOR
-#if defined(NTC_RES_MOTOR) && defined(ADC_IND_TEMP_MOTOR)
-#define PTC_TEMP_MOTOR(res, con, tbase)			(((NTC_RES_MOTOR(ADC_Value[ADC_IND_TEMP_MOTOR]) - res) / res) * 100 / con + tbase)
-#define PTC_TEMP_MOTOR_2(res, con, tbase)		(((NTC_RES_MOTOR(ADC_Value[ADC_IND_TEMP_MOTOR_2]) - res) / res) * 100 / con + tbase)
-#else
-#define PTC_TEMP_MOTOR(res, con, tbase)			0.0
-#define PTC_TEMP_MOTOR_2(res, con, tbase)		0.0
-#endif
-#endif
-
-#ifndef NTC100K_TEMP_MOTOR
-#if defined(NTC_RES_MOTOR) && defined(ADC_IND_TEMP_MOTOR)
-#define NTC100K_TEMP_MOTOR(beta)		(1.0 / ((logf(NTC_RES_MOTOR(ADC_Value[ADC_IND_TEMP_MOTOR]) / 100000.0) / beta) + (1.0 / 298.15)) - 273.15)
-#define NTC100K_TEMP_MOTOR_2(beta)		(1.0 / ((logf(NTC_RES_MOTOR(ADC_Value[ADC_IND_TEMP_MOTOR_2]) / 100000.0) / beta) + (1.0 / 298.15)) - 273.15)
-#else
-#define NTC100K_TEMP_MOTOR(beta)		0.0
-#define NTC100K_TEMP_MOTOR2(beta)		0.0
-#endif
-#endif
-
-// Default second motor defines
 #ifndef READ_HALL1_2
 #define READ_HALL1_2()			READ_HALL1()
 #endif
@@ -472,21 +55,69 @@
 #ifndef READ_HALL3_2
 #define READ_HALL3_2()			READ_HALL3()
 #endif
-#ifndef ADC_IND_TEMP_MOS_M2
-#define ADC_IND_TEMP_MOS_M2		ADC_IND_TEMP_MOS
-#endif
-#ifndef NTC_TEMP_MOTOR_2
-#define NTC_TEMP_MOTOR_2(beta)	NTC_TEMP_MOTOR(beta)
-#endif
-#ifndef ADC_IND_TEMP_MOTOR_2
-#define ADC_IND_TEMP_MOTOR_2	ADC_IND_TEMP_MOTOR
-#endif
-#ifndef  MOTOR_TEMP_LPF
-#define MOTOR_TEMP_LPF 			0.01
-#endif
-#ifndef HW_ADC_CHANNELS_EXTRA
+
+#define HW_ADC_CHANNELS			15
+#define HW_ADC_INJ_CHANNELS		3
+#define HW_ADC_NBR_CONV			5
+
 #define HW_ADC_CHANNELS_EXTRA	0
+
+// ADC Indexes
+#define ADC_IND_SENS1			0
+#define ADC_IND_SENS2			1
+#define ADC_IND_SENS3			2
+#define ADC_IND_CURR1			3
+#define ADC_IND_CURR2			4
+#define ADC_IND_CURR3			5
+#define ADC_IND_VIN_SENS		11
+#define ADC_IND_EXT				6
+#define ADC_IND_EXT2			7
+#define ADC_IND_TEMP_MOS		8
+#define ADC_IND_TEMP_MOTOR		9
+#define ADC_IND_VREFINT			12
+
+#define ENABLE_GATE()			palSetPad(GPIOB, 5)
+#define DISABLE_GATE()			palClearPad(GPIOB, 5)
+// #endif
+// #define DCCAL_ON()
+// #define DCCAL_OFF()
+#define IS_DRV_FAULT()			(!palReadPad(GPIOB, 7))
+
+#define LED_GREEN_ON()			palSetPad(GPIOB, 0)
+#define LED_GREEN_OFF()			palClearPad(GPIOB, 0)
+#define LED_RED_ON()			palSetPad(GPIOB, 1)
+#define LED_RED_OFF()			palClearPad(GPIOB, 1)
+
+// #define HW_HAS_DRV8301
+#define HW_HAS_3_SHUNTS
+#define HW_HAS_PHASE_SHUNTS
+
+
+#ifndef V_REG
+#define V_REG					3.3
 #endif
+#ifndef VIN_R1
+#define VIN_R1					39000.0
+#endif
+#ifndef VIN_R2
+#define VIN_R2					2200.0
+#endif
+#ifndef CURRENT_AMP_GAIN
+#define CURRENT_AMP_GAIN		20.0
+#endif
+#ifndef CURRENT_SHUNT_RES
+#define CURRENT_SHUNT_RES		0.0005
+#endif
+
+#define FAC_CURRENT					((V_REG / 4095.0) / (CURRENT_SHUNT_RES * CURRENT_AMP_GAIN))
+
+// Input voltage
+#define GET_INPUT_VOLTAGE()		((V_REG / 4095.0) * (float)ADC_Value[ADC_IND_VIN_SENS] * ((VIN_R1 + VIN_R2) / VIN_R2))
+
+#define ADC_V_L1				ADC_Value[ADC_IND_SENS1]
+#define ADC_V_L2				ADC_Value[ADC_IND_SENS2]
+#define ADC_V_L3				ADC_Value[ADC_IND_SENS3]
+
 #ifndef ADC_V_L4
 #define ADC_V_L4				ADC_V_L1
 #endif
@@ -497,49 +128,43 @@
 #define ADC_V_L6				ADC_V_L3
 #endif
 
-#ifdef HW_HAS_DRV8323S
-#ifndef DRV8323S_CUSTOM_SETTINGS
-#define DRV8323S_CUSTOM_SETTINGS()
+
+#ifndef CURR1_DOUBLE_SAMPLE
+#define CURR1_DOUBLE_SAMPLE		0
 #endif
+#ifndef CURR2_DOUBLE_SAMPLE
+#define CURR2_DOUBLE_SAMPLE		0
+#endif
+#ifndef CURR3_DOUBLE_SAMPLE
+#define CURR3_DOUBLE_SAMPLE		0
 #endif
 
-#ifndef HW_PAS1_PORT
-#define HW_PAS1_PORT			HW_UART_RX_PORT
-#define HW_PAS1_PIN				HW_UART_RX_PIN
-#define HW_PAS2_PORT			HW_UART_TX_PORT
-#define HW_PAS2_PIN				HW_UART_TX_PIN
+#ifndef GET_CURRENT1
+#define GET_CURRENT1()		ADC_Value[ADC_IND_CURR1]
 #endif
 
-#ifndef HW_ICU_TIMER
-#ifdef HW_USE_SERVO_TIM4
-#define HW_ICU_TIMER			TIM4
-#define HW_ICU_TIM_CLK_EN()		RCC_APB1PeriphClockCmd(RCC_APB1Periph_TIM4, ENABLE)
-#else
-#define HW_ICU_TIMER			TIM3
-#define HW_ICU_TIM_CLK_EN()		RCC_APB1PeriphClockCmd(RCC_APB1Periph_TIM3, ENABLE)
-#endif
+#ifndef GET_CURRENT2
+#define GET_CURRENT2()		ADC_Value[ADC_IND_CURR2]
 #endif
 
-#ifndef HW_RESET_DRV_FAULTS
-#define HW_RESET_DRV_FAULTS()
+#ifndef GET_CURRENT3
+#define GET_CURRENT3()		ADC_Value[ADC_IND_CURR3]
 #endif
 
-// For backwards-compatibility with configs that use the old name
-#ifdef MCCONF_FOC_F_SW
-#ifndef MCCONF_FOC_F_ZV
-#define MCCONF_FOC_F_ZV			MCCONF_FOC_F_SW
-#warning Please replace `MCCONF_FOC_F_SW` by `MCCONF_FOC_F_ZV`. `MCCONF_FOC_F_SW` is deprecated.
+#ifndef ADC_VOLTS_PH_FACTOR
+#define ADC_VOLTS_PH_FACTOR		1.0
 #endif
+#ifndef ADC_VOLTS_INPUT_FACTOR
+#define ADC_VOLTS_INPUT_FACTOR	1.0
 #endif
 
-// Functions
+#define ADC_VOLTS(ch)			((float)ADC_Value[ch] / 4096.0 * V_REG)
+// #define ADC_V_ZERO				(ADC_Value[ADC_IND_VIN_SENS] / 2)
+
+
 void hw_init_gpio(void);
 void hw_setup_adc_channels(void);
-// void hw_start_i2c(void);
-// void hw_stop_i2c(void);
-// void hw_try_restore_i2c(void);
-// uint8_t hw_id_from_uuid(void);
-// uint8_t hw_id_from_pins(void);
-
 void confgenerator_set_defaults_mcconf(mc_configuration *conf);
+uint8_t conf_general_calculate_deadtime(float deadtime_ns, float core_clock_freq);
+
 #endif /* HW_H_ */

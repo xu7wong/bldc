@@ -17,66 +17,164 @@
 	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	*/
 
-#include "conf_general.h"
-#include "utils.h"
-#include <math.h>
-#include HW_SOURCE
+// #include "conf_general.h"
+// #include "utils.h"
+// #include <math.h>
+#include "hw.h"
+#include "hal.h"
+#include "stm32f4xx_conf.h"
 
-// uint8_t hw_id_from_uuid(void) {
-// 	uint8_t id = utils_crc32c(STM32_UUID_8, 12) & 0x7F;
-// 	// CAN ID 10 and 11 are often used by DieBieMS / FlexiBMS
-// 	uint8_t reserved[] = {10, 11};
-// 	for (size_t i = 0; i < sizeof(reserved); ++i) {
-// 		if (id == reserved[i]) {
-// 			id = (id + 1) & 0x7F;
-// 			i = 0;
-// 		}
-// 	}
-// 	return id;
-// }
+void hw_init_gpio(void) {
+// #if defined(HW60_IS_MK3) || defined(HW60_IS_MK4) || defined(HW60_IS_MK5)
+// 	chMtxObjectInit(&shutdown_mutex);
+// #endif
 
-// #if defined(HW_ID_PIN_GPIOS) && defined(HW_ID_PIN_PINS)
-// uint8_t hw_id_from_pins(void) {
-// 	stm32_gpio_t *hw_id_ports[]={HW_ID_PIN_GPIOS};
-// 	const uint16_t hw_id_pins[] = {HW_ID_PIN_PINS};
-// 	const uint16_t hw_id_pins_size = sizeof(hw_id_pins)/sizeof(uint16_t);
+	// GPIO clock enable
+	RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_GPIOA, ENABLE);
+	RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_GPIOB, ENABLE);
+	RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_GPIOC, ENABLE);
+	RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_GPIOD, ENABLE);
 
-// 	const uint16_t DELAY_MS = 5;
-// 	uint8_t trits[hw_id_pins_size];
-// 	uint8_t id = 1u; //Start at 1
-// 	for (uint8_t i=0; i<hw_id_pins_size; i++) {
-// 		//Initialize pulldown
-// 		palSetPadMode(hw_id_ports[i], hw_id_pins[i], PAL_MODE_INPUT_PULLDOWN);
-		
-// 		//Delay a little for the resistor to take affect
-// 		chThdSleepMilliseconds(DELAY_MS);
-// 		bool pin_set_pulldown = (palReadPad(hw_id_ports[i], hw_id_pins[i]));
-// 		//Initialize pullup
-// 		palSetPadMode(hw_id_ports[i], hw_id_pins[i], PAL_MODE_INPUT_PULLUP);
-// 		//Delay a little for the resistor to take affect
-// 		chThdSleepMilliseconds(DELAY_MS);
-// 		bool pin_set_pullup = (palReadPad(hw_id_ports[i], hw_id_pins[i]));
-// 		//Now determine the trit state
-// 		if (!pin_set_pulldown && !pin_set_pullup) {
-// 			//Tied to GND
-// 			trits[i] = 1u;
-// 		} else if (pin_set_pulldown && pin_set_pullup) {
-// 			//Tied to VCC
-// 			trits[i] = 2u;
-// 		} else if (!pin_set_pulldown && pin_set_pullup) {
-// 			//Floating
-// 			trits[i] = 0u;
-// 		} else {
-// 			return hw_id_from_uuid();
-// 			//To satisfy compiler warning
-// 			trits[i] = 3u;
-// 		}
-// 		id += trits[i] * pow(3, i); 
-// 		palSetPadMode(hw_id_ports[i], hw_id_pins[i], PAL_MODE_INPUT);
-// 	}
-// 	return id;
-// }
-// #endif //defined(HW_ID_PIN_GPIOS) && defined(HW_ID_PIN_PINS)
+	// LEDs
+	palSetPadMode(GPIOB, 0,
+			PAL_MODE_OUTPUT_PUSHPULL |
+			PAL_STM32_OSPEED_HIGHEST);
+	palSetPadMode(GPIOB, 1,
+			PAL_MODE_OUTPUT_PUSHPULL |
+			PAL_STM32_OSPEED_HIGHEST);
+
+	LED_GREEN_OFF();
+	LED_RED_OFF();
+	// ENABLE_GATE
+// #ifdef HW60_VEDDER_FIRST_PCB
+// 	palSetPadMode(GPIOB, 6,
+// 			PAL_MODE_OUTPUT_PUSHPULL |
+// 			PAL_STM32_OSPEED_HIGHEST);
+// #else
+	palSetPadMode(GPIOB, 5,
+			PAL_MODE_OUTPUT_PUSHPULL |
+			PAL_STM32_OSPEED_HIGHEST);
+// #endif
+
+	ENABLE_GATE();
+
+	// Current filter
+	// palSetPadMode(GPIOD, 2,
+	// 		PAL_MODE_OUTPUT_PUSHPULL |
+	// 		PAL_STM32_OSPEED_HIGHEST);
+
+	// CURRENT_FILTER_OFF();
+
+	// GPIOA Configuration: Channel 1 to 3 as alternate function push-pull
+	palSetPadMode(GPIOA, 8, PAL_MODE_ALTERNATE(GPIO_AF_TIM1) |
+			PAL_STM32_OSPEED_HIGHEST |
+			PAL_STM32_PUDR_FLOATING);
+	palSetPadMode(GPIOA, 9, PAL_MODE_ALTERNATE(GPIO_AF_TIM1) |
+			PAL_STM32_OSPEED_HIGHEST |
+			PAL_STM32_PUDR_FLOATING);
+	palSetPadMode(GPIOA, 10, PAL_MODE_ALTERNATE(GPIO_AF_TIM1) |
+			PAL_STM32_OSPEED_HIGHEST |
+			PAL_STM32_PUDR_FLOATING);
+
+	palSetPadMode(GPIOB, 13, PAL_MODE_ALTERNATE(GPIO_AF_TIM1) |
+			PAL_STM32_OSPEED_HIGHEST |
+			PAL_STM32_PUDR_FLOATING);
+	palSetPadMode(GPIOB, 14, PAL_MODE_ALTERNATE(GPIO_AF_TIM1) |
+			PAL_STM32_OSPEED_HIGHEST |
+			PAL_STM32_PUDR_FLOATING);
+	palSetPadMode(GPIOB, 15, PAL_MODE_ALTERNATE(GPIO_AF_TIM1) |
+			PAL_STM32_OSPEED_HIGHEST |
+			PAL_STM32_PUDR_FLOATING);
+	//PB10 -> TIM2 CH3 output debug
+	// palSetPadMode(GPIOB, 10, PAL_MODE_ALTERNATE(GPIO_AF_TIM2) |
+	// 		PAL_STM32_OSPEED_HIGHEST |
+	// 		PAL_STM32_PUDR_FLOATING);
+
+	palSetPadMode(GPIOB, 10, PAL_MODE_OUTPUT_PUSHPULL |PAL_STM32_OSPEED_HIGHEST);
+
+	// Hall sensors
+	palSetPadMode(HW_HALL_ENC_GPIO1, HW_HALL_ENC_PIN1, PAL_MODE_INPUT_PULLUP);
+	palSetPadMode(HW_HALL_ENC_GPIO2, HW_HALL_ENC_PIN2, PAL_MODE_INPUT_PULLUP);
+	palSetPadMode(HW_HALL_ENC_GPIO3, HW_HALL_ENC_PIN3, PAL_MODE_INPUT_PULLUP);
+
+	// Phase filters
+// #ifdef PHASE_FILTER_GPIO
+// 	palSetPadMode(PHASE_FILTER_GPIO, PHASE_FILTER_PIN,
+// 			PAL_MODE_OUTPUT_PUSHPULL |
+// 			PAL_STM32_OSPEED_HIGHEST);
+// 	PHASE_FILTER_OFF();
+// #endif
+
+	// Fault pin
+	palSetPadMode(GPIOB, 7, PAL_MODE_INPUT_PULLUP);
+
+	// ADC Pins
+	palSetPadMode(GPIOA, 0, PAL_MODE_INPUT_ANALOG);
+	palSetPadMode(GPIOA, 1, PAL_MODE_INPUT_ANALOG);
+	palSetPadMode(GPIOA, 2, PAL_MODE_INPUT_ANALOG);
+	palSetPadMode(GPIOA, 3, PAL_MODE_INPUT_ANALOG);
+	palSetPadMode(GPIOA, 5, PAL_MODE_INPUT_ANALOG);
+	palSetPadMode(GPIOA, 6, PAL_MODE_INPUT_ANALOG);
+
+	palSetPadMode(GPIOC, 0, PAL_MODE_INPUT_ANALOG);
+	palSetPadMode(GPIOC, 1, PAL_MODE_INPUT_ANALOG);
+	palSetPadMode(GPIOC, 2, PAL_MODE_INPUT_ANALOG);
+	palSetPadMode(GPIOC, 3, PAL_MODE_INPUT_ANALOG);
+	palSetPadMode(GPIOC, 4, PAL_MODE_INPUT_ANALOG);
+// #if !defined(HW60_IS_MK3) && !defined(HW60_IS_MK4) && !defined(HW60_IS_MK5)
+// 	palSetPadMode(GPIOC, 5, PAL_MODE_INPUT_ANALOG);
+// #endif
+
+	//drv8301_init();
+
+// #if defined(HW60_IS_MK3) || defined(HW60_IS_MK4) || defined(HW60_IS_MK5)
+// 	terminal_register_command_callback(
+// 		"shutdown",
+// 		"Shutdown VESC now.",
+// 		0,
+// 		terminal_shutdown_now);
+
+// 	terminal_register_command_callback(
+// 		"test_button",
+// 		"Try sampling the shutdown button",
+// 		0,
+// 		terminal_button_test);
+// #endif
+}
+
+void hw_setup_adc_channels(void) {
+	// ADC1 regular channels
+	ADC_RegularChannelConfig(ADC1, ADC_Channel_0, 1, ADC_SampleTime_15Cycles);
+	ADC_RegularChannelConfig(ADC1, ADC_Channel_10, 2, ADC_SampleTime_15Cycles);
+	ADC_RegularChannelConfig(ADC1, ADC_Channel_5, 3, ADC_SampleTime_15Cycles);
+	ADC_RegularChannelConfig(ADC1, ADC_Channel_14, 4, ADC_SampleTime_15Cycles);
+	ADC_RegularChannelConfig(ADC1, ADC_Channel_Vrefint, 5, ADC_SampleTime_15Cycles);
+
+	// ADC2 regular channels
+	ADC_RegularChannelConfig(ADC2, ADC_Channel_1, 1, ADC_SampleTime_15Cycles);
+	ADC_RegularChannelConfig(ADC2, ADC_Channel_11, 2, ADC_SampleTime_15Cycles);
+	ADC_RegularChannelConfig(ADC2, ADC_Channel_6, 3, ADC_SampleTime_15Cycles);
+	ADC_RegularChannelConfig(ADC2, ADC_Channel_15, 4, ADC_SampleTime_15Cycles);
+	ADC_RegularChannelConfig(ADC2, ADC_Channel_0, 5, ADC_SampleTime_15Cycles);
+
+	// ADC3 regular channels
+	ADC_RegularChannelConfig(ADC3, ADC_Channel_2, 1, ADC_SampleTime_15Cycles);
+	ADC_RegularChannelConfig(ADC3, ADC_Channel_12, 2, ADC_SampleTime_15Cycles);
+	ADC_RegularChannelConfig(ADC3, ADC_Channel_3, 3, ADC_SampleTime_15Cycles);
+	ADC_RegularChannelConfig(ADC3, ADC_Channel_13, 4, ADC_SampleTime_15Cycles);
+	ADC_RegularChannelConfig(ADC3, ADC_Channel_1, 5, ADC_SampleTime_15Cycles);
+
+	// Injected channels
+	// ADC_InjectedChannelConfig(ADC1, ADC_Channel_10, 1, ADC_SampleTime_15Cycles);
+	// ADC_InjectedChannelConfig(ADC2, ADC_Channel_11, 1, ADC_SampleTime_15Cycles);
+	// ADC_InjectedChannelConfig(ADC3, ADC_Channel_12, 1, ADC_SampleTime_15Cycles);
+	// ADC_InjectedChannelConfig(ADC1, ADC_Channel_10, 2, ADC_SampleTime_15Cycles);
+	// ADC_InjectedChannelConfig(ADC2, ADC_Channel_11, 2, ADC_SampleTime_15Cycles);
+	// ADC_InjectedChannelConfig(ADC3, ADC_Channel_12, 2, ADC_SampleTime_15Cycles);
+	// ADC_InjectedChannelConfig(ADC1, ADC_Channel_10, 3, ADC_SampleTime_15Cycles);
+	// ADC_InjectedChannelConfig(ADC2, ADC_Channel_11, 3, ADC_SampleTime_15Cycles);
+	// ADC_InjectedChannelConfig(ADC3, ADC_Channel_12, 3, ADC_SampleTime_15Cycles);
+}
 
 uint8_t conf_general_calculate_deadtime(float deadtime_ns, float core_clock_freq) {
 	uint8_t DTG = 0;

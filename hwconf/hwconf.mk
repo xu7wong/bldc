@@ -1,5 +1,4 @@
-HWSRC =	hwconf/hw.c \
-	hwconf/drv8301.c
+HWSRC =	hwconf/hw.c
 
 HWINC = hwconf
 

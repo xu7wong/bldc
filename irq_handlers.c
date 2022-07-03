@@ -72,3 +72,40 @@ CH_IRQ_HANDLER(TIM2_IRQHandler) {
 // 		EXTI_ClearFlag(EXTI_Line16);
 // 	}
 // }
+void DMA2_Stream4_IRQHandler(void){
+//	uint32_t flags;
+
+//	//
+//	//  	OSAL_IRQ_PROLOGUE();
+//	//
+//	flags = (DMA2->HISR >> 0) & STM32_DMA_ISR_MASK;
+//	DMA2->HIFCR = flags << 0;
+//	//  //if (dma_isr_redirX[12].dma_func)
+//	//  //  dma_isr_redirX[12].dma_func(dma_isr_redirX[12].dma_param, flags);
+//	mcpwm_foc_adc_int_handler();
+//
+	if(DMA_GetITStatus(DMA2_Stream4, DMA_IT_TCIF4))
+	{
+
+	/* Clear DMA Stream Transfer Complete interrupt pending bit */
+		DMA_ClearITPendingBit(DMA2_Stream4, DMA_IT_TCIF4);
+
+//		if (debug_flag > 0) {
+//			GPIOB->BSRR = GPIO_Pin_10;
+//			debug_flag = 0;
+//		} else {
+//			GPIOB->BSRR = GPIO_Pin_10 << 16;
+//			debug_flag = 1;
+//		}
+
+//		uint32_t flags;
+//		flags = (DMA2->HISR >> 0) & STM32_DMA_ISR_MASK;
+//		DMA2->HIFCR = flags << 0;
+
+//		memcpy(ADC_debug, ADC_Value, 30);
+		mcpwm_foc_adc_int_handler();
+	}
+	//if(DMA_GetITStatus(DMA2_Stream4, DMA_IT_TEIF4)){
+	//	DMA_ClearITPendingBit(DMA2_Stream4, DMA_IT_TEIF4);
+	//}
+}

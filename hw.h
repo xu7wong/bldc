@@ -64,16 +64,16 @@
 
 // ADC Indexes
 #define ADC_IND_SENS1			0
-#define ADC_IND_SENS2			1
-#define ADC_IND_SENS3			2
-#define ADC_IND_CURR1			3
+#define ADC_IND_SENS2			3
+#define ADC_IND_SENS3			6//2
+#define ADC_IND_CURR1			1
 #define ADC_IND_CURR2			4
-#define ADC_IND_CURR3			5
-#define ADC_IND_VIN_SENS		11
-#define ADC_IND_EXT				6
-#define ADC_IND_EXT2			7
-#define ADC_IND_TEMP_MOS		8
-#define ADC_IND_TEMP_MOTOR		9
+#define ADC_IND_CURR3			7
+// #define ADC_IND_EXT				6
+// #define ADC_IND_EXT2			7
+#define ADC_IND_TEMP_MOS		13
+#define ADC_IND_TEMP_MOTOR		10
+#define ADC_IND_VIN_SENS		9
 #define ADC_IND_VREFINT			12
 
 #define ENABLE_GATE()			palSetPad(GPIOB, 5)
@@ -118,15 +118,15 @@
 #define ADC_V_L2				ADC_Value[ADC_IND_SENS2]
 #define ADC_V_L3				ADC_Value[ADC_IND_SENS3]
 
-#ifndef ADC_V_L4
-#define ADC_V_L4				ADC_V_L1
-#endif
-#ifndef ADC_V_L5
-#define ADC_V_L5				ADC_V_L2
-#endif
-#ifndef ADC_V_L6
-#define ADC_V_L6				ADC_V_L3
-#endif
+// #ifndef ADC_V_L4
+// #define ADC_V_L4				ADC_V_L1
+// #endif
+// #ifndef ADC_V_L5
+// #define ADC_V_L5				ADC_V_L2
+// #endif
+// #ifndef ADC_V_L6
+// #define ADC_V_L6				ADC_V_L3
+// #endif
 
 
 #ifndef CURR1_DOUBLE_SAMPLE

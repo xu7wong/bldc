@@ -4,6 +4,8 @@
         "mcconf_default.h": "c",
         "st.h": "c",
         "halconf.h": "c",
-        "hal.h": "c"
+        "hal.h": "c",
+        "osal.h": "c",
+        "stm32f4xx_dma.h": "c"
     }
 }

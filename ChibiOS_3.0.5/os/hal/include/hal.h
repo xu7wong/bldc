@@ -25,7 +25,21 @@
 #ifndef _HAL_H_
 #define _HAL_H_
 
-#include "osal.h"
+// #include "osal.h"
+#if !defined(FALSE) || defined(__DOXYGEN__)
+#define FALSE                               0
+#endif
+
+#if !defined OSAL_ST_FREQUENCY
+#define OSAL_ST_FREQUENCY  1000
+#endif
+#if !defined CH_CFG_ST_FREQUENCY
+#define CH_CFG_ST_FREQUENCY                 10000
+#endif
+#if !defined(TRUE) || defined(__DOXYGEN__)
+#define TRUE                                (!FALSE)
+#endif
+
 #include "board.h"
 #include "halconf.h"
 

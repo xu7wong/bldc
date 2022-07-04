@@ -17,7 +17,7 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-// #include "ch.h"
+#include "ch.h"
 #include "hal.h"
 #include "stm32f4xx_conf.h"
 
@@ -210,6 +210,22 @@ void assert_failed(uint8_t* file, uint32_t line) {
 int main(void) {
 	halInit();
 	chSysInit();
+
+	  /* Initialization of the vector table and priority related settings.*/
+//   SCB->VTOR = CORTEX_VTOR_INIT;
+
+//   /* Initializing priority grouping.*/
+//   NVIC_SetPriorityGrouping(CORTEX_PRIGROUP_INIT);
+
+//   /* DWT cycle counter enable.*/
+//   CoreDebug->DEMCR |= CoreDebug_DEMCR_TRCENA_Msk;
+//   DWT->CTRL |= DWT_CTRL_CYCCNTENA_Msk;
+
+
+//   NVIC_SetPriority(PendSV_IRQn, CORTEX_PRIORITY_PENDSV);
+
+
+
 	timer_init();
 	// Initialize the enable pins here and disable them
 	// to avoid excessive current draw at boot because of

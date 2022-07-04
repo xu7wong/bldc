@@ -48,8 +48,8 @@ float utils_min_abs(float va, float vb);
 float utils_max_abs(float va, float vb);
 void utils_byte_to_binary(int x, char *b);
 float utils_throttle_curve(float val, float curve_acc, float curve_brake, int mode);
-void utils_sys_lock_cnt(void);
-void utils_sys_unlock_cnt(void);
+// void utils_sys_lock_cnt(void);
+// void utils_sys_unlock_cnt(void);
 // uint32_t utils_crc32c(uint8_t *data, uint32_t len);
 void utils_fft32_bin0(float *real_in, float *real, float *imag);
 void utils_fft32_bin1(float *real_in, float *real, float *imag);
@@ -74,7 +74,7 @@ const char* utils_hw_type_to_string(HW_TYPE hw);
 #define SQ(x)				((x) * (x))
 
 // Return the age of a timestamp in seconds
-#define UTILS_AGE_S(x)		((float)chVTTimeElapsedSinceX(x) / (float)CH_CFG_ST_FREQUENCY)
+#define UTILS_AGE_S(x)		timer_seconds_elapsed_since(0)//((float)chVTTimeElapsedSinceX(x) / (float)CH_CFG_ST_FREQUENCY)
 
 // nan and infinity check for floats
 #define UTILS_IS_INF(x)		((x) == (1.0 / 0.0) || (x) == (-1.0 / 0.0))

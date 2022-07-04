@@ -606,12 +606,12 @@ float utils_throttle_curve(float val, float curve_acc, float curve_brake, int mo
  * be called five times as well. Note that chSysLock and chSysLockFromIsr are the same
  * for this port.
  */
-void utils_sys_lock_cnt(void) {
-	if (!sys_lock_cnt) {
-		chSysLock();
-	}
-	sys_lock_cnt++;
-}
+// void utils_sys_lock_cnt(void) {
+// 	if (!sys_lock_cnt) {
+// 		chSysLock();
+// 	}
+// 	sys_lock_cnt++;
+// }
 
 /**
  * A system unlocking function with a counter. For every lock, a corresponding unlock must
@@ -619,14 +619,14 @@ void utils_sys_lock_cnt(void) {
  * be called five times as well. Note that chSysUnlock and chSysUnlockFromIsr are the same
  * for this port.
  */
-void utils_sys_unlock_cnt(void) {
-	if (sys_lock_cnt) {
-		sys_lock_cnt--;
-		if (!sys_lock_cnt) {
-			chSysUnlock();
-		}
-	}
-}
+// void utils_sys_unlock_cnt(void) {
+// 	if (sys_lock_cnt) {
+// 		sys_lock_cnt--;
+// 		if (!sys_lock_cnt) {
+// 			chSysUnlock();
+// 		}
+// 	}
+// }
 
 // uint32_t utils_crc32c(uint8_t *data, uint32_t len) {
 // 	uint32_t crc = 0xFFFFFFFF;

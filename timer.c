@@ -48,6 +48,10 @@ float timer_seconds_elapsed_since(uint32_t time) {
 	uint32_t diff = TIM5->CNT - time;
 	return (float)diff / (float)TIMER_HZ;
 }
+uint32_t timer_milliseconds_elapsed_since(uint32_t time) {
+	uint32_t diff = TIM5->CNT - time;
+	return diff / 14000;
+}
 
 /**
  * Blocking sleep based on timer.

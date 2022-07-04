@@ -582,7 +582,7 @@ void mcpwm_foc_init(volatile mc_configuration *conf_m1, volatile mc_configuratio
 	// DCCAL_OFF();
 
 	if (m_motor_1.m_conf->foc_offsets_cal_on_boot) {
-		systime_t cal_start_time = chVTGetSystemTimeX();
+		systime_t cal_start_time = timer_milliseconds_elapsed_since(0);//chVTGetSystemTimeX();
 		float cal_start_timeout = 10.0;
 
 		// Wait for input voltage to rise above minimum voltage
@@ -597,14 +597,14 @@ void mcpwm_foc_init(volatile mc_configuration *conf_m1, volatile mc_configuratio
 		// Wait for input voltage to settle
 		if (!m_dccal_done) {
 			float v_in_last = mc_interface_get_input_voltage_filtered();
-			systime_t v_in_stable_time = chVTGetSystemTimeX();
+			systime_t v_in_stable_time = timer_milliseconds_elapsed_since(0);//chVTGetSystemTimeX();
 			while (UTILS_AGE_S(v_in_stable_time) < 2.0) {
 				chThdSleepMS(1);
 
 				float v_in_now = mc_interface_get_input_voltage_filtered();
 				if (fabsf(v_in_now - v_in_last) > 1.5) {
 					v_in_last = v_in_now;
-					v_in_stable_time = chVTGetSystemTimeX();
+					v_in_stable_time = timer_milliseconds_elapsed_since(0);//chVTGetSystemTimeX();
 				}
 
 				if (UTILS_AGE_S(cal_start_time) >= cal_start_timeout) {

@@ -17,7 +17,7 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
     */
 
-// #include "ch.h"
+#include "ch.h"
 #include "hal.h"
 #include "stm32f4xx_conf.h"
 #include "isr_vector_table.h"
@@ -71,11 +71,12 @@
 
 //   OSAL_IRQ_EPILOGUE();
 // }
-void SysTick_Handler(){
-	osalSysLockFromISR();
-  	osalOsTimerHandlerI();
-  	osalSysUnlockFromISR();
+void SysTick_Handler(void){
+	// chSysLockFromISR();
+  	// chSysTimerHandlerI();
+  	// chSysUnlockFromISR();
 }
+
 void TIM2_IRQHandler(void){
     if (TIM_GetITStatus(TIM2, TIM_IT_CC2) != RESET) {
 		mcpwm_foc_tim_sample_int_handler();

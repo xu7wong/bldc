@@ -181,11 +181,11 @@ void hw_setup_adc_channels(void) {
 	ADC_RegularChannelConfig(ADC2, ADC_Channel_3, 5, ADC_SampleTime_15Cycles);	// MOS TEMP, 9
 
 	// ADC3 regular channels
-	ADC_RegularChannelConfig(ADC3, ADC_Channel_15, 1, ADC_SampleTime_15Cycles);	// 2
-	ADC_RegularChannelConfig(ADC3, ADC_Channel_6, 2, ADC_SampleTime_15Cycles);	// 5
-	ADC_RegularChannelConfig(ADC3, ADC_Channel_0, 3, ADC_SampleTime_15Cycles);	// 8
-	ADC_RegularChannelConfig(ADC3, ADC_Channel_5, 4, ADC_SampleTime_15Cycles);	// 11
-	ADC_RegularChannelConfig(ADC3, ADC_Channel_1, 5, ADC_SampleTime_15Cycles);	// 14
+	// ADC_RegularChannelConfig(ADC3, ADC_Channel_15, 1, ADC_SampleTime_15Cycles);	// 2
+	// ADC_RegularChannelConfig(ADC3, ADC_Channel_6, 2, ADC_SampleTime_15Cycles);	// 5
+	// ADC_RegularChannelConfig(ADC3, ADC_Channel_0, 3, ADC_SampleTime_15Cycles);	// 8
+	// ADC_RegularChannelConfig(ADC3, ADC_Channel_5, 4, ADC_SampleTime_15Cycles);	// 11
+	// ADC_RegularChannelConfig(ADC3, ADC_Channel_1, 5, ADC_SampleTime_15Cycles);	// 14
 }
 
 uint8_t conf_general_calculate_deadtime(float deadtime_ns, float core_clock_freq) {

@@ -17,7 +17,7 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "ch.h"
+// #include "ch.h"
 #include "hal.h"
 #include "stm32f4xx_conf.h"
 
@@ -206,24 +206,32 @@ void assert_failed(uint8_t* file, uint32_t line) {
 // bool main_init_done(void) {
 // 	return m_init_done;
 // }
+// #include "chsys.h"
+#define CORTEX_MAX_KERNEL_PRIORITY      0U
+#define CORTEX_PRIORITY_PENDSV          CORTEX_MAX_KERNEL_PRIORITY
+#define CORTEX_VTOR_INIT                0x00000000U
+#define CORTEX_PRIORITY_BITS    4
+#define CORTEX_PRIGROUP_INIT            (7 - CORTEX_PRIORITY_BITS)
 
 int main(void) {
 	halInit();
-	chSysInit();
+	// chSysInit();
 
 	  /* Initialization of the vector table and priority related settings.*/
-//   SCB->VTOR = CORTEX_VTOR_INIT;
+  SCB->VTOR = CORTEX_VTOR_INIT;
 
-//   /* Initializing priority grouping.*/
-//   NVIC_SetPriorityGrouping(CORTEX_PRIGROUP_INIT);
+  /* Initializing priority grouping.*/
+  NVIC_SetPriorityGrouping(CORTEX_PRIGROUP_INIT);
 
-//   /* DWT cycle counter enable.*/
-//   CoreDebug->DEMCR |= CoreDebug_DEMCR_TRCENA_Msk;
-//   DWT->CTRL |= DWT_CTRL_CYCCNTENA_Msk;
+  /* DWT cycle counter enable.*/
+  CoreDebug->DEMCR |= CoreDebug_DEMCR_TRCENA_Msk;
+  DWT->CTRL |= DWT_CTRL_CYCCNTENA_Msk;
 
 
-//   NVIC_SetPriority(PendSV_IRQn, CORTEX_PRIORITY_PENDSV);
+  NVIC_SetPriority(PendSV_IRQn, CORTEX_PRIORITY_PENDSV);
 
+	// __ASM volatile ("MSR basepri, %0" : : "r" (0U) : "memory");
+	__ASM volatile ("cpsie i" : : : "memory");
 
 
 	timer_init();

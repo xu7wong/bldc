@@ -98,16 +98,16 @@ PROJECT = BLDC_4_ChibiOS
 CHIBIOS = ChibiOS_3.0.5
 include driver/stm32lib.mk
 # Startup files
-include $(CHIBIOS)/os/common/ports/ARMCMx/compilers/GCC/mk/startup_stm32f4xx.mk
+include driver/ports/ARMCMx/compilers/GCC/mk/startup_stm32f4xx.mk
 # HAL-OSAL files
-include $(CHIBIOS)/os/hal/hal.mk
+include driver/hal/hal.mk
 
 #include $(CHIBIOS)/os/hal/osal/rt/osal.mk
 # RTOS files
-include $(CHIBIOS)/os/rt/rt.mk
-include $(CHIBIOS)/os/rt/ports/ARMCMx/compilers/GCC/mk/port_v7m.mk
+# include $(CHIBIOS)/os/rt/rt.mk
+# include driver/ports/ARMCMx/compilers/GCC/mk/port_v7m.mk
 # Other files
-include hwconf/hwconf.mk
+# include hwconf/hwconf.mk
 # include applications/applications.mk
 # include nrf/nrf.mk
 # include libcanard/canard.mk
@@ -127,8 +127,6 @@ LDSCRIPT= ld_eeprom_emu.ld
 # C sources that can be compiled in ARM or THUMB mode depending on the global
 # setting.
 CSRC = $(STM32SRC) $(STARTUPSRC) \
-       $(KERNSRC) \
-       $(PORTSRC) \
        $(HALSRC) \
        board.c \
        main.c \
@@ -138,7 +136,7 @@ CSRC = $(STM32SRC) $(STARTUPSRC) \
        mc_interface.c \
        mcpwm_foc.c \
        timer.c \
-       $(HWSRC)
+       hw.c
        
        
 # ifeq ($(USE_LISPBM),1)
@@ -172,9 +170,8 @@ TCPPSRC =
 # List ASM source files here
 ASMSRC = $(STARTUPASM) $(PORTASM) $(OSALASM)
 
-INCDIR = $(STM32INC) $(STARTUPINC) $(KERNINC) $(PORTINC) $(OSALINC) \
-         $(HALINC) $(PLATFORMINC) \
-         $(CHIBIOS)/os/lib/streams \
+INCDIR = $(STM32INC) $(STARTUPINC) $(PORTINC) \
+         $(HALINC) \
          mcconf \
          appconf \
          $(HWINC)
@@ -261,7 +258,7 @@ ULIBS = -lm
 #   USE_OPT += -DUSE_STDPERIPH_DRIVER
 # endif
 
-RULESPATH = $(CHIBIOS)/os/common/ports/ARMCMx/compilers/GCC
+RULESPATH = driver/ports/ARMCMx/compilers/GCC
 include $(RULESPATH)/rules.mk
 
 build/$(PROJECT).bin: build/$(PROJECT).elf 

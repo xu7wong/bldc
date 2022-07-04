@@ -10,73 +10,16 @@
 
 An open source motor controller firmware.
 
-This is the source code for the VESC DC/BLDC/FOC controller. Read more at
-[https://vesc-project.com/](https://vesc-project.com/)
+This is the slim version for the VESC FOC controller.
 
-## Supported boards
-
-All  of them!
-
-Make sure you select your board in [conf_general.h](conf_general.h)
-
-
-```c
-//#define HW_SOURCE "hw_40.c"
-//#define HW_HEADER "hw_40.h"
-
-//#define HW_SOURCE "hw_45.c"
-//#define HW_HEADER "hw_45.h"
-
-//#define HW_SOURCE "hw_46.c" // Also for 4.7
-//#define HW_HEADER "hw_46.h" // Also for 4.7
-
-//#define HW_SOURCE "hw_48.c"
-//#define HW_HEADER "hw_48.h"
-
-//#define HW_SOURCE "hw_49.c"
-//#define HW_HEADER "hw_49.h"
-
-//#define HW_SOURCE "hw_410.c" // Also for 4.11 and 4.12
-//#define HW_HEADER "hw_410.h" // Also for 4.11 and 4.12
-
-#define HW_SOURCE "hw_60.c"
-#define HW_HEADER "hw_60.h"
-
-//#define HW_SOURCE "hw_r2.c"
-//#define HW_HEADER "hw_r2.h"
-
-//#define HW_SOURCE "hw_victor_r1a.c"
-//#define HW_HEADER "hw_victor_r1a.h"
-
-//#define HW_SOURCE "hw_das_rs.c"
-//#define HW_HEADER "hw_das_rs.h"
-
-//#define HW_SOURCE "hw_axiom.c"
-//#define HW_HEADER "hw_axiom.h"
-
-//#define HW_SOURCE "hw_rh.c"
-//#define HW_HEADER "hw_rh.h"
-
-//#define HW_SOURCE "hw_tp.c"
-//#define HW_HEADER "hw_tp.h"
-
-//#define HW_SOURCE "hw_75_300.c"
-//#define HW_HEADER "hw_75_300.h"
-
-//#define HW_SOURCE "hw_mini4.c"
-//#define HW_HEADER "hw_mini4.h"
-
-//#define HW_SOURCE "hw_das_mini.c"
-//#define HW_HEADER "hw_das_mini.h"
-
-//#define HW_SOURCE "hw_uavc_qcube.c"
-//#define HW_HEADER "hw_uavc_qcube.h"
-
-//#define HW_SOURCE "hw_uavc_basic.c"
-//#define HW_HEADER "hw_uavc_basic.h"
-```
-There are also many other options that can be changed in conf_general.h
-
+- based on V5.03
+- delete ChibiOS
+- delete communication layer
+- delete bootloader
+- delete all motor functions except FOC current control
+- delete all encoder code except hall sensor and sensorless
+- write pre-set motor configuration into mcconf_default.h
+- powertrain hardware is the same as hw_60
 
 ## Prerequisites
 

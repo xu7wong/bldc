@@ -27,7 +27,7 @@
 void mc_interface_init(void);
 // int mc_interface_motor_now(void);
 void mc_interface_select_motor_thread(int motor);
-int mc_interface_get_motor_thread(void);
+// int mc_interface_get_motor_thread(void);
 const volatile mc_configuration* mc_interface_get_configuration(void);
 void mc_interface_set_configuration(mc_configuration *configuration);
 // unsigned mc_interface_calc_crc(mc_configuration* conf, bool is_motor_2);

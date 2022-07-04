@@ -271,26 +271,26 @@ void mc_interface_init(void) {
 
 
 void mc_interface_select_motor_thread(int motor) {
-#if defined HW_HAS_DUAL_MOTORS || defined HW_HAS_DUAL_PARALLEL
-	if (motor == 0 || motor == 1 || motor == 2) {
-		chThdGetSelfX()->motor_selected = motor;
-	}
-#else
+// #if defined HW_HAS_DUAL_MOTORS || defined HW_HAS_DUAL_PARALLEL
+// 	if (motor == 0 || motor == 1 || motor == 2) {
+// 		chThdGetSelfX()->motor_selected = motor;
+// 	}
+// #else
 	(void)motor;
-#endif
+// #endif
 }
 
-/**
- * Get the motor selected for the current thread.
- *
- * @return
- * 0: no specific motor selected, the last motor will be used.
- * 1: motor 1 selected (default).
- * 2: motor 2 selected.
- */
-int mc_interface_get_motor_thread(void) {
-	return chThdGetSelfX()->motor_selected;
-}
+// /**
+//  * Get the motor selected for the current thread.
+//  *
+//  * @return
+//  * 0: no specific motor selected, the last motor will be used.
+//  * 1: motor 1 selected (default).
+//  * 2: motor 2 selected.
+//  */
+// int mc_interface_get_motor_thread(void) {
+// 	return 1;//chThdGetSelfX()->motor_selected;
+// }
 
 const volatile mc_configuration* mc_interface_get_configuration(void) {
 	return &motor_now()->m_conf;
@@ -697,7 +697,7 @@ static volatile motor_if_state_t *motor_now(void) {
 void mc_interface_stat_reset(void) {
 	volatile setup_stats *s = &motor_now()->m_stats;
 	memset((void*)s, 0, sizeof(setup_stats));
-	s->time_start = chVTGetSystemTimeX();
+	// s->time_start = chVTGetSystemTimeX();
 	s->max_temp_mos = -300.0;
 	s->max_temp_motor = -300.0;
 }

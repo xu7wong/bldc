@@ -26,5 +26,5 @@ void timer_init(void);
 uint32_t timer_time_now(void);
 float timer_seconds_elapsed_since(uint32_t time);
 void timer_sleep(float seconds);
-
+void chThdSleepMS(uint32_t ms);
 #endif /* TIMER_H_ */

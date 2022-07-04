@@ -199,7 +199,7 @@ void assert_failed(uint8_t* file, uint32_t line) {
 	// commands_printf("Wrong parameters value: file %s on line %d\r\n", file, line);
 	mc_interface_release_motor();
 	while(1) {
-		chThdSleepMilliseconds(1);
+		chThdSleepMS(1);
 	}
 }
 
@@ -210,7 +210,7 @@ void assert_failed(uint8_t* file, uint32_t line) {
 int main(void) {
 	halInit();
 	chSysInit();
-
+	timer_init();
 	// Initialize the enable pins here and disable them
 	// to avoid excessive current draw at boot because of
 	// floating pins.
@@ -224,15 +224,15 @@ int main(void) {
 // 	palSetPadMode(BOOT_OK_GPIO, BOOT_OK_PIN, PAL_MODE_OUTPUT_PUSHPULL);
 // 	palClearPad(BOOT_OK_GPIO, BOOT_OK_PIN);
 // #endif
-
-	chThdSleepMilliseconds(100);
+	
+	chThdSleepMS(100);
 
 	// events_init();
 	hw_init_gpio();
 	// LED_RED_OFF();
 	// LED_GREEN_OFF();
 
-	// timer_init();
+	
 	// conf_general_init();
 
 	// if( flash_helper_verify_flash_memory() == FAULT_CODE_FLASH_CORRUPTION )	{
@@ -250,9 +250,9 @@ int main(void) {
 
 	// commands_init();
 
-#if COMM_USE_USB
+// #if COMM_USE_USB
 	// comm_usb_init();
-#endif
+// #endif
 
 // #if CAN_ENABLE
 // 	comm_can_init();

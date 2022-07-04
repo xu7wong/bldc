@@ -195,7 +195,7 @@ typedef struct {
 
 // Private variables
 static volatile bool m_dccal_done = false;
-static volatile float m_last_adc_isr_duration;
+// static volatile float m_last_adc_isr_duration;
 static volatile bool m_init_done = false;
 static volatile motor_all_state_t m_motor_1;
 #ifdef HW_HAS_DUAL_MOTORS
@@ -1126,14 +1126,14 @@ int mcpwm_foc_dc_cal(bool cal_undriven) {
 	// Wait max 5 seconds for DRV-fault to go away
 	int cnt = 0;
 	while(IS_DRV_FAULT()){
-		chThdSleepMilliseconds(1);
+		chThdSleepMS(1);
 		cnt++;
 		if (cnt > 5000) {
 			return -1;
 		}
 	};
 
-	chThdSleepMilliseconds(1000);
+	chThdSleepMS(1000);
 
 	// // Disable timeout
 	// systime_t tout = timeout_get_timeout_msec();
@@ -1171,7 +1171,7 @@ int mcpwm_foc_dc_cal(bool cal_undriven) {
 // 	TIM_GenerateEvent(TIM8, TIM_EventSource_COM);
 // #endif
 
-	chThdSleepMilliseconds(10);
+	chThdSleepMS(10);
 
 	for (float i = 0;i < samples;i++) {
 		current_sum[0] += m_motor_1.m_currents_adc[0];
@@ -1180,7 +1180,7 @@ int mcpwm_foc_dc_cal(bool cal_undriven) {
 		current_sum_m2[0] += m_motor_2.m_currents_adc[0];
 		voltage_sum_m2[0] += ADC_VOLTS(ADC_IND_SENS4);
 #endif
-		chThdSleep(1);
+		chThdSleepMS(1);
 	}
 
 	// Start PWM on phase 2
@@ -1200,8 +1200,8 @@ int mcpwm_foc_dc_cal(bool cal_undriven) {
 // 	TIM_GenerateEvent(TIM8, TIM_EventSource_COM);
 // #endif
 
-	chThdSleep(1);
-
+	// chThdSleep(1);
+	chThdSleepMS(0.1);
 	for (float i = 0;i < samples;i++) {
 		current_sum[1] += m_motor_1.m_currents_adc[1];
 		voltage_sum[1] += ADC_VOLTS(ADC_IND_SENS2);
@@ -1209,7 +1209,8 @@ int mcpwm_foc_dc_cal(bool cal_undriven) {
 		current_sum_m2[1] += m_motor_2.m_currents_adc[1];
 		voltage_sum_m2[1] += ADC_VOLTS(ADC_IND_SENS5);
 #endif
-		chThdSleep(1);
+		// chThdSleep(1);
+		chThdSleepMS(0.1);
 	}
 
 	// Start PWM on phase 3
@@ -1229,8 +1230,8 @@ int mcpwm_foc_dc_cal(bool cal_undriven) {
 // 	TIM_GenerateEvent(TIM8, TIM_EventSource_COM);
 // #endif
 
-	chThdSleep(1);
-
+	// chThdSleep(1);
+	chThdSleepMS(0.1);
 	for (float i = 0;i < samples;i++) {
 		current_sum[2] += m_motor_1.m_currents_adc[2];
 		voltage_sum[2] += ADC_VOLTS(ADC_IND_SENS3);
@@ -1238,7 +1239,8 @@ int mcpwm_foc_dc_cal(bool cal_undriven) {
 		current_sum_m2[2] += m_motor_2.m_currents_adc[2];
 		voltage_sum_m2[2] += ADC_VOLTS(ADC_IND_SENS6);
 #endif
-		chThdSleep(1);
+		// chThdSleep(1);
+		chThdSleepMS(0.1);
 	}
 
 	stop_pwm_hw(&m_motor_1);
@@ -1276,7 +1278,7 @@ int mcpwm_foc_dc_cal(bool cal_undriven) {
 	// Measure undriven offsets
 
 	if (cal_undriven) {
-		chThdSleepMilliseconds(10);
+		chThdSleepMS(10);
 
 		voltage_sum[0] = 0.0; voltage_sum[1] = 0.0; voltage_sum[2] = 0.0;
 #ifdef HW_HAS_DUAL_MOTORS
@@ -1294,7 +1296,8 @@ int mcpwm_foc_dc_cal(bool cal_undriven) {
 			voltage_sum_m2[1] += ADC_VOLTS(ADC_IND_SENS5) - v_avg;
 			voltage_sum_m2[2] += ADC_VOLTS(ADC_IND_SENS6) - v_avg;
 #endif
-			chThdSleep(1);
+			// chThdSleep(1);
+			chThdSleepMS(0.1);
 		}
 
 		stop_pwm_hw(&m_motor_1);
@@ -1353,7 +1356,7 @@ void mcpwm_foc_adc_int_handler(void) {
 		return;
 	}
 
-	uint32_t t_start = timer_time_now();
+	// uint32_t t_start = timer_time_now();
 
 	bool is_v7 = !(TIM1->CR1 & TIM_CR1_DIR);
 	int norm_curr_ofs = 0;
@@ -2054,7 +2057,7 @@ void mcpwm_foc_adc_int_handler(void) {
 #endif
 
 	m_isr_motor = 0;
-	m_last_adc_isr_duration = timer_seconds_elapsed_since(t_start);
+	// m_last_adc_isr_duration = timer_seconds_elapsed_since(t_start);
 }
 
 // Private functions
@@ -2554,7 +2557,7 @@ static void control_current(volatile motor_all_state_t *motor, float dt) {
 	// Decoupling. Using feedforward this compensates for the fact that the equations of a PMSM
 	// are not really decoupled (the d axis current has impact on q axis voltage and visa-versa):
     //      Resistance  Inductance   Cross terms   Back-EMF   (see www.mathworks.com/help/physmod/sps/ref/pmsm.html)
-    // vd = Rs*id   +   Ld*did/dt �???  ωe*iq*Lq
+    // vd = Rs*id   +   Ld*did/dt �????  ωe*iq*Lq
     // vq = Rs*iq   +   Lq*diq/dt +  ωe*id*Ld     + ωe*ψm
 	float dec_vd = 0.0;
 	float dec_vq = 0.0;

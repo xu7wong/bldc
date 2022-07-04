@@ -64,3 +64,6 @@ void timer_sleep(float seconds) {
 		}
 	}
 }
+void chThdSleepMS(uint32_t ms){
+	timer_sleep((float)ms / 1000.0);
+}

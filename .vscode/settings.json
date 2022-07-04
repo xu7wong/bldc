@@ -1,6 +1,9 @@
 {
     "files.associations": {
         "stm32f4xx_conf.h": "c",
-        "mcconf_default.h": "c"
+        "mcconf_default.h": "c",
+        "st.h": "c",
+        "halconf.h": "c",
+        "hal.h": "c"
     }
 }

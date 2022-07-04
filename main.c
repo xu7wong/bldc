@@ -17,7 +17,7 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "ch.h"
+// #include "ch.h"
 #include "hal.h"
 #include "stm32f4xx_conf.h"
 
@@ -312,14 +312,15 @@ int main(void) {
 // #endif
 
 	// m_init_done = true;
-
+	mc_interface_set_current((float)2.0);
 	for(;;) {
-		
-		mc_interface_set_current((float)2.0);
+		thread_foc_run();
+		chThdSleepMS(1);
+		// mc_interface_set_current((float)2.0);
 
-		chThdSleepMilliseconds(5000);
-		mc_interface_set_brake_current((float)0.5);
-		chThdSleepMilliseconds(5000);
+		// chThdSleepMilliseconds(5000);
+		// mc_interface_set_brake_current((float)0.5);
+		// chThdSleepMilliseconds(5000);
 		// mc_interface_set_pid_speed((float)2500.0);
 		//mcpwm_foc_set_pid_speed((float)2500.0);
 		// timeout_reset();

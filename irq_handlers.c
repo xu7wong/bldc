@@ -51,16 +51,39 @@
 // 	}
 // }
 
-CH_IRQ_HANDLER(TIM2_IRQHandler) {
-	if (TIM_GetITStatus(TIM2, TIM_IT_CC2) != RESET) {
+// CH_IRQ_HANDLER(TIM2_IRQHandler) {
+// 	if (TIM_GetITStatus(TIM2, TIM_IT_CC2) != RESET) {
+// 		mcpwm_foc_tim_sample_int_handler();
+
+// 		// Clear the IT pending bit
+// 		TIM_ClearITPendingBit(TIM2, TIM_IT_CC2);
+// 	}
+// 	TIM_ClearITPendingBit(TIM2, TIM_IT_CC2);
+// }
+
+// OSAL_IRQ_HANDLER(SysTick_Handler) {
+
+//   OSAL_IRQ_PROLOGUE();
+
+//   osalSysLockFromISR();
+//   osalOsTimerHandlerI();
+//   osalSysUnlockFromISR();
+
+//   OSAL_IRQ_EPILOGUE();
+// }
+void SysTick_Handler(){
+	osalSysLockFromISR();
+  	osalOsTimerHandlerI();
+  	osalSysUnlockFromISR();
+}
+void TIM2_IRQHandler(void){
+    if (TIM_GetITStatus(TIM2, TIM_IT_CC2) != RESET) {
 		mcpwm_foc_tim_sample_int_handler();
 
 		// Clear the IT pending bit
 		TIM_ClearITPendingBit(TIM2, TIM_IT_CC2);
 	}
-	TIM_ClearITPendingBit(TIM2, TIM_IT_CC2);
 }
-
 // CH_IRQ_HANDLER(PVD_IRQHandler) {
 // 	if (EXTI_GetITStatus(EXTI_Line16) != RESET) {
 // 		// Log the fault. Supply voltage dropped below 2.9V,

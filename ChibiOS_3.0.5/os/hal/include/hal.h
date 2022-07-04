@@ -65,9 +65,9 @@
  *  The ST driver is a special case, it is only included if the OSAL is
  *  configured to require it.
  */
-#if OSAL_ST_MODE != OSAL_ST_MODE_NONE
+// #if OSAL_ST_MODE != OSAL_ST_MODE_NONE
 #include "st.h"
-#endif
+// #endif
 
 /* Complex drivers.*/
 // #include "mmc_spi.h"
@@ -147,13 +147,7 @@
 /* External declarations.                                                    */
 /*===========================================================================*/
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-  void halInit(void);
-#ifdef __cplusplus
-}
-#endif
+void halInit(void);
 
 #endif /* _HAL_H_ */
 

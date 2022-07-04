@@ -226,8 +226,8 @@ static void input_current_offset_measurement( void );
 // static void hfi_update(volatile motor_all_state_t *motor);
 
 // Threads
-static THD_WORKING_AREA(timer_thread_wa, 1024);
-static THD_FUNCTION(timer_thread, arg);
+// static THD_WORKING_AREA(timer_thread_wa, 1024);
+// static THD_FUNCTION(timer_thread, arg);
 static volatile bool timer_thd_stop;
 
 // static THD_WORKING_AREA(hfi_thread_wa, 1024);
@@ -587,7 +587,7 @@ void mcpwm_foc_init(volatile mc_configuration *conf_m1, volatile mc_configuratio
 
 		// Wait for input voltage to rise above minimum voltage
 		while (mc_interface_get_input_voltage_filtered() < m_motor_1.m_conf->l_min_vin) {
-			chThdSleepMilliseconds(1);
+			chThdSleepMS(1);
 			if (UTILS_AGE_S(cal_start_time) >= cal_start_timeout) {
 				m_dccal_done = true;
 				break;
@@ -599,7 +599,7 @@ void mcpwm_foc_init(volatile mc_configuration *conf_m1, volatile mc_configuratio
 			float v_in_last = mc_interface_get_input_voltage_filtered();
 			systime_t v_in_stable_time = chVTGetSystemTimeX();
 			while (UTILS_AGE_S(v_in_stable_time) < 2.0) {
-				chThdSleepMilliseconds(1);
+				chThdSleepMS(1);
 
 				float v_in_now = mc_interface_get_input_voltage_filtered();
 				if (fabsf(v_in_now - v_in_last) > 1.5) {
@@ -635,7 +635,7 @@ void mcpwm_foc_init(volatile mc_configuration *conf_m1, volatile mc_configuratio
 
 	// Start threads
 	timer_thd_stop = false;
-	chThdCreateStatic(timer_thread_wa, sizeof(timer_thread_wa), NORMALPRIO, timer_thread, NULL);
+	// chThdCreateStatic(timer_thread_wa, sizeof(timer_thread_wa), NORMALPRIO, timer_thread, NULL);
 
 	hfi_thd_stop = true;
 	// chThdCreateStatic(hfi_thread_wa, sizeof(hfi_thread_wa), NORMALPRIO, hfi_thread, NULL);
@@ -2337,13 +2337,12 @@ static void input_current_offset_measurement(void) {
 	}
 #endif
 }
+void thread_foc_run(void) {
+	// (void)arg;
 
-static THD_FUNCTION(timer_thread, arg) {
-	(void)arg;
+	// chRegSetThreadName("foc timer");
 
-	chRegSetThreadName("foc timer");
-
-	for(;;) {
+	//for(;;) {
 		const float dt = 0.001;
 
 		if (timer_thd_stop) {
@@ -2358,9 +2357,32 @@ static THD_FUNCTION(timer_thread, arg) {
 
 		input_current_offset_measurement();
 
-		chThdSleepMilliseconds(1);
-	}
+		
+	//}
 }
+// static THD_FUNCTION(timer_thread, arg) {
+// 	(void)arg;
+
+// 	chRegSetThreadName("foc timer");
+
+// 	for(;;) {
+// 		const float dt = 0.001;
+
+// 		if (timer_thd_stop) {
+// 			timer_thd_stop = false;
+// 			return;
+// 		}
+
+// 		timer_update(&m_motor_1, dt);
+// #ifdef HW_HAS_DUAL_MOTORS
+// 		timer_update(&m_motor_2, dt);
+// #endif
+
+// 		input_current_offset_measurement();
+
+// 		chThdSleepMS(1);
+// 	}
+// }
 
 // See http://cas.ensmp.fr/~praly/Telechargement/Journaux/2010-IEEE_TPEL-Lee-Hong-Nam-Ortega-Praly-Astolfi.pdf
 void observer_update(float v_alpha, float v_beta, float i_alpha, float i_beta,
@@ -2557,7 +2579,7 @@ static void control_current(volatile motor_all_state_t *motor, float dt) {
 	// Decoupling. Using feedforward this compensates for the fact that the equations of a PMSM
 	// are not really decoupled (the d axis current has impact on q axis voltage and visa-versa):
     //      Resistance  Inductance   Cross terms   Back-EMF   (see www.mathworks.com/help/physmod/sps/ref/pmsm.html)
-    // vd = Rs*id   +   Ld*did/dt �????  ωe*iq*Lq
+    // vd = Rs*id   +   Ld*did/dt �????  ωe*iq*Lq
     // vq = Rs*iq   +   Lq*diq/dt +  ωe*id*Ld     + ωe*ψm
 	float dec_vd = 0.0;
 	float dec_vq = 0.0;

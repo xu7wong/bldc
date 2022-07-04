@@ -168,17 +168,17 @@ void hw_setup_adc_channels(void) {
 	// ADC_RegularChannelConfig(ADC3, ADC_Channel_1, 5, ADC_SampleTime_15Cycles);	// 14
 
 	ADC_RegularChannelConfig(ADC1, ADC_Channel_0, 1, ADC_SampleTime_15Cycles);	// Phase 1 V, 0
-	ADC_RegularChannelConfig(ADC1, ADC_Channel_1, 2, ADC_SampleTime_15Cycles);	// Phase 2 V, 3
-	ADC_RegularChannelConfig(ADC1, ADC_Channel_2, 3, ADC_SampleTime_15Cycles);	// Phase 3 V, 6
-	ADC_RegularChannelConfig(ADC1, ADC_Channel_13, 4, ADC_SampleTime_15Cycles);	// SUPPLY, 9
-	ADC_RegularChannelConfig(ADC1, ADC_Channel_Vrefint, 5, ADC_SampleTime_15Cycles);	// VREFIN, 12
+	ADC_RegularChannelConfig(ADC1, ADC_Channel_1, 2, ADC_SampleTime_15Cycles);	// Phase 2 V, 2
+	ADC_RegularChannelConfig(ADC1, ADC_Channel_2, 3, ADC_SampleTime_15Cycles);	// Phase 3 V, 4
+	ADC_RegularChannelConfig(ADC1, ADC_Channel_13, 4, ADC_SampleTime_15Cycles);	// SUPPLY, 6
+	ADC_RegularChannelConfig(ADC1, ADC_Channel_Vrefint, 5, ADC_SampleTime_15Cycles);	// VREFIN, 8
 
 	// ADC2 regular channels
 	ADC_RegularChannelConfig(ADC2, ADC_Channel_10, 1, ADC_SampleTime_15Cycles);	// Phase 1 C, 1
-	ADC_RegularChannelConfig(ADC2, ADC_Channel_11, 2, ADC_SampleTime_15Cycles);	// Phase 2 C, 4
-	ADC_RegularChannelConfig(ADC2, ADC_Channel_12, 3, ADC_SampleTime_15Cycles);	// Phase 3 C, 7
-	ADC_RegularChannelConfig(ADC2, ADC_Channel_14, 4, ADC_SampleTime_15Cycles);	// MOTOR TEMP, 10
-	ADC_RegularChannelConfig(ADC2, ADC_Channel_3, 5, ADC_SampleTime_15Cycles);	// MOS TEMP, 13
+	ADC_RegularChannelConfig(ADC2, ADC_Channel_11, 2, ADC_SampleTime_15Cycles);	// Phase 2 C, 3
+	ADC_RegularChannelConfig(ADC2, ADC_Channel_12, 3, ADC_SampleTime_15Cycles);	// Phase 3 C, 5
+	ADC_RegularChannelConfig(ADC2, ADC_Channel_14, 4, ADC_SampleTime_15Cycles);	// MOTOR TEMP, 7
+	ADC_RegularChannelConfig(ADC2, ADC_Channel_3, 5, ADC_SampleTime_15Cycles);	// MOS TEMP, 9
 
 	// ADC3 regular channels
 	ADC_RegularChannelConfig(ADC3, ADC_Channel_15, 1, ADC_SampleTime_15Cycles);	// 2

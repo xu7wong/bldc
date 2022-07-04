@@ -56,25 +56,24 @@
 #define READ_HALL3_2()			READ_HALL3()
 #endif
 
-#define HW_ADC_CHANNELS			15
-#define HW_ADC_INJ_CHANNELS		3
+#define HW_ADC_CHANNELS			10
+// #define HW_ADC_INJ_CHANNELS		3
 #define HW_ADC_NBR_CONV			5
 
 #define HW_ADC_CHANNELS_EXTRA	0
 
 // ADC Indexes
 #define ADC_IND_SENS1			0
-#define ADC_IND_SENS2			3
-#define ADC_IND_SENS3			6//2
+#define ADC_IND_SENS2			2
+#define ADC_IND_SENS3			4
 #define ADC_IND_CURR1			1
-#define ADC_IND_CURR2			4
-#define ADC_IND_CURR3			7
-// #define ADC_IND_EXT				6
-// #define ADC_IND_EXT2			7
-#define ADC_IND_TEMP_MOS		13
-#define ADC_IND_TEMP_MOTOR		10
-#define ADC_IND_VIN_SENS		9
-#define ADC_IND_VREFINT			12
+#define ADC_IND_CURR2			3
+#define ADC_IND_CURR3			5
+
+#define ADC_IND_TEMP_MOS		9
+#define ADC_IND_TEMP_MOTOR		7
+#define ADC_IND_VIN_SENS		6
+#define ADC_IND_VREFINT			8
 
 #define ENABLE_GATE()			palSetPad(GPIOB, 5)
 #define DISABLE_GATE()			palClearPad(GPIOB, 5)

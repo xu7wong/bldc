@@ -336,7 +336,7 @@ int main(void) {
 // #endif
 
 	// m_init_done = true;
-	mc_interface_set_current((float)2.0);
+	mc_interface_set_current((float)4.0);
 	for(;;) {
 		thread_foc_run();
 		chThdSleepMS(1);

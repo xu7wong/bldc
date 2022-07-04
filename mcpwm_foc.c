@@ -495,8 +495,8 @@ void mcpwm_foc_init(volatile mc_configuration *conf_m1, volatile mc_configuratio
 
 	// Clock
 	RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_DMA2 | RCC_AHB1Periph_GPIOA | RCC_AHB1Periph_GPIOC, ENABLE);
-	RCC_APB2PeriphClockCmd(RCC_APB2Periph_ADC1 | RCC_APB2Periph_ADC2 | RCC_APB2Periph_ADC3, ENABLE);
-	
+	//RCC_APB2PeriphClockCmd(RCC_APB2Periph_ADC1 | RCC_APB2Periph_ADC2 | RCC_APB2Periph_ADC3, ENABLE);
+	RCC_APB2PeriphClockCmd(RCC_APB2Periph_ADC1 | RCC_APB2Periph_ADC2, ENABLE);
 	
 	// rccEnableDMA2(FALSE);
 	nvicEnableVector(DMA2_Stream4_IRQn, 5);
@@ -530,7 +530,7 @@ void mcpwm_foc_init(volatile mc_configuration *conf_m1, volatile mc_configuratio
 	// ADC Common Init
 	// Note that the ADC is running at 42MHz, which is higher than the
 	// specified 36MHz in the data sheet, but it works.
-	ADC_CommonInitStructure.ADC_Mode = ADC_TripleMode_RegSimult;
+	ADC_CommonInitStructure.ADC_Mode = ADC_DualMode_RegSimult;
 	ADC_CommonInitStructure.ADC_Prescaler = ADC_Prescaler_Div2;
 	ADC_CommonInitStructure.ADC_DMAAccessMode = ADC_DMAAccessMode_1;
 	ADC_CommonInitStructure.ADC_TwoSamplingDelay = ADC_TwoSamplingDelay_5Cycles;
@@ -549,7 +549,7 @@ void mcpwm_foc_init(volatile mc_configuration *conf_m1, volatile mc_configuratio
 	ADC_InitStructure.ADC_ExternalTrigConvEdge = ADC_ExternalTrigConvEdge_None;
 	ADC_InitStructure.ADC_ExternalTrigConv = 0;
 	ADC_Init(ADC2, &ADC_InitStructure);
-	ADC_Init(ADC3, &ADC_InitStructure);
+	//ADC_Init(ADC3, &ADC_InitStructure);
 
 	ADC_TempSensorVrefintCmd(ENABLE);
 	ADC_MultiModeDMARequestAfterLastTransferCmd(ENABLE);
@@ -558,7 +558,7 @@ void mcpwm_foc_init(volatile mc_configuration *conf_m1, volatile mc_configuratio
 
 	ADC_Cmd(ADC1, ENABLE);
 	ADC_Cmd(ADC2, ENABLE);
-	ADC_Cmd(ADC3, ENABLE);
+	//ADC_Cmd(ADC3, ENABLE);
 
 	timer_reinit((int)m_motor_1.m_conf->foc_f_zv);
 
